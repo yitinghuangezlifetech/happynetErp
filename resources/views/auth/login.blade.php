@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>雲端稽核管理系統</title>
+    <title>樂得ERP管理系統</title>
 
     <!-- Google Font: Source Sans Pro -->
     <link rel="stylesheet"
@@ -21,7 +21,7 @@
     <div class="login-box">
         <div class="card card-outline card-primary">
             <div class="card-header text-center">
-                <b class="h3">雲端稽核管理系統</b>
+                <b class="h3">樂得ERP管理系統</b>
             </div>
             <div class="card-body">
 
@@ -40,19 +40,6 @@
                         <div class="input-group-append">
                             <div class="input-group-text">
                                 <span class="fas fa-lock"></span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="input-group mb-3">
-                        <select name="system_type_id" class="form-control" required>
-                            <option value="">請選擇登錄系統</option>
-                            @foreach($types??[] as $type)
-                            <option value="{{$type->id}}">{{$type->name}}</option>
-                            @endforeach
-                        </select>
-                        <div class="input-group-append">
-                            <div class="input-group-text">
-                                <i class="fas fa-address-card"></i>
                             </div>
                         </div>
                     </div>
