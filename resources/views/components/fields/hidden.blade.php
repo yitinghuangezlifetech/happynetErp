@@ -1,0 +1,1 @@
+<input type="hidden" name="{{$detail->field}}" id="{{$type.'_'.$detail->field}}" value="{{$value}}">
