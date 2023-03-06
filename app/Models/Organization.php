@@ -11,6 +11,23 @@ class Organization extends AbstractModel
     {
         return [
             [
+                'field' => 'parent_id',
+                'type' => 'select',
+                'show_name' => '父層組織',
+                'join_search' => 2,
+                'required' => 1,
+                'browse' => 2,
+                'create' => 1,
+                'edit' => 1,
+                'sort' => 0,
+                'has_relationship' => 1,
+                'relationship' => json_encode([
+                    'model' => 'App\Models\Organization',
+                    'references_field' => 'id',
+                    'show_field' => 'name'
+                ])
+            ],
+            [
                 'field' => 'system_no',
                 'type' => 'text',
                 'show_name' => '系統編號',
@@ -19,7 +36,7 @@ class Organization extends AbstractModel
                 'browse' => 1,
                 'create' => 1,
                 'edit' => 1,
-                'sort' => 0
+                'sort' => 1
             ],
             [
                 'field' => 'group_id',
@@ -30,7 +47,7 @@ class Organization extends AbstractModel
                 'browse' => 2,
                 'create' => 1,
                 'edit' => 1,
-                'sort' => 1,
+                'sort' => 2,
                 'has_relationship' => 1,
                 'relationship' => json_encode([
                     'model' => 'App\Models\Group',
@@ -47,7 +64,7 @@ class Organization extends AbstractModel
                 'browse' => 2,
                 'create' => 1,
                 'edit' => 1,
-                'sort' => 2,
+                'sort' => 3,
                 'has_relationship' => 1,
                 'relationship' => json_encode([
                     'model' => 'App\Models\Identity',
@@ -73,7 +90,7 @@ class Organization extends AbstractModel
                 'browse' => 1,
                 'create' => 1,
                 'edit' => 1,
-                'sort' => 3,
+                'sort' => 4,
                 'has_relationship' => 1,
                 'relationship' => json_encode([
                     'model' => 'App\Models\OrganizationType',
@@ -99,7 +116,7 @@ class Organization extends AbstractModel
                 'browse' => 1,
                 'create' => 1,
                 'edit' => 1,
-                'sort' => 4
+                'sort' => 5
             ],
             [
                 'field' => 'cost_rate_id',
@@ -110,7 +127,7 @@ class Organization extends AbstractModel
                 'browse' => 1,
                 'create' => 1,
                 'edit' => 1,
-                'sort' => 5,
+                'sort' => 6,
                 'has_relationship' => 1,
                 'relationship' => json_encode([
                     'model' => 'App\Models\CostRate',
@@ -127,7 +144,7 @@ class Organization extends AbstractModel
                 'browse' => 1,
                 'create' => 1,
                 'edit' => 1,
-                'sort' => 6
+                'sort' => 7
             ],
             [
                 'field' => 'manager',
@@ -138,7 +155,7 @@ class Organization extends AbstractModel
                 'browse' => 1,
                 'create' => 1,
                 'edit' => 1,
-                'sort' => 7
+                'sort' => 8
             ],
             [
                 'field' => 'manager_id_no',
@@ -149,7 +166,7 @@ class Organization extends AbstractModel
                 'browse' => 1,
                 'create' => 1,
                 'edit' => 1,
-                'sort' => 8
+                'sort' => 9
             ],
             [
                 'field' => 'mobile',
@@ -160,7 +177,7 @@ class Organization extends AbstractModel
                 'browse' => 1,
                 'create' => 1,
                 'edit' => 1,
-                'sort' => 9
+                'sort' => 10
             ],
             [
                 'field' => 'tel',
@@ -171,7 +188,7 @@ class Organization extends AbstractModel
                 'browse' => 1,
                 'create' => 1,
                 'edit' => 1,
-                'sort' => 10
+                'sort' => 11
             ],
             [
                 'field' => 'tel_1',
@@ -182,7 +199,7 @@ class Organization extends AbstractModel
                 'browse' => 2,
                 'create' => 1,
                 'edit' => 1,
-                'sort' => 11
+                'sort' => 12
             ],
             [
                 'field' => 'fax',
@@ -193,7 +210,7 @@ class Organization extends AbstractModel
                 'browse' => 2,
                 'create' => 1,
                 'edit' => 1,
-                'sort' => 12
+                'sort' => 13
             ],
             [
                 'field' => 'line',
@@ -204,7 +221,7 @@ class Organization extends AbstractModel
                 'browse' => 2,
                 'create' => 1,
                 'edit' => 1,
-                'sort' => 13
+                'sort' => 14
             ],
             [
                 'field' => 'county',
@@ -215,7 +232,7 @@ class Organization extends AbstractModel
                 'browse' => 2,
                 'create' => 1,
                 'edit' => 1,
-                'sort' => 14
+                'sort' => 15
             ],
             [
                 'field' => 'district',
@@ -226,7 +243,7 @@ class Organization extends AbstractModel
                 'browse' => 2,
                 'create' => 1,
                 'edit' => 1,
-                'sort' => 15
+                'sort' => 16
             ],
             [
                 'field' => 'zipcode',
@@ -237,7 +254,7 @@ class Organization extends AbstractModel
                 'browse' => 2,
                 'create' => 1,
                 'edit' => 1,
-                'sort' => 16
+                'sort' => 17
             ],
             [
                 'field' => 'address',
@@ -248,7 +265,7 @@ class Organization extends AbstractModel
                 'browse' => 2,
                 'create' => 1,
                 'edit' => 1,
-                'sort' => 17
+                'sort' => 18
             ],
             [
                 'field' => 'bill_county',
@@ -259,7 +276,7 @@ class Organization extends AbstractModel
                 'browse' => 2,
                 'create' => 1,
                 'edit' => 1,
-                'sort' => 18
+                'sort' => 19
             ],
             [
                 'field' => 'bill_district',
@@ -270,7 +287,7 @@ class Organization extends AbstractModel
                 'browse' => 2,
                 'create' => 1,
                 'edit' => 1,
-                'sort' => 19
+                'sort' => 20
             ],
             [
                 'field' => 'bill_zipcode',
@@ -281,7 +298,7 @@ class Organization extends AbstractModel
                 'browse' => 2,
                 'create' => 1,
                 'edit' => 1,
-                'sort' => 20
+                'sort' => 21
             ],
             [
                 'field' => 'bill_address',
@@ -292,7 +309,7 @@ class Organization extends AbstractModel
                 'browse' => 2,
                 'create' => 1,
                 'edit' => 1,
-                'sort' => 21
+                'sort' => 22
             ],
             [
                 'field' => 'business_county',
@@ -303,7 +320,7 @@ class Organization extends AbstractModel
                 'browse' => 2,
                 'create' => 1,
                 'edit' => 1,
-                'sort' => 22
+                'sort' => 23
             ],
             [
                 'field' => 'business_district',
@@ -314,7 +331,7 @@ class Organization extends AbstractModel
                 'browse' => 2,
                 'create' => 1,
                 'edit' => 1,
-                'sort' => 23
+                'sort' => 24
             ],
             [
                 'field' => 'business_zipcode',
@@ -325,7 +342,7 @@ class Organization extends AbstractModel
                 'browse' => 2,
                 'create' => 1,
                 'edit' => 1,
-                'sort' => 24
+                'sort' => 25
             ],
             [
                 'field' => 'business_address',
@@ -336,7 +353,7 @@ class Organization extends AbstractModel
                 'browse' => 2,
                 'create' => 1,
                 'edit' => 1,
-                'sort' => 25
+                'sort' => 26
             ],
             [
                 'field' => 'email',
@@ -347,7 +364,7 @@ class Organization extends AbstractModel
                 'browse' => 2,
                 'create' => 1,
                 'edit' => 1,
-                'sort' => 26
+                'sort' => 27
             ],
             [
                 'field' => 'official_website',
@@ -358,7 +375,7 @@ class Organization extends AbstractModel
                 'browse' => 2,
                 'create' => 1,
                 'edit' => 1,
-                'sort' => 27
+                'sort' => 28
             ],
             [
                 'field' => 'expiry_day',
@@ -369,7 +386,7 @@ class Organization extends AbstractModel
                 'browse' => 2,
                 'create' => 1,
                 'edit' => 1,
-                'sort' => 28
+                'sort' => 29
             ],
             [
                 'field' => 'bill_day',
@@ -380,7 +397,7 @@ class Organization extends AbstractModel
                 'browse' => 2,
                 'create' => 1,
                 'edit' => 1,
-                'sort' => 29
+                'sort' => 30
             ],
             [
                 'field' => 'attach_number_limit',
@@ -391,7 +408,7 @@ class Organization extends AbstractModel
                 'browse' => 2,
                 'create' => 1,
                 'edit' => 1,
-                'sort' => 30
+                'sort' => 31
             ],
             [
                 'field' => 'phone_call_limit',
@@ -402,7 +419,7 @@ class Organization extends AbstractModel
                 'browse' => 2,
                 'create' => 1,
                 'edit' => 1,
-                'sort' => 31
+                'sort' => 32
             ],
             [
                 'field' => 'bill_contact',
@@ -413,7 +430,7 @@ class Organization extends AbstractModel
                 'browse' => 2,
                 'create' => 1,
                 'edit' => 1,
-                'sort' => 32
+                'sort' => 33
             ],
             [
                 'field' => 'bill_contact_mobile',
@@ -424,7 +441,7 @@ class Organization extends AbstractModel
                 'browse' => 2,
                 'create' => 1,
                 'edit' => 1,
-                'sort' => 33
+                'sort' => 34
             ],
             [
                 'field' => 'bill_contact_tel',
@@ -435,7 +452,7 @@ class Organization extends AbstractModel
                 'browse' => 2,
                 'create' => 1,
                 'edit' => 1,
-                'sort' => 34
+                'sort' => 35
             ],
             [
                 'field' => 'bill_contact_tel_1',
@@ -446,7 +463,7 @@ class Organization extends AbstractModel
                 'browse' => 2,
                 'create' => 1,
                 'edit' => 1,
-                'sort' => 35
+                'sort' => 36
             ],
             [
                 'field' => 'bill_contact_line',
@@ -457,7 +474,7 @@ class Organization extends AbstractModel
                 'browse' => 2,
                 'create' => 1,
                 'edit' => 1,
-                'sort' => 36
+                'sort' => 37
             ],
             [
                 'field' => 'bill_contact_mail',
@@ -468,7 +485,7 @@ class Organization extends AbstractModel
                 'browse' => 2,
                 'create' => 1,
                 'edit' => 1,
-                'sort' => 37
+                'sort' => 38
             ],
             [
                 'field' => 'bill_contact_mail_1',
@@ -479,7 +496,7 @@ class Organization extends AbstractModel
                 'browse' => 2,
                 'create' => 1,
                 'edit' => 1,
-                'sort' => 38
+                'sort' => 39
             ],
             [
                 'field' => 'setup_contact',
@@ -490,7 +507,7 @@ class Organization extends AbstractModel
                 'browse' => 2,
                 'create' => 1,
                 'edit' => 1,
-                'sort' => 39
+                'sort' => 40
             ],
             [
                 'field' => 'setup_contact_mobile',
@@ -501,7 +518,7 @@ class Organization extends AbstractModel
                 'browse' => 2,
                 'create' => 1,
                 'edit' => 1,
-                'sort' => 40
+                'sort' => 41
             ],
             [
                 'field' => 'setup_contact_tel',
@@ -512,7 +529,7 @@ class Organization extends AbstractModel
                 'browse' => 2,
                 'create' => 1,
                 'edit' => 1,
-                'sort' => 41
+                'sort' => 42
             ],
             [
                 'field' => 'setup_contact_tel_1',
@@ -523,7 +540,7 @@ class Organization extends AbstractModel
                 'browse' => 2,
                 'create' => 1,
                 'edit' => 1,
-                'sort' => 42
+                'sort' => 43
             ],
             [
                 'field' => 'setup_contact_line',
@@ -534,7 +551,7 @@ class Organization extends AbstractModel
                 'browse' => 2,
                 'create' => 1,
                 'edit' => 1,
-                'sort' => 43
+                'sort' => 44
             ],
             [
                 'field' => 'setup_contact_mail',
@@ -545,7 +562,7 @@ class Organization extends AbstractModel
                 'browse' => 2,
                 'create' => 1,
                 'edit' => 1,
-                'sort' => 44
+                'sort' => 45
             ],
             [
                 'field' => 'setup_contact_mail_1',
@@ -556,7 +573,7 @@ class Organization extends AbstractModel
                 'browse' => 2,
                 'create' => 1,
                 'edit' => 1,
-                'sort' => 45
+                'sort' => 46
             ],
             [
                 'field' => 'note',
@@ -567,7 +584,7 @@ class Organization extends AbstractModel
                 'browse' => 2,
                 'create' => 1,
                 'edit' => 1,
-                'sort' => 46
+                'sort' => 47
             ],
             [
                 'field' => 'status',
@@ -576,7 +593,7 @@ class Organization extends AbstractModel
                 'browse' => 1,
                 'create' => 1,
                 'edit' => 1,
-                'sort' => 47,
+                'sort' => 48,
                 'options' => json_encode([
                     ['text'=>'啟用', 'value'=>1, 'default'=>0],
                     ['text'=>'停用', 'value'=>2, 'default'=>1],
@@ -591,7 +608,7 @@ class Organization extends AbstractModel
                 'browse' => 2,
                 'create' => 1,
                 'edit' => 1,
-                'sort' => 48,
+                'sort' => 49,
                 'has_relationship' => 1,
                 'relationship' => json_encode([
                     'model' => 'App\Models\User',
@@ -608,7 +625,7 @@ class Organization extends AbstractModel
                 'browse' => 2,
                 'create' => 1,
                 'edit' => 1,
-                'sort' => 49,
+                'sort' => 50,
                 'has_relationship' => 1,
                 'relationship' => json_encode([
                     'model' => 'App\Models\User',
@@ -617,6 +634,37 @@ class Organization extends AbstractModel
                 ])
             ],
         ];
+    }
+
+    public function parent()
+    {
+        return $this->belongsTo(Organization::class, 'parent_id');
+    }
+
+    public function childs()
+    {
+        return $this->hasMany(Organization::class, 'parent_id');
+    }
+
+    public function systemRoles()
+    {
+        $identity = app(Identity::class)->where('name', '系統商')->first();
+        
+        return $this->hasMany(Organization::class, 'parent_id')->where('identity_id', $identity->id);
+    }
+
+    public function agentRoles()
+    {
+        $identity = app(Identity::class)->where('name', '經銷商')->first();
+        
+        return $this->hasMany(Organization::class, 'parent_id')->where('identity_id', $identity->id);
+    }
+
+    public function customerRoles()
+    {
+        $identity = app(Identity::class)->where('name', '用戶')->first();
+        
+        return $this->hasMany(Organization::class, 'parent_id')->where('identity_id', $identity->id);
     }
 
     public function group()
@@ -634,8 +682,23 @@ class Organization extends AbstractModel
         return $this->belongsTo(OrganizationType::class, 'organization_type_id');
     }
 
-    public function customer()
+    public function createUser()
     {
-        return $this->belongsTo(Customer::class, 'customer_id');
+        return $this->belongsTo(User::class, 'create_user_id');
+    }
+
+    public function updateUser()
+    {
+        return $this->belongsTo(User::class, 'update_user_id');
+    }
+
+    public function users()
+    {
+        return $this->belongsTo(User::class, 'organization_id');
+    }
+
+    public function feeRate()
+    {
+        return $this->belongsTo(FeeRate::class, 'fee_rate_id');
     }
 }

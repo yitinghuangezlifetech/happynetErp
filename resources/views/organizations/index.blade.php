@@ -13,13 +13,12 @@
           <thead>
             <tr>
               <th class="bg-gradient-secondary" style="text-align: center"><input type="checkbox" class="checkAll"></th>
+              <th class="bg-gradient-secondary" style="text-align: center">操作</th>
               <th class="bg-gradient-secondary" style="text-align: center">系統編號</th>
               <th class="bg-gradient-secondary" style="text-align: center">群組</th>
               <th class="bg-gradient-secondary" style="text-align: center">身份</th>
-              <th class="bg-gradient-secondary" style="text-align: center">帳號</th>
-              <th class="bg-gradient-secondary" style="text-align: center">電信帳號</th>
               <th class="bg-gradient-secondary" style="text-align: center">名稱</th>
-              <th class="bg-gradient-secondary" style="text-align: center">成本費率名稱</th>
+              <th class="bg-gradient-secondary" style="text-align: center">費率名稱</th>
               <th class="bg-gradient-secondary" style="text-align: center">統一編號</th>
               <th class="bg-gradient-secondary" style="text-align: center">系統商(數)</th>
               <th class="bg-gradient-secondary" style="text-align: center">經銷商(數)</th>
@@ -35,19 +34,27 @@
             @foreach($list??[] as $data)
             <tr>
               <td class="text-center"><input type="checkbox" class="rowItem" name="items[]" value="{{ $data->id }}"></td>
+              <td style="text-align: center">
+                @can('update_'.$menu->slug, app($menu->model))
+                  <button type="button" class="btn bg-gradient-secondary btn-sm" onclick="location.href='{{route($menu->slug.'.edit', $data->id)}}'"><i class="fas fa-edit"></i></button>
+                @endcan
+              </td>
               <td class="text-center" style="vertical-align: middle">{{$data->system_no}}</td>
               <td class="text-center" style="vertical-align: middle">{{optional($data->group)->name}}</td>
               <td class="text-center" style="vertical-align: middle">{{optional($data->identity)->name}}</td>
-              <td class="text-center" style="vertical-align: middle">{{$data->mobile}}</td>
-              <td class="text-center" style="vertical-align: middle">{{$data->zipcode.$data->county.$data->district.$data->address}}</td>
+              <td class="text-center" style="vertical-align: middle">{{$data->name}}</td>
+              <td class="text-center" style="vertical-align: middle">{{optional($data->feeRate)->name}}</td>
+              <td class="text-center" style="vertical-align: middle">{{$data->id_no}}</td>
+              <td class="text-center" style="vertical-align: middle">{{$data->systemRoles->count()}}</td>
+              <td class="text-center" style="vertical-align: middle">{{$data->agentRoles->count()}}</td>
+              <td class="text-center" style="vertical-align: middle">{{$data->customerRoles->count()}}</td>
               <td class="text-center" style="vertical-align: middle">
                 <input type="checkbox" class="switchBtn status" checkeddata-toggle="toggle" data-id="{{$data->id}}" data-field="status" data-model="{{$menu->model}}" @if($data->status == 1){{'checked'}}@endif>
               </td>
-              <td style="text-align: center">
-                @can('update_'.$menu->slug, app($menu->model))
-                  <button type="button" class="btn bg-gradient-secondary btn-sm" onclick="location.href='{{route('admin.'.$menu->slug.'.edit', $data->id)}}'"><i class="fas fa-edit"></i></button>
-                @endcan
-              </td>
+              <td class="text-center" style="vertical-align: middle">{{optional($data->createUser)->name}}</td>
+              <td class="text-center" style="vertical-align: middle">{{$data->created_at}}</td>
+              <td class="text-center" style="vertical-align: middle">{{optional($data->updateUser)->name}}</td>
+              <td class="text-center" style="vertical-align: middle">{{$data->updated_at}}</td>
             </tr>
             @endforeach
           </tbody>
@@ -55,7 +62,7 @@
       </div>
       <!-- /.card-body -->
       <div class="card-footer clearfix">
-        {{$list->links('admins.pagination.adminLTE')}}
+        {{$list->links('pagination.adminLTE')}}
       </div>
     </div>
     <!-- /.card -->
@@ -66,7 +73,7 @@
 </form>
 <!-- /.row -->
 @if($menu->search_component == 1)
-  @include('admins.components.search_modal', ['menu'=>$menu, 'filters'=>$filters])
+  @include('components.search_modal', ['menu'=>$menu, 'filters'=>$filters])
 @endif
 @endsection
 
@@ -75,20 +82,20 @@
 <script type="text/javascript">
   $(document).ready(function(){
       $(".clearSearch").click(function(){
-        $("#exampleModal input").val('');
-        $("#exampleModal select").val('');
+        $("#searchForm input").val('');
+        $("#searchForm select").val('');
       })
 
       $('.search').click(function(){
         $('#searchForm')[0].method = 'get';
         $('#searchForm')[0].target = '_self';
-        $('#searchForm')[0].action = '{{ route('admin.'.$menu->slug.'.index') }}';
+        $('#searchForm')[0].action = '{{ route($menu->slug.'.index') }}';
         $('#searchForm').submit();
       })
 
       $('.switchBtn').bootstrapToggle({
-        on: '上架',
-        off: '下架',
+        on: '啟用',
+        off: '停用',
         onstyle: 'success',
         offstyle: 'secondary'
       }).on('change', function(){
@@ -104,7 +111,7 @@
         $.ajax({
               headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
               method: 'post',
-              url: '{{ route('admin.status.changeStatus') }}',
+              url: '{{ route('status.changeStatus') }}',
               data: {
                 id: id,
                 model: model,
@@ -123,18 +130,11 @@
         }
       })
 
-      $('.exportBtn').click(function(){
-        $('#searchForm')[0].method = 'post';
-        $('#searchForm')[0].target = '_blank';
-        $('#searchForm')[0].action = '{{ route('admin.'.$menu->slug.'.exportExcel') }}';
-        $('#searchForm').submit();
-      })
-
       $(".deleteBtn").click(function(){
 
         $('#delete_form')[0].method = 'get';
         $('#delete_form')[0].target = '_self';
-        $('#delete_form')[0].action = '{{ route('admin.'.$menu->slug.'.multipleDestroy') }}';
+        $('#delete_form')[0].action = '{{ route($menu->slug.'.multipleDestroy') }}';
 
         if ( $('.rowItem:checked').length > 0) {
           Swal.fire({

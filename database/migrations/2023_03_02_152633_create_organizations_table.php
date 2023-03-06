@@ -70,6 +70,7 @@ return new class extends Migration
             $table->string('setup_contact_mail', 120)->nullable()->comment('裝機聯絡人-mail');
             $table->string('setup_contact_mail_1', 120)->nullable()->comment('裝機聯絡人-mail-1');
             $table->text('note')->nullable()->comment('備註說明');
+            $table->string('parent_id', 36)->nullable()->comment('父層組織');
             $table->tinyInteger('status')->default(2)->nullable()->comment('狀態(值1:啟用, 值2:未啟用)');
             $table->string('create_user_id', 36)->nullable()->comment('建立人員');
             $table->string('update_user_id', 36)->nullable()->comment('修改人員');

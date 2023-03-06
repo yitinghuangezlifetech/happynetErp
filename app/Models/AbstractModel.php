@@ -164,7 +164,7 @@ abstract class AbstractModel extends Model implements InterfaceModel
      * 取得指定資料表的所有欄位
      *
      * @author Wayne <wayne@howdesign.com.tw>
-     * @param string $tableName
+     * @param string $tableName 資料表名稱
      * @return mixed
      */
     public function getTableColumsByTableName(string $tableName)
@@ -181,6 +181,25 @@ abstract class AbstractModel extends Model implements InterfaceModel
     public function getDbTables()
     {
         return DB::connection()->getDoctrineSchemaManager()->listTableNames();
+    }
+
+    /**
+     * 取得資料表指定之欄位是否存在
+     *
+     * @author Wayne <wayne@howdesign.com.tw>
+     * @param string $columnName 欄位名稱
+     * @return mixed
+     */
+    public function checkColumnExist($columnName)
+    {
+        if (Schema::hasColumn($this->table, $columnName))
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
     /**

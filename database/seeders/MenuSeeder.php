@@ -189,6 +189,7 @@ class MenuSeeder extends Seeder
                 'target' => '_self',
                 'icon_class' => 'far fa-circle nav-icon',
                 'model' => 'App\Models\Organization',
+                'controller' => 'App\Http\Controllers\OrganizationController',
                 'search_component' => 1,
                 'parent_id' => 3,
                 'sort' => 2
