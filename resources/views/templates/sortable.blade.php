@@ -17,6 +17,7 @@
             <tr>
               <th class="bg-gradient-secondary" style="text-align: center"><input type="checkbox" class="checkAll"></th>
               <th class="bg-gradient-secondary" style="text-align: center">拖曳</th>
+              <th class="bg-gradient-secondary" style="text-align: center">操作</th>
               @if($menu->menuBrowseDetails->count() > 0)
                 @foreach($menu->menuBrowseDetails as $detail)
                   @php
@@ -47,7 +48,6 @@
                   @endif
                 @endforeach
               @endif
-              <th class="bg-gradient-secondary" style="text-align: center">編輯</th>
             </tr>
           </thead>
           <tbody id="items">
@@ -58,6 +58,11 @@
                 <input type="checkbox" class="rowItem" name="items[]" value="{{ $data->id }}">
               </td>
               <td class="text-center" style="vertical-align: middle"><i class="fas fa-arrows-alt" style="cursor:pointer"></i></td>
+              <td style="text-align: center; vertical-align: middle">
+                @can('update_'.$menu->slug, app($menu->model))
+                  <button type="button" class="btn bg-gradient-secondary btn-sm" onclick="location.href='{{route($menu->slug.'.edit', $data->id)}}'"><i class="fas fa-edit"></i></button>
+                @endcan
+              </td>
               @if($menu->menuBrowseDetails->count() > 0)
                 @foreach($menu->menuBrowseDetails as $detail)
                   @php
@@ -712,11 +717,6 @@
                   @endif
                 @endforeach
               @endif
-              <td style="text-align: center; vertical-align: middle">
-                @can('update_'.$menu->slug, app($menu->model))
-                  <button type="button" class="btn bg-gradient-secondary btn-sm" onclick="location.href='{{route('admin.'.$menu->slug.'.edit', $data->id)}}'"><i class="fas fa-edit"></i></button>
-                @endcan
-              </td>
             </tr>
             @endforeach
           </tbody>

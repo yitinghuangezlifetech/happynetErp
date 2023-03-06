@@ -5,7 +5,6 @@ namespace Database\Seeders;
 use DB;
 use App\Models\Role;
 use App\Models\Group;
-use App\Models\SystemType;
 use Illuminate\Database\Seeder;
 
 class RoleSeeder extends Seeder
@@ -31,7 +30,6 @@ class RoleSeeder extends Seeder
     private function getData()
     {
         $arr = [];
-        $type = app(SystemType::class)->where('name', '資安系統')->first();
         $groups = app(Group::class)->get();
 
         if ($groups->count() > 0)
@@ -42,7 +40,6 @@ class RoleSeeder extends Seeder
                 {
                     array_push($arr, [
                         'id' => uniqid(),
-                        'system_type_id' => $type->id,
                         'group_id' => $group->id,
                         'super_admin' => 1,
                         'name' => '超級管理員'

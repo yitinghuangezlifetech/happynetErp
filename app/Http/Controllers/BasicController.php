@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
@@ -157,6 +158,11 @@ class BasicController extends Controller implements InterfaceController
             $formData = $request->except('_token');
             $formData['id'] = uniqid();
 
+            if ($this->model->checkColumnExist('create_user_id'))
+            {
+                $formData['create_user_id'] = Auth::user()->id;
+            }
+
             if ($this->menu->menuDetails->count() > 0)
             {
                 foreach ($this->menu->menuDetails as $detail)
@@ -255,6 +261,11 @@ class BasicController extends Controller implements InterfaceController
 
         try {
             $formData = $request->except('_token', '_method');
+
+            if ($this->model->checkColumnExist('update_user_id'))
+            {
+                $formData['update_user_id'] = Auth::user()->id;
+            }
 
             if ($this->menu->menuDetails->count() > 0)
             {

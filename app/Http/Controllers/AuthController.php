@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\SystemType;
-
 use Session;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -13,20 +11,16 @@ class AuthController extends BasicController
 {
     public function loginForm()
     {
-        $types = app(SystemType::class)->get();
-
-        return view('auth.login', compact(
-            'types'
-        ));
+        return view('auth.login');
     }
 
     public function login(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'email'=>'required',
+            'account'=>'required',
             'password'=>'required',
         ], [
-            'email.required'=>'缺少帳號',
+            'account.required'=>'缺少帳號',
             'password.required'=>'缺少密碼',
         ]);
 
@@ -38,7 +32,7 @@ class AuthController extends BasicController
             ]);
         }
 
-        $credentials = $request->only('email', 'password');
+        $credentials = $request->only('account', 'password');
         
         if (Auth::guard('web')->attempt($credentials, $request->remember))
         {
@@ -50,22 +44,6 @@ class AuthController extends BasicController
                     'msg'=>'您的帳戶已被停權, 請洽管理人員',
                     'redirectURL'=>route('loginForm')
                 ]);
-            }
-
-            if ($user->role) 
-            {
-                if ($user->role->systemType) 
-                {
-                    if ($request->system_type_id != $user->role->systemType->id) 
-                    {
-                        Auth::logout();
-                        
-                        return view('alerts.error',[
-                            'msg'=>'登錄失敗，所屬系統有誤',
-                            'redirectURL'=>route('loginForm')
-                        ]);
-                    }
-                }
             }
 
             return view('alerts.success',[

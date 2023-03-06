@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="csrf-token" content="{{ csrf_token() }}">
   <meta name="uploadUrl" content="{{route('api.image.upload')}}">
-  <title>稽核管理系統</title>
+  <title>樂得ERP系統</title>
 
   @include('layouts.css')
   @yield('css')
@@ -29,7 +29,7 @@
     <!-- Brand Logo -->
     <a href="{{route('dashboard')}}" class="brand-link">
       <img src="/admins/img/AdminLTELogo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
-      <span class="brand-text font-weight-light">稽核管理系統</span>
+      <span class="brand-text font-weight-light">ERP系統</span>
     </a>
 
     <!-- Sidebar -->

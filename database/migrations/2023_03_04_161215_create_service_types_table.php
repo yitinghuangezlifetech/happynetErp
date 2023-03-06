@@ -13,12 +13,9 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('groups', function (Blueprint $table) {
+        Schema::create('service_types', function (Blueprint $table) {
             $table->uuid('id')->unique()->primary();
-            $table->string('name', 120)->nullable()->comment('群組名稱');
-            $table->string('parent_id', 36)->nullable()->comment('父層ID');
-            $table->integer('sort')->nullable()->default(0)->comment('排序(由小排到大)');
-            $table->softDeletes();
+            $table->string('name', 120)->nullable()->comment('服務類別名稱');
             $table->timestamps();
         });
     }
@@ -30,6 +27,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('groups');
+        Schema::dropIfExists('service_types');
     }
 };

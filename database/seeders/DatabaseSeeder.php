@@ -24,12 +24,11 @@ class DatabaseSeeder extends Seeder
 
         DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         
-        $this->call(SystemTypeSeeder::class);
         $this->call(MenuSeeder::class);
         $this->call(MenuDetailSeeder::class);
-        $this->call(GroupSeeder::class);
-        $this->call(RoleSeeder::class);
-        $this->call(UserSeeder::class);
+        // $this->call(GroupSeeder::class);
+        // $this->call(RoleSeeder::class);
+        // $this->call(UserSeeder::class);
         $this->call(PermissionSeeder::class);
         $this->call(GroupPermissionSeeder::class);
         $this->call(RolePermissionSeeder::class);

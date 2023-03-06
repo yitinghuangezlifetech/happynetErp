@@ -45,8 +45,8 @@ class UserSeeder extends Seeder
                 'id' => uniqid(),
                 'group_id' => $role->group_id,
                 'role_id' => $role->id,
-                'email' => 'admin@admin.com',
-                'password' => Hash::make('admin@admin.com'),
+                'account' => 'admin',
+                'password' => Hash::make('admin'),
                 'name' => '超級管理員',
                 'status' => 1
             ]);

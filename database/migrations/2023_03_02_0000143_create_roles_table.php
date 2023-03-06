@@ -15,7 +15,6 @@ return new class extends Migration
     {
         Schema::create('roles', function (Blueprint $table) {
             $table->uuid('id')->unique()->primary();
-            $table->string('system_type_id', 36)->nullable()->comment('所屬系統類別');
             $table->foreignUuid('group_id')
                 ->references('id')
                 ->on('groups')

@@ -21,14 +21,14 @@
     <div class="login-box">
         <div class="card card-outline card-primary">
             <div class="card-header text-center">
-                <b class="h3">樂得ERP管理系統</b>
+                <b class="h3">樂得ERP系統</b>
             </div>
             <div class="card-body">
 
                 <form action="{{route('login')}}" method="post">
                     @csrf
                     <div class="input-group mb-3">
-                        <input type="email" class="form-control" name="email" placeholder="Email">
+                        <input type="text" class="form-control" name="account" placeholder="請輸入帳號">
                         <div class="input-group-append">
                             <div class="input-group-text">
                                 <span class="fas fa-envelope"></span>
@@ -36,7 +36,7 @@
                         </div>
                     </div>
                     <div class="input-group mb-3">
-                        <input type="password" class="form-control" name="password" placeholder="Password">
+                        <input type="password" class="form-control" name="password" placeholder="請輸入密碼">
                         <div class="input-group-append">
                             <div class="input-group-text">
                                 <span class="fas fa-lock"></span>
