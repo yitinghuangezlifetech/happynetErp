@@ -17,10 +17,10 @@ class AuthController extends BasicController
     public function login(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'email'=>'required',
+            'account'=>'required',
             'password'=>'required',
         ], [
-            'email.required'=>'缺少帳號',
+            'account.required'=>'缺少帳號',
             'password.required'=>'缺少密碼',
         ]);
 
@@ -32,7 +32,7 @@ class AuthController extends BasicController
             ]);
         }
 
-        $credentials = $request->only('email', 'password');
+        $credentials = $request->only('account', 'password');
         
         if (Auth::guard('web')->attempt($credentials, $request->remember))
         {

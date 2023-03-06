@@ -197,7 +197,7 @@ class MenuSeeder extends Seeder
                 'id' => 4,
                 'menu_name' => '費率管理',
                 'name' => '費率',
-                'icon_class' => 'fas fa-chart-line',
+                'icon_class' => 'nav-icon fas fa-chart-line',
                 'sort' => 4
             ],
             [
@@ -235,6 +235,18 @@ class MenuSeeder extends Seeder
                 'search_component' => 2,
                 'parent_id' => 4,
                 'sort' => 2
+            ],
+            [
+                'id' => uniqid(),
+                'menu_name' => '費率設定',
+                'name' => '費率',
+                'slug' => 'fee_rates',
+                'target' => '_self',
+                'icon_class' => 'far fa-circle nav-icon',
+                'model' => 'App\Models\FeeRate',
+                'search_component' => 1,
+                'parent_id' => 4,
+                'sort' => 3
             ],
         ];
     }

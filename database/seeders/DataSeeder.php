@@ -17,6 +17,5 @@ class DataSeeder extends Seeder
         $this->call(IdentitySeeder::class);
         $this->call(UserTypeSeeder::class);
         $this->call(ServiceTypeSeeder::class);
-        $this->call(CostRateTypeSeeder::class);
     }
 }

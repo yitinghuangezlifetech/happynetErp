@@ -26,7 +26,7 @@ return new class extends Migration
                 ->onDelete('cascade')
                 ->comment('所屬組織類型');
             $table->string('group_id', 36)->nullable()->comment('所屬群組');
-            $table->string('cost_rate_id', 36)->nullable()->comment('所屬成本費率id');
+            $table->string('fee_rate_id', 36)->nullable()->comment('所屬費率id');
             $table->string('system_no', 100)->nullable()->comment('系統編號');
             $table->string('name', 120)->nullable()->comment('用戶名稱/公司名稱');
             $table->string('id_no', 15)->nullable()->comment('用戶統編/身份證號');
