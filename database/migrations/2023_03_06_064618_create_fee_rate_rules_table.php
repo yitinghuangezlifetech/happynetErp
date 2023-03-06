@@ -13,12 +13,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('groups', function (Blueprint $table) {
+        Schema::create('fee_rate_rules', function (Blueprint $table) {
             $table->uuid('id')->unique()->primary();
-            $table->string('name', 120)->nullable()->comment('群組名稱');
-            $table->string('parent_id', 36)->nullable()->comment('父層ID');
-            $table->integer('sort')->nullable()->default(0)->comment('排序(由小排到大)');
-            $table->softDeletes();
+            $table->string('fee_rate_type_id', 36)->nullable()->comment('費率類別');
+            $table->string('ip', 20)->nullable()->comment('IP');
+            $table->date('stop_day')->nullable()->comment('停用日期');
+            $table->tinyInteger('status')->default(2)->nullable()->comment('狀態(值1:啟用, 值2:停用)');
             $table->timestamps();
         });
     }
@@ -30,6 +30,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('groups');
+        Schema::dropIfExists('fee_rate_rules');
     }
 };

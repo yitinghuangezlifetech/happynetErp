@@ -11,26 +11,6 @@ class Role extends AbstractModel
     {
         return [
             [
-                'field' => 'systems',
-                'type' => 'component',
-                'show_name' => '所屬系統類別',
-                'use_component' => 1,
-                'component_name' => 'SystemType',
-                'join_search' => 1,
-                'required' => 1,
-                'browse' => 2,
-                'create' => 1,
-                'edit' => 1,
-                'sort' => 0,
-                'has_relationship' => 1,
-                'relationship' => json_encode([
-                    'model' => 'App\Models\SystemType',
-                    'references_field' => 'id',
-                    'show_field' => 'name'
-                ]),
-                'relationship_method'=>'getParentSystemType',
-            ],
-            [
                 'field' => 'group_id',
                 'type' => 'select',
                 'show_name' => '所屬群組',

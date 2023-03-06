@@ -26,15 +26,38 @@ class User extends AbstractModel {
     {
         return [
             [
-                'field' => 'group_id',
+                'field' => 'organization_id',
                 'type' => 'select',
-                'show_name' => '所屬群組',
-                'join_search' => 1,
-                'required' => 1,
+                'show_name' => '所屬組織',
+                'join_search' => 2,
+                'required' => 2,
                 'browse' => 1,
                 'create' => 1,
                 'edit' => 1,
                 'sort' => 0,
+                'has_relationship' => 1,
+                'relationship' => json_encode([
+                    'model' => 'App\Models\Organization',
+                    'references_field' => 'id',
+                    'show_field' => 'name'
+                ])
+            ],
+            [
+                'field' => 'empty',
+                'create' => 1,
+                'edit' => 1,
+                'sort' => 1,
+            ],
+            [
+                'field' => 'group_id',
+                'type' => 'select',
+                'show_name' => '所屬群組',
+                'join_search' => 2,
+                'required' => 1,
+                'browse' => 2,
+                'create' => 1,
+                'edit' => 1,
+                'sort' => 2,
                 'has_relationship' => 1,
                 'relationship' => json_encode([
                     'model' => 'App\Models\Group',
@@ -55,12 +78,12 @@ class User extends AbstractModel {
                 'field' => 'role_id',
                 'type' => 'select',
                 'show_name' => '所屬角色',
-                'join_search' => 1,
+                'join_search' => 2,
                 'required' => 1,
-                'browse' => 1,
+                'browse' => 2,
                 'create' => 1,
                 'edit' => 1,
-                'sort' => 1,
+                'sort' => 3,
                 'has_relationship' => 1,
                 'relationship' => json_encode([
                     'model' => 'App\Models\Role',
@@ -77,17 +100,98 @@ class User extends AbstractModel {
                     ['role_id.required'=>'請選擇所屬角色']
                 ])
             ],
+            
             [
-                'field' => 'name',
+                'field' => 'user_type_id',
+                'type' => 'select',
+                'show_name' => '所屬用戶類別',
+                'join_search' => 2,
+                'required' => 1,
+                'browse' => 2,
+                'create' => 1,
+                'edit' => 1,
+                'sort' => 4,
+                'has_relationship' => 1,
+                'relationship' => json_encode([
+                    'model' => 'App\Models\UserType',
+                    'references_field' => 'id',
+                    'show_field' => 'name'
+                ])
+            ],
+            [
+                'field' => 'account',
                 'type' => 'text',
-                'show_name' => '姓名',
+                'show_name' => '帳號',
                 'use_edit_link'=>1,
                 'join_search' => 1,
                 'required' => 1,
                 'browse' => 1,
                 'create' => 1,
                 'edit' => 1,
-                'sort' => 2,
+                'sort' => 5,
+                'create_rule' => json_encode([
+                    'account'=>'required'
+                ]),
+                'update_rule' => json_encode([
+                    'account'=>'required'
+                ]),
+                'error_msg' => json_encode([
+                    ['account.required'=>'帳號請勿空白']
+                ])
+            ],
+            [
+                'field' => 'password',
+                'type' => 'password',
+                'show_name' => '密碼',
+                'use_edit_link'=>2,
+                'join_search' => 2,
+                'required' => 1,
+                'browse' => 2,
+                'create' => 1,
+                'edit' => 1,
+                'sort' => 6,
+                'create_rule' => json_encode([
+                    'password'=>'required'
+                ]),
+                'update_rule' => json_encode([
+                    'password'=>'required'
+                ]),
+                'error_msg' => json_encode([
+                    ['password.required'=>'密碼請勿空白']
+                ])
+            ],
+            [
+                'field' => 'telecom_number',
+                'type' => 'text',
+                'show_name' => '電信號碼',
+                'use_edit_link'=>2,
+                'join_search' => 1,
+                'required' => 1,
+                'browse' => 1,
+                'create' => 1,
+                'edit' => 1,
+                'sort' => 7,
+                'create_rule' => json_encode([
+                    'telecom_number'=>'required'
+                ]),
+                'update_rule' => json_encode([
+                    'telecom_number'=>'required'
+                ]),
+                'error_msg' => json_encode([
+                    ['telecom_number.required'=>'電信號碼請勿空白']
+                ])
+            ],
+            [
+                'field' => 'name',
+                'type' => 'text',
+                'show_name' => '使用者名稱',
+                'use_edit_link'=>2,
+                'join_search' => 1,
+                'required' => 1,
+                'browse' => 1,
+                'create' => 1,
+                'edit' => 1,
+                'sort' => 8,
                 'create_rule' => json_encode([
                     'name'=>'required'
                 ]),
@@ -98,41 +202,7 @@ class User extends AbstractModel {
                     ['name.required'=>'姓名請勿空白']
                 ])
             ],
-            [
-                'field' => 'email',
-                'type' => 'email',
-                'show_name' => '帳號',
-                'join_search' => 1,
-                'required' => 1,
-                'browse' => 1,
-                'create' => 1,
-                'edit' => 1,
-                'sort' => 3,
-                'create_rule' => json_encode([
-                    'email'=>'required'
-                ]),
-                'update_rule' => json_encode([
-                    'email'=>'required'
-                ]),
-                'error_msg' => json_encode([
-                    ['email.required'=>'帳號請勿空白']
-                ])
-            ],
-            [
-                'field' => 'password',
-                'type' => 'password',
-                'show_name' => '密碼',
-                'required' => 1,
-                'create' => 1,
-                'edit' => 1,
-                'sort' => 4,
-                'create_rule' => json_encode([
-                    'password'=>'required'
-                ]),
-                'error_msg' => json_encode([
-                    ['password.required'=>'密碼請勿空白']
-                ])
-            ],
+            
             [
                 'field' => 'status',
                 'type' => 'radio',
@@ -142,18 +212,51 @@ class User extends AbstractModel {
                 'browse' => 1,
                 'create' => 1,
                 'edit' => 1,
-                'sort' => 5,
+                'sort' => 9,
                 'options' => json_encode([
                     ['text'=>'啟用', 'value'=>'1', 'default'=>2],
                     ['text'=>'停用', 'value'=>'2', 'default'=>1],
                 ])
             ],
             [
+                'field' => 'create_user_id',
+                'type' => 'select',
+                'show_name' => '建立人員',
+                'browse' => 1,
+                'sort' => 10,
+                'has_relationship' => 1,
+                'relationship' => json_encode([
+                    'model' => 'App\Models\User',
+                    'references_field' => 'id',
+                    'show_field' => 'name'
+                ])
+            ],
+            [
                 'field' => 'created_at',
                 'type' => 'date_time',
-                'show_name' => '資料建立日期',
+                'show_name' => '建立日期',
                 'browse' => 1,
-                'sort' => 6
+                'sort' => 11
+            ],
+            [
+                'field' => 'update_user_id',
+                'type' => 'select',
+                'show_name' => '修改人員',
+                'browse' => 1,
+                'sort' => 12,
+                'has_relationship' => 1,
+                'relationship' => json_encode([
+                    'model' => 'App\Models\User',
+                    'references_field' => 'id',
+                    'show_field' => 'name'
+                ])
+            ],
+            [
+                'field' => 'updated_at',
+                'type' => 'date_time',
+                'show_name' => '修改日期',
+                'browse' => 1,
+                'sort' => 13
             ],
         ];
     }

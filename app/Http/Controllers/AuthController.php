@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\SystemType;
-
 use Session;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -13,11 +11,7 @@ class AuthController extends BasicController
 {
     public function loginForm()
     {
-        $types = app(SystemType::class)->get();
-
-        return view('auth.login', compact(
-            'types'
-        ));
+        return view('auth.login');
     }
 
     public function login(Request $request)
@@ -50,22 +44,6 @@ class AuthController extends BasicController
                     'msg'=>'您的帳戶已被停權, 請洽管理人員',
                     'redirectURL'=>route('loginForm')
                 ]);
-            }
-
-            if ($user->role) 
-            {
-                if ($user->role->systemType) 
-                {
-                    if ($request->system_type_id != $user->role->systemType->id) 
-                    {
-                        Auth::logout();
-                        
-                        return view('alerts.error',[
-                            'msg'=>'登錄失敗，所屬系統有誤',
-                            'redirectURL'=>route('loginForm')
-                        ]);
-                    }
-                }
             }
 
             return view('alerts.success',[

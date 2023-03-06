@@ -14,6 +14,9 @@ class DataSeeder extends Seeder
      */
     public function run()
     {
-        $this->call(StoreTypeSeeder::class);
+        $this->call(IdentitySeeder::class);
+        $this->call(UserTypeSeeder::class);
+        $this->call(ServiceTypeSeeder::class);
+        $this->call(CostRateTypeSeeder::class);
     }
 }

@@ -3,10 +3,12 @@
 namespace Database\Seeders;
 
 use DB;
-use App\Models\Group;
+use App\Models\OrganizationType;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class GroupSeeder extends Seeder {
+class OrganizationTypeSeeder extends Seeder
+{
     /**
      * Run the database seeds.
      *
@@ -16,23 +18,27 @@ class GroupSeeder extends Seeder {
     {
         DB::statement('SET FOREIGN_KEY_CHECKS=0;');
 
-        app(Group::class)->truncate();
+        app(OrganizationType::class)->truncate();
 
         foreach ($this->getData() as $data)
         {
-            app(Group::class)->create($data);
+            app(OrganizationType::class)->create($data);
         }
 
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
     }
 
-    private function getData()
+    public function getData()
     {
         return [
             [
                 'id' => uniqid(),
-                'name' => '奕立生活科技有限公司'
+                'name' => '企業',
             ],
+            [
+                'id' => uniqid(),
+                'name' => '個人',
+            ]
         ];
     }
 }
