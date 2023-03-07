@@ -35,11 +35,9 @@ class RoleController extends BasicController
         $formData = $request->except('_token', '_method', 'permissions', 'systems');
         $formData['id'] = uniqid();
         $permissions = $request->permissions;
-        $systems = $request->systems;
 
         $this->model->createData($formData);
         $this->proccessPermissions($formData['id'], $permissions);
-        $this->proccessSystemTypes($formData['id'], $systems);
         
         return view('alerts.success', [
             'msg'=>'資料新增成功',
@@ -71,11 +69,9 @@ class RoleController extends BasicController
 
         $formData = $request->except('_token', '_method', 'permissions', 'systems');
         $permissions = $request->permissions;
-        $systems = $request->systems;
 
         $this->model->updateData($id, $formData);
         $this->proccessPermissions($id, $permissions);
-        $this->proccessSystemTypes($id, $systems);
 
         return view('alerts.success',[
             'msg'=>'資料更新成功',
@@ -150,23 +146,5 @@ class RoleController extends BasicController
                 ]);
             }
         }
-    }
-
-    private function proccessSystemTypes($roleId, $types)
-    {
-        app(RoleSystemTypeLog::class)
-            ->where('role_id', $roleId)
-            ->delete();
-
-        if (is_array($types) && count($types) > 0)
-        {
-            foreach($types as $typeId) {
-                app(RoleSystemTypeLog::class)->create([
-                    'id' => uniqid(),
-                    'system_type_id' => $typeId,
-                    'role_id' =>$roleId
-                ]);
-            }
-        }    
     }
 }

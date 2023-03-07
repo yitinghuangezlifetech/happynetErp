@@ -234,29 +234,13 @@ $('#group_id').change(function(){
 @endif
 
 var init = function(){
-
-  $('.systemTypeTd').hide();
-
-  @if(optional($data->group)->systemTypes->count() > 0)
-    @foreach($data->group->systemTypes??[] as $type)
-      if($('#td_{{$type->id}}').length > 0) {
-        $('#td_{{$type->id}}').show();
-      }
-    @endforeach
-    @foreach($data->systemTypes??[] as $type)
-      if($('#td_{{$type->id}}').length > 0) {
-        $('#checkbox_{{$type->id}}_systems').prop('checked', true);
-      }
-    @endforeach
-  @endif
-
   $.ajax({
       headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
       method: 'post',
       url: '{{ route('components.getGroupPermissionComponent') }}',
       data: {
         userId: '{{$user->id}}',
-        group_id: '{{$data->group_id}}',
+        groupId: '{{$data->group_id}}',
         type: 'edit'
       },
       success: function (res) {
@@ -279,39 +263,5 @@ var init = function(){
   })
 }  
 init();
-
-// $('#role_id').change(function(){
-//     var groupId = $(this).val();
-
-//     $('#permissionContent').html('');
-
-//     $.ajax({
-//         headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-//         method: 'post',
-//         url: '{{ route('components.getGroupPermissionComponent') }}',
-//         data: {
-//           userId: '{{$user->id}}',
-//           groupId: groupId
-//         },
-//         success: function (res) {
-//             if (res.status) {
-//               $('#permissionContent').html(res.data);
-//             }
-//         },
-//         error: function() {
-//             Swal.fire({
-//                 icon: 'error',
-//                 text: res.message,
-//                 showCancelButton: false,
-//                 confirmButtonText: '確認',
-//             }).then((result) => {
-//                 if (result.isConfirmed) {
-//                     location.href = '{{ route($menu->slug.'.index') }}'
-//                 }
-//             })
-//         }
-//     })
-
-// });
 </script>
 @endsection

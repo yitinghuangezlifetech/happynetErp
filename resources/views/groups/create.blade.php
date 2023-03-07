@@ -127,32 +127,15 @@
 <script>
 const checkForm = () => {
   let pass = 2;
-  let typeRows = 0;
   let permissionRows = 0;
   const typeLen = parseInt($('.systemType').length);
   const permissionLen = parseInt($('.menuIem').length);
-
-  $('.systemType').each(function(){
-    if ($(this).prop('checked')) {
-      typeRows++;
-    }
-  })
 
   $('.menuIem').each(function(){
     if ($(this).prop('checked')) {
       permissionRows++;
     }
   })
-
-  if (typeRows == 0) {
-    Swal.fire({
-      icon: 'error',
-      title: '訊息提示',
-      text: '請選擇至少一個所屬系統類別'
-    })
-
-    return false;
-  }
 
   if (permissionRows == 0) {
     Swal.fire({
@@ -257,37 +240,6 @@ $('#parent_id').change(function(){
             })
         }
     })
-
-    $.ajax({
-      headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-      method: 'post',
-      url: '{{ route('api.system_types.getGroupSystemTypes') }}',
-      data: {
-        groupId: groupId,
-      },
-      success: function (rs) {
-        if (rs.status) {
-          rs.data.forEach(function(v){
-            console.log(v);
-            if($(`#td_${v.id}`).length > 0) {
-              $(`#td_${v.id}`).show();
-            }
-          })
-        }
-      },
-      error: function(rs) {
-          Swal.fire({
-              icon: 'error',
-              text: rs.responseJSON.message,
-              showCancelButton: false,
-              confirmButtonText: '確認',
-          }).then((result) => {
-              if (result.isConfirmed) {
-                location.href = '{{ route($menu->slug.'.index') }}'
-              }
-          })
-      }
-    })
 });
 @else
 var init = function(){
@@ -303,32 +255,6 @@ var init = function(){
         userId: '{{$user->id}}',
         groupId: groupId,
         type: 'create'
-      },
-      success: function (res) {
-          if (res.status) {
-            $('#permissionContent').html(res.data);
-          }
-      },
-      error: function(rs) {
-          Swal.fire({
-              icon: 'error',
-              text: rs.responseJSON.message,
-              showCancelButton: false,
-              confirmButtonText: '確認',
-          }).then((result) => {
-              if (result.isConfirmed) {
-                location.href = '{{ route($menu->slug.'.index') }}'
-              }
-          })
-      }
-  })
-
-  $.ajax({
-      headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-      method: 'post',
-      url: '{{ route('api.system_types.getGroupSystemTypes') }}',
-      data: {
-        groupId: groupId,
       },
       success: function (res) {
           if (res.status) {

@@ -146,33 +146,16 @@
 <script>
 const checkForm = () => {
   let pass = 2;
-  let typeRows = 0;
   let permissionRows = 0;
   const typeLen = parseInt($('.systemType').length);
   const permissionLen = parseInt($('.menuIem').length);
-
-  $('.systemType').each(function(){
-    if ($(this).prop('checked')) {
-      typeRows++;
-    }
-  })
 
   $('.menuIem').each(function(){
     if ($(this).prop('checked')) {
       permissionRows++;
     }
   })
-
-  if (typeRows == 0) {
-    Swal.fire({
-      icon: 'error',
-      title: '訊息提示',
-      text: '請選擇至少一個所屬系統類別'
-    })
-
-    return false;
-  }
-
+  
   if (permissionRows == 0) {
     Swal.fire({
       icon: 'error',

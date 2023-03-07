@@ -69,11 +69,9 @@ class GroupController extends BasicController
         $formData = $request->except('_token', '_method', 'permissions', 'systems');
         $formData['id'] = uniqid();
         $permissions = $request->permissions;
-        $systems = $request->systems;
 
         $this->model->createData($formData);
         $this->proccessPermissions($formData['id'], $permissions);
-        $this->proccessSystemTypes($formData['id'], $systems);
         
         return view('alerts.success', [
             'msg'=>'資料新增成功',
@@ -104,11 +102,9 @@ class GroupController extends BasicController
         }
         $formData = $request->except('_token', '_method', 'permissions', 'systems');
         $permissions = $request->permissions;
-        $systems = $request->systems;
 
         $this->model->updateData($id, $formData);
         $this->proccessPermissions($id, $permissions);
-        $this->proccessSystemTypes($id, $systems);
 
         return view('alerts.success',[
             'msg'=>'資料更新成功',
@@ -131,23 +127,5 @@ class GroupController extends BasicController
                 ]);
             }
         }
-    }
-
-    private function proccessSystemTypes($groupId, $types)
-    {
-        app(GroupSystemTypeLog::class)
-            ->where('group_id', $groupId)
-            ->delete();
-
-        if (is_array($types) && count($types) > 0)
-        {
-            foreach($types as $typeId) {
-                app(GroupSystemTypeLog::class)->create([
-                    'id' => uniqid(),
-                    'system_type_id' => $typeId,
-                    'group_id' =>$groupId
-                ]);
-            }
-        }    
     }
 }

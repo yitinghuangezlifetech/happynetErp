@@ -19,6 +19,7 @@ class ComponentController extends Controller
             ->whereNull('parent_id')
             ->orderBy('sort', 'ASC')
             ->get();
+
         $permissions = $this->getGroupPermissions($request->groupId);
 
         if (($user->role->super_admin == 1 || ($user->group_id == $request->groupId)) && $request->type!='create') {

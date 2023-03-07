@@ -206,37 +206,6 @@ $('#group_id').change(function(){
             })
         }
     })
-
-    $.ajax({
-      headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-      method: 'post',
-      url: '{{ route('api.system_types.getGroupSystemTypes') }}',
-      data: {
-        groupId: groupId,
-      },
-      success: function (rs) {
-        if (rs.status) {
-          rs.data.forEach(function(v){
-            console.log(v);
-            if($(`#td_${v.id}`).length > 0) {
-              $(`#td_${v.id}`).show();
-            }
-          })
-        }
-      },
-      error: function(rs) {
-          Swal.fire({
-              icon: 'error',
-              text: rs.responseJSON.message,
-              showCancelButton: false,
-              confirmButtonText: '確認',
-          }).then((result) => {
-              if (result.isConfirmed) {
-                location.href = '{{ route($menu->slug.'.index') }}'
-              }
-          })
-      }
-    })
 });
 @else
 var init = function(){
@@ -252,32 +221,6 @@ var init = function(){
         userId: '{{$user->id}}',
         groupId: groupId,
         type: 'create'
-      },
-      success: function (res) {
-          if (res.status) {
-            $('#permissionContent').html(res.data);
-          }
-      },
-      error: function(rs) {
-          Swal.fire({
-              icon: 'error',
-              text: rs.responseJSON.message,
-              showCancelButton: false,
-              confirmButtonText: '確認',
-          }).then((result) => {
-              if (result.isConfirmed) {
-                location.href = '{{ route($menu->slug.'.index') }}'
-              }
-          })
-      }
-  })
-
-  $.ajax({
-      headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-      method: 'post',
-      url: '{{ route('api.system_types.getGroupSystemTypes') }}',
-      data: {
-        groupId: groupId,
       },
       success: function (res) {
           if (res.status) {
