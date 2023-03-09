@@ -37,11 +37,23 @@ class Role extends AbstractModel
                 ]),
             ],
             [
+                'field' => 'name',
+                'type' => 'text',
+                'show_name' => '角色名稱',
+                'use_edit_link'=>1,
+                'join_search' => 1,
+                'required' => 1,
+                'browse' => 1,
+                'create' => 1,
+                'edit' => 1,
+                'sort' => 1
+            ],
+            [
                 'field' => 'created_at',
                 'type' => 'date_time',
                 'show_name' => '資料建立日期',
                 'browse' => 1,
-                'sort' => 1
+                'sort' => 2
             ],
         ];
     }
