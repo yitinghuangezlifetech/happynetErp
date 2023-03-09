@@ -19,7 +19,7 @@ class Role extends AbstractModel
                 'browse' => 1,
                 'create' => 1,
                 'edit' => 1,
-                'sort' => 1,
+                'sort' => 0,
                 'has_relationship' => 1,
                 'relationship' => json_encode([
                     'model' => 'App\Models\Group',
@@ -37,36 +37,11 @@ class Role extends AbstractModel
                 ]),
             ],
             [
-                'field' => 'name',
-                'type' => 'text',
-                'show_name' => '角色名稱',
-                'use_edit_link'=>1,
-                'join_search' => 1,
-                'required' => 1,
-                'browse' => 1,
-                'create' => 1,
-                'edit' => 1,
-                'sort' => 2
-            ],
-            [
-                'field' => 'has_audit_route',
-                'type' => 'radio',
-                'show_name' => '觀看所有稽核行程',
-                'browse' => 1,
-                'create' => 1,
-                'edit' => 1,
-                'sort' => 3,
-                'options' => json_encode([
-                    ['text'=>'是', 'value'=>1, 'default'=>0],
-                    ['text'=>'否', 'value'=>2, 'default'=>1],
-                ])
-            ],
-            [
                 'field' => 'created_at',
                 'type' => 'date_time',
                 'show_name' => '資料建立日期',
                 'browse' => 1,
-                'sort' => 4
+                'sort' => 1
             ],
         ];
     }
