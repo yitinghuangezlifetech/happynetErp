@@ -16,11 +16,13 @@ return new class extends Migration
         Schema::create('organizations', function (Blueprint $table) {
             $table->uuid('id')->unique()->primary();
             $table->foreignUuid('identity_id')
+                ->nullable()
                 ->references('id')
                 ->on('identities')
                 ->onDelete('set null')
                 ->comment('所屬身份');
             $table->foreignUuid('organization_type_id')
+                ->nullable()
                 ->references('id')
                 ->on('organization_types')
                 ->onDelete('set null')
