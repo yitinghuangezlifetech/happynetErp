@@ -18,12 +18,12 @@ return new class extends Migration
             $table->foreignUuid('identity_id')
                 ->references('id')
                 ->on('identities')
-                ->onDelete('cascade')
+                ->onDelete('set null')
                 ->comment('所屬身份');
             $table->foreignUuid('organization_type_id')
                 ->references('id')
                 ->on('organization_types')
-                ->onDelete('cascade')
+                ->onDelete('set null')
                 ->comment('所屬組織類型');
             $table->string('group_id', 36)->nullable()->comment('所屬群組');
             $table->string('fee_rate_id', 36)->nullable()->comment('所屬費率id');
