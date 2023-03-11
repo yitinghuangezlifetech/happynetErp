@@ -19,6 +19,8 @@ return new class extends Migration
             $table->string('ip', 20)->nullable()->comment('IP');
             $table->date('stop_day')->nullable()->comment('停用日期');
             $table->tinyInteger('status')->default(2)->nullable()->comment('狀態(值1:啟用, 值2:停用)');
+            $table->string('create_user_id', 36)->nullable()->comment('建立人員');
+            $table->string('update_user_id', 36)->nullable()->comment('修改人員');
             $table->timestamps();
         });
     }

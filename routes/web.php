@@ -48,7 +48,7 @@ Route::middleware('auth:web')->group(function(){
     });
 
     Route::prefix('components')->group(function(){
-        Route::get('getPermissionComponent', [ComponentController::class, 'getPermissionComponent'])->name('components.getPermissionComponent');
+        Route::post('getRolePermissionComponent', [ComponentController::class, 'getRolePermissionComponent'])->name('components.getRolePermissionComponent');
         Route::post('getGroupPermissionComponent', [ComponentController::class, 'getGroupPermissionComponent'])->name('components.getGroupPermissionComponent');
     });
 

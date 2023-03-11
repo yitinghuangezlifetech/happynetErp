@@ -16,6 +16,8 @@ return new class extends Migration
         Schema::create('identities', function (Blueprint $table) {
             $table->uuid('id')->unique()->primary();
             $table->string('name', 120)->nullable()->comment('身份名稱');
+            $table->string('create_user_id', 36)->nullable()->comment('建立人員');
+            $table->string('update_user_id', 36)->nullable()->comment('修改人員');
             $table->timestamps();
         });
     }

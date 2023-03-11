@@ -29,6 +29,8 @@ return new class extends Migration
             $table->tinyInteger('no_show')->default(2)->nullable()->comment('是否不顥示於目錄(值1:是, 值2:否)');
             $table->string('parent_id', 60)->nullable()->comment('父層目錄');
             $table->integer('sort')->default(0)->nullable()->comment('排序');
+            $table->string('create_user_id', 36)->nullable()->comment('建立人員');
+            $table->string('update_user_id', 36)->nullable()->comment('修改人員');
             $table->timestamps();
         });
     }

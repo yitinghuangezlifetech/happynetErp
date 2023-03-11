@@ -206,10 +206,11 @@ $('#group_id').change(function(){
     $.ajax({
         headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
         method: 'post',
-        url: '{{ route('components.getGroupPermissionComponent') }}',
+        url: '{{ route('components.getRolePermissionComponent') }}',
         data: {
           userId: '{{$user->id}}',
           groupId: '{{$data->group_id}}',
+          roleID: '{{$data->id}}',
           type: 'edit'
         },
         success: function (res) {
@@ -237,10 +238,11 @@ var init = function(){
   $.ajax({
       headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
       method: 'post',
-      url: '{{ route('components.getGroupPermissionComponent') }}',
+      url: '{{ route('components.getRolePermissionComponent') }}',
       data: {
         userId: '{{$user->id}}',
         groupId: '{{$data->group_id}}',
+        roleID: '{{$data->id}}',
         type: 'edit'
       },
       success: function (res) {

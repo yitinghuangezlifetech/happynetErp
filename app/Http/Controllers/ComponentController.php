@@ -39,20 +39,17 @@ class ComponentController extends Controller
         ], 200);
     }
 
-    public function getPermissionComponent(Request $request) {
+    public function getRolePermissionComponent(Request $request) {
         $menuItems = app(Menu::class)
             ->whereNull('parent_id')
             ->orderBy('sort', 'ASC')
             ->get();
 
-        if (isset($request->groupId)) {
-            $permissions = $this->getOriginGroupPermissions($request->groupId);
-        } else {
-            $permissions = [];
-        }
+        $permissions = $this->getGroupPermissions($request->groupId);
+        $hasPermissions = $this->getRolePermissions($request->roleId);
         
-        $content = view('components.permissions', compact(
-            'menuItems', 'permissions'
+        $content = view('components.role_permissions', compact(
+            'menuItems', 'permissions', 'hasPermissions'
         ))->render();
 
         return response()->json([

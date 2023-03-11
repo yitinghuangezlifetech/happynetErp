@@ -16,6 +16,8 @@ return new class extends Migration
         Schema::create('organization_types', function (Blueprint $table) {
             $table->uuid('id')->unique()->primary();
             $table->string('name', 120)->nullable()->comment('組織類型名稱');
+            $table->string('create_user_id', 36)->nullable()->comment('建立人員');
+            $table->string('update_user_id', 36)->nullable()->comment('修改人員');
             $table->timestamps();
         });
     }

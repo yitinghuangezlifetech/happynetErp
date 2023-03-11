@@ -128,7 +128,6 @@
 const checkForm = () => {
   let pass = 2;
   let permissionRows = 0;
-  const typeLen = parseInt($('.systemType').length);
   const permissionLen = parseInt($('.menuIem').length);
 
   $('.menuIem').each(function(){

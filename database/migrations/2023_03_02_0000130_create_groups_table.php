@@ -18,6 +18,8 @@ return new class extends Migration
             $table->string('name', 120)->nullable()->comment('群組名稱');
             $table->string('parent_id', 36)->nullable()->comment('父層ID');
             $table->integer('sort')->nullable()->default(0)->comment('排序(由小排到大)');
+            $table->string('create_user_id', 36)->nullable()->comment('建立人員');
+            $table->string('update_user_id', 36)->nullable()->comment('修改人員');
             $table->softDeletes();
             $table->timestamps();
         });
