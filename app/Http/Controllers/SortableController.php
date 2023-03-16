@@ -35,13 +35,18 @@ class SortableController extends BasicController
         {
             foreach ($request->data as $k1=>$data)
             {
-                $this->model->where('id', $data['id'])->update([
-                    'parent_id' => NULL,
-                    'sort' => $k1
-                ]);
+                $parentGroup = $this->model->find($data['id']);
+
+                if ($parentGroup)
+                {
+                    $parentGroup->parent_id = NULL;
+                    $parentGroup->sort = $k1;
+                    $parentGroup->save();
+                }
+
                 if (isset($data['children']) && count($data['children']) > 0)
                 {
-                    $this->proccessChild($data);
+                    $this->proccessChild($parentGroup, $data);
                 }
             }
         }
@@ -53,18 +58,22 @@ class SortableController extends BasicController
         ], 200);
     }
 
-    private function proccessChild($data)
+    private function proccessChild($parentGroup, $data)
     {
         if (isset($data['children']) && count($data['children']) > 0)
         {
             foreach ($data['children'] as $k2=>$child) 
             {
-                $this->model->where('id', $child['id'])->update([
-                    'parent_id' => $data['id'],
-                    'sort' => $k2
-                ]);
+                $group = $this->model->find($child['id']);
 
-                $this->proccessChild($child);
+                if ($group)
+                {
+                    $group->parent_id = $data['id'];
+                    $group->sort = $k2;
+                    $group->save();
+                }
+
+                $this->proccessChild($parentGroup, $child);
             }
         }
     }
