@@ -3,7 +3,7 @@
 @section('content')
 <form enctype="multipart/form-data" method="POST" action="{{route($menu->slug.'.store')}}">
   @csrf
-<div class="card card-primary">
+<div class="card card-secondary">
   <div class="card-header">
     <h3 class="card-title">建立{{$menu->name}}資料</h3>
   </div>
@@ -49,7 +49,7 @@
     @endif
   </div>
 </div>
-<div class="card card-info">
+<div class="card card-secondary">
   <div class="card-header">
     <h3 class="card-title">設定群組權限</h3>
     <div style="float: right;">
