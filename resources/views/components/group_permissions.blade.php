@@ -1,6 +1,5 @@
 @php $i = 1; @endphp
 @foreach($menuItems??[] as $key=>$menu)
-    @if(isset($permissions[$menu->id]))
     @if($i == 1)
         <div class="row">
     @endif
@@ -23,24 +22,18 @@
             <table class="table">
             <tbody>
             @foreach($menu->getChilds as $child)
-                @if(isset($permissions[$menu->id][$child->id]))
-                    <tr>
+                <tr>
                     <td style="vertical-align: middle">{{ $child->menu_name }}</td>
                     <td>
-                        @if(count($permissions[$menu->id][$child->id]) > 0)
-                        @if($child->permissions->count() > 0)
-                            @foreach($child->permissions as $item)
-                            @php $action = explode('_', $item->code); @endphp
-                            <div class="form-check">
-                            <input type="checkbox" class="form-check-input menuIem subMenu_{{$menu->id}}" id="{{ $item->code }}" name="permissions[]" value="{{ $item->id }}" @if(isset($hasPermissions[$item->id])){{'checked'}}@endif>
-                            <label class="form-check-label" for="{{ $item->code }}">{{ ucwords($action[0]) }}</label>
-                            </div>
-                            @endforeach
-                        @endif
-                        @endif
+                        @foreach($child->permissions??[] as $item)
+                        @php $action = explode('_', $item->code); @endphp
+                        <div class="form-check">
+                        <input type="checkbox" class="form-check-input menuIem subMenu_{{$menu->id}}" id="{{ $item->code }}" name="permissions[]" value="{{ $item->id }}" @if(isset($hasPermissions[$item->id])){{'checked'}}@endif>
+                        <label class="form-check-label" for="{{ $item->code }}">{{ ucwords($action[0]) }}</label>
+                        </div>
+                        @endforeach
                     </td>
-                    </tr>
-                @endif
+                </tr>
             @endforeach
             </tbody>
             </table>
@@ -50,13 +43,12 @@
         </div>
         <!-- /.card -->
     </div>
-        @if($i % 3 == 0 )  
-            </div>
-            <div class="row">
-        @endif
-        @if($loop->last)
-            </div>
-        @endif
-        @php $i++; @endphp
+    @if($i % 3 == 0 )  
+        </div>
+        <div class="row">
     @endif
+    @if($loop->last)
+        </div>
+    @endif
+    @php $i++; @endphp
 @endforeach

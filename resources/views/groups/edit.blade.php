@@ -1,49 +1,28 @@
 @extends('layouts.main')
 
 @section('content')
-<form enctype="multipart/form-data" method="POST" action="{{route($menu->slug.'.update', $data->id)}}" onsubmit="return checkForm()">
+<form enctype="multipart/form-data" method="POST" action="{{route($menu->slug.'.update', $data->id)}}">
   @csrf
   @method('put')
-<div class="card card-secondary">
+<div class="card card-primary">
   <div class="card-header">
     <h3 class="card-title">編輯{{$menu->name}}資料</h3>
   </div>
   <div class="card-body">
     @php
-    $jsArr = [];
-    $fieldNameArr = [];
-    if($menu->seo_enable == 1) {
-      array_push($jsArr, 'image.js');
-    } 
-    $i = 1;
+      $jsArr = [];
     @endphp
     @if($menu->menuEditDetails->count() > 0)
         @foreach($menu->menuEditDetails as $detail)
-          @if($loop->first)
-            <div class="row">
-          @endif
           @php
             if ($detail->has_js == 1)  {
               if (!in_array($detail->type.'.js', $jsArr)) {
                 array_push($jsArr, $detail->type.'.js');
               }
-              if($detail->type == 'ckeditor') {
-                if (!in_array('edit_'.$detail->field, $fieldNameArr)) {
-                  array_push($fieldNameArr, $detail->field);
-                }
-              }
             }
-            if ($detail->use_component == 1) {
-              if (!in_array($detail->component_name.'.js', $jsArr)) {
-                array_push($jsArr, $detail->component_name.'.js');
-              }
-            }
-            $halfRows = '';
           @endphp
           @if($detail->super_admin_use == 1 && $user->super_admin == 1)
-          <div class="col-sm-6">
             @include('components.fields.'.$detail->type, ['type'=>'edit', 'detail'=>$detail, 'value'=>$data->{$detail->field}])
-          </div>
           @else  
             @if($detail->show_hidden_field == 1)
               @php
@@ -56,74 +35,36 @@
                 }
               @endphp
               @include('components.fields.hidden', ['type'=>'edit', 'detail'=>$detail, 'value'=>$value])
-            @else
-              @if($detail->use_component == 1)
-              </div>
-              <div class="row">
-                <div class="col-sm-6">
-                  @include('components.'.$detail->component_name, ['type'=>'edit', 'detail'=>$detail, 'model'=>$menu->model, 'data'=>$data])
-                </div>
-              </div>
-              <div class="row">
-              @php $i++; @endphp
-              @elseif($detail->type == 'multiple_input')
-                  @php
-                    $options = [];
-                    
-                    if ($detail->has_relationship == 1) {
-                        $json = json_decode($detail->relationship, true);
-                        if (is_array($json) && count($json) > 0) {
-                            $options = app($json['model'])->where($json['references_field'], $data->{$detail->foreign_key})->get();
-                        }
-                    }
-                  @endphp
-                  @if(!empty($options) && $options->count() > 0)
-                  <div class="col-sm-6">
-                    <label for="{{ $detail->field }}">{{$detail->show_name}}</label>
-                    <div id="{{ $detail->field }}">
-                    @foreach($options as $option)
-                      @include('components.fields.'.$detail->type, ['type'=>'edit', 'detail'=>$detail, 'jsonData'=>$json, 'index'=>$key, 'value'=>$option->{$json['show_field']}])
-                    @endforeach
-                    </div>
-                  </div>  
-                  @endif
-              @elseif($detail->type == 'ckeditor')
+            @else  
+              @if($detail->type == 'multiple_input')
+                @php
+                  $options = [];
+                  
+                  if ($detail->has_relationship == 1) {
+                      $json = json_decode($detail->relationship, true);
+                      if (is_array($json) && count($json) > 0) {
+                          $options = app($json['model'])->where($json['references_field'], $data->{$detail->foreign_key})->get();
+                      }
+                  }
+                @endphp
+                @if(!empty($options) && $options->count() > 0)
+                  <label for="{{ $detail->field }}">{{$detail->show_name}}</label>
+                  <div id="{{ $detail->field }}">
+                  @foreach($options as $option)
+                    @include('components.fields.'.$detail->type, ['type'=>'edit', 'detail'=>$detail, 'jsonData'=>$json, 'index'=>$key, 'value'=>$option->{$json['show_field']}])
+                  @endforeach
                   </div>
-                  <div class="row">
-                    <div class="col-sm-12">
-                      @include('components.fields.'.$detail->type, ['type'=>'edit', 'detail'=>$detail, 'id'=>$data->id, 'model'=>$menu->model, 'value'=>$data->{$detail->field}])
-                    </div>
-                  </div>
-                  <div class="row">
-                  @php $i++; @endphp
-              @elseif($detail->type == 'multiple_select')
-                  <div class="col-sm-6">
-                    @include('components.fields.'.$detail->type, ['type'=>'edit', 'detail'=>$detail, 'model'=>$menu->model, 'data'=>$data])
-                  </div>
-              @elseif($detail->type == 'empty')
-                  <div class="col-sm-6"></div>
-              @elseif($detail->type == 'component')
-                  @include('components.'.$detail->component_name, ['type'=>'edit', 'detail'=>$detail, 'model'=>$menu->model, 'data'=>$data])
+                @endif    
               @else
-                  <div class="col-sm-6">
-                    @include('components.fields.'.$detail->type, ['type'=>'edit', 'detail'=>$detail, 'id'=>$data->id, 'model'=>$menu->model, 'value'=>$data->{$detail->field}])
-                  </div>
+                @include('components.fields.'.$detail->type, ['type'=>'edit', 'detail'=>$detail, 'value'=>$data->{$detail->field}])
               @endif
             @endif
           @endif
-          @if($i % 2 == 0)
-          </div>
-          <div class="row">
-          @endif
-          @if($loop->last)
-          </div>
-          @endif
-          @php $i++; @endphp
         @endforeach
     @endif
   </div>
 </div>
-<div class="card card-secondary">
+<div class="card card-info">
   <div class="card-header">
     <h3 class="card-title">設定群組權限</h3>
     <div style="float: right;">

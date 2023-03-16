@@ -12,27 +12,6 @@ class FuncType extends AbstractModel
     {
         return [
             [
-                'field' => 'name',
-                'type' => 'text',
-                'show_name' => '類別名稱',
-                'use_edit_link'=>1,
-                'join_search' => 1,
-                'required' => 1,
-                'browse' => 1,
-                'create' => 1,
-                'edit' => 1,
-                'sort' => 0,
-                'create_rule' => json_encode([
-                    'name'=>'required'
-                ]),
-                'update_rule' => json_encode([
-                    'name'=>'required'
-                ]),
-                'error_msg' => json_encode([
-                    ['name.required'=>'類別名稱請勿空白']
-                ]),
-            ],
-            [
                 'field' => 'type_code',
                 'type' => 'text',
                 'show_name' => '類別代碼',
@@ -42,15 +21,15 @@ class FuncType extends AbstractModel
                 'browse' => 1,
                 'create' => 1,
                 'edit' => 1,
-                'sort' => 0,
+                'sort' => 1,
                 'create_rule' => json_encode([
-                    'name'=>'required'
+                    'type_code'=>'required'
                 ]),
                 'update_rule' => json_encode([
-                    'name'=>'required'
+                    'type_code'=>'required'
                 ]),
                 'error_msg' => json_encode([
-                    ['name.required'=>'類別名稱請勿空白']
+                    ['type_code.required'=>'類別代碼請勿空白']
                 ]),
             ],
             [
@@ -63,15 +42,15 @@ class FuncType extends AbstractModel
                 'browse' => 1,
                 'create' => 1,
                 'edit' => 1,
-                'sort' => 0,
+                'sort' => 2,
                 'create_rule' => json_encode([
-                    'name'=>'required'
+                    'type_value'=>'required'
                 ]),
                 'update_rule' => json_encode([
-                    'name'=>'required'
+                    'type_value'=>'required'
                 ]),
                 'error_msg' => json_encode([
-                    ['name.required'=>'類別名稱請勿空白']
+                    ['type_value.required'=>'類別代碼值請勿空白']
                 ]),
             ],
             [
@@ -84,7 +63,7 @@ class FuncType extends AbstractModel
                 'browse' => 1,
                 'create' => 1,
                 'edit' => 1,
-                'sort' => 0,
+                'sort' => 3,
                 'create_rule' => json_encode([
                     'name'=>'required'
                 ]),
@@ -100,21 +79,12 @@ class FuncType extends AbstractModel
                 'type' => 'text',
                 'show_name' => '描述',
                 'use_edit_link'=>1,
-                'join_search' => 1,
-                'required' => 1,
+                'join_search' => 2,
+                'required' => 2,
                 'browse' => 1,
                 'create' => 1,
                 'edit' => 1,
-                'sort' => 0,
-                'create_rule' => json_encode([
-                    'name'=>'required'
-                ]),
-                'update_rule' => json_encode([
-                    'name'=>'required'
-                ]),
-                'error_msg' => json_encode([
-                    ['name.required'=>'類別名稱請勿空白']
-                ]),
+                'sort' => 4,
             ],
             [
                 'field' => 'status',
@@ -126,7 +96,7 @@ class FuncType extends AbstractModel
                 'browse' => 1,
                 'create' => 1,
                 'edit' => 1,
-                'sort' => 0,
+                'sort' => 5,
                 'create_rule' => json_encode([
                     'name'=>'required'
                 ]),

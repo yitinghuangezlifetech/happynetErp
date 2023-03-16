@@ -33,7 +33,7 @@ class UserSeeder extends Seeder
     {
         $arr = [];
 
-        $group = app(Group::class)->where('name', '奕立生活科技有限公司')->first();
+        $group = app(Group::class)->where('name', '系統管理')->first();
         $role = app(Role::class)
             ->where('group_id', $group->id)
             ->where('name', '超級管理員')

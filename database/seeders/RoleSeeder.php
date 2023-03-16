@@ -36,7 +36,7 @@ class RoleSeeder extends Seeder
         {
             foreach ($groups as $group)
             {
-                if ($group->name == '奕立生活科技有限公司')
+                if ($group->name == '系統管理')
                 {
                     array_push($arr, [
                         'id' => uniqid(),

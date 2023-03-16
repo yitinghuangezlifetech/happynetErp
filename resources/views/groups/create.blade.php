@@ -1,48 +1,27 @@
 @extends('layouts.main')
 
 @section('content')
-<form enctype="multipart/form-data" method="POST" action="{{route($menu->slug.'.store')}}" onsubmit="return checkForm()">
+<form enctype="multipart/form-data" method="POST" action="{{route($menu->slug.'.store')}}">
   @csrf
-<div class="card card-secondary">
+<div class="card card-primary">
   <div class="card-header">
     <h3 class="card-title">建立{{$menu->name}}資料</h3>
   </div>
   <div class="card-body">
     @php
-      $jsArr = [];
-      $fieldNameArr = [];
-      if($menu->seo_enable == 1) {
-        array_push($jsArr, 'image.js');
-      } 
-      $i = 1;
+    $jsArr = [];
     @endphp
     @if($menu->menuCreateDetails->count() > 0)
         @foreach($menu->menuCreateDetails as $detail)
-          @if($loop->first)
-          <div class="row">
-          @endif
           @php
             if ($detail->has_js == 1)  {
               if (!in_array($detail->type.'.js', $jsArr)) {
                 array_push($jsArr, $detail->type.'.js');
               }
-              if($detail->type == 'ckeditor') {
-                if (!in_array($detail->field, $fieldNameArr)) {
-                  array_push($fieldNameArr, $detail->field);
-                }
-              }
             }
-            if ($detail->use_component == 1) {
-              if (!in_array($detail->component_name.'.js', $jsArr)) {
-                array_push($jsArr, $detail->component_name.'.js');
-              }
-            }
-            $halfRows = '';
           @endphp
-          @if($detail->super_admin_use == 1 && $user->super_admin == 1)
-          <div class="col-sm-6">
+          @if($detail->super_admin_use == 1 && $user->role->super_admin == 1)
             @include('components.fields.'.$detail->type, ['type'=>'create', 'detail'=>$detail, 'value'=>''])
-          </div>  
           @else  
             @if($detail->show_hidden_field == 1)
               @php
@@ -54,58 +33,23 @@
               @endphp
               @include('components.fields.hidden', ['type'=>'create', 'detail'=>$detail, 'value'=>$value])
             @else
-              @if($detail->use_component == 1)
-              </div>
-              <div class="row">
-                <div class="col-sm-6">
-                  @include('components.'.$detail->component_name, ['detail'=>$detail])
+              @if($detail->type == 'multiple_input')
+              <div class="form-group">
+              <label>{{$detail->show_name}}</label>
+                <div id="{{ $detail->field }}">
+                  @include('components.fields.'.$detail->type, ['type'=>'create', 'detail'=>$detail, 'jsonData'=>null, 'index'=>0, 'value'=>null])
                 </div>
               </div>
-              <div class="row">
-              @php $i++; @endphp
-              @elseif($detail->type == 'multiple_input')
-              <div class="col-sm-6">
-                <div class="form-group">
-                  <label>{{$detail->show_name}}</label>
-                  <div id="{{ $detail->field }}">
-                    @include('components.fields.'.$detail->type, ['type'=>'create', 'detail'=>$detail, 'jsonData'=>null, 'index'=>0, 'value'=>null])
-                  </div>
-                </div>
-              </div>
-              @elseif($detail->type == 'ckeditor')
-              </div>
-              <div class="row">
-                <div class="col-sm-12">
-                  @include('components.fields.'.$detail->type, ['type'=>'create', 'detail'=>$detail, 'value'=>''])
-                </div>
-              </div>
-              <div class="row">
-                @php $i++; @endphp
-              @elseif($detail->type == 'multiple_select')
               @else
-                @if($detail->field == 'empty')
-                  <div class="col-sm-6"></div>
-                  @else
-                  <div class="col-sm-6">
-                    @include('components.fields.'.$detail->type, ['type'=>'create', 'detail'=>$detail, 'value'=>''])
-                  </div>
-                  @endif
-                @endif  
+                @include('components.fields.'.$detail->type, ['type'=>'create', 'detail'=>$detail, 'value'=>''])
+              @endif  
             @endif
-          @endif
-          @if($i % 2 == 0)
-          </div>
-          <div class="row">
-          @endif
-          @if($loop->last)
-          </div>
-          @endif
-          @php $i++; @endphp
+          @endif  
         @endforeach
     @endif
   </div>
 </div>
-<div class="card card-secondary">
+<div class="card card-info">
   <div class="card-header">
     <h3 class="card-title">設定群組權限</h3>
     <div style="float: right;">
@@ -149,33 +93,6 @@ const checkForm = () => {
   return true;
 }
 
-$('body').on('keyup', '#name', function(){
-  if ($('.menuIem').length == 0) {
-      $.ajax({
-        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-        method: 'get',
-        url: '{{ route('components.getPermissionComponent') }}',
-        success: function (res) {
-            if (res.status) {
-              $('#permissionContent').html(res.data);
-            }
-        },
-        error: function(rs) {
-            Swal.fire({
-                icon: 'error',
-                text: rs.responseJSON.message,
-                showCancelButton: false,
-                confirmButtonText: '確認',
-            }).then((result) => {
-                if (result.isConfirmed) {
-                  location.href = '{{ route($menu->slug.'.index') }}'
-                }
-            })
-        }
-    })
-  }
-})
-
 $('body').on('click', '#checkAll', function(){
   if (!$(this).prop('checked')) {
     $('.menuIem').attr('checked', false);
@@ -206,41 +123,6 @@ let checkBtn = (id) => {
   });
 }
 
-@if($user->role->super_admin == 1)
-$('#parent_id').change(function(){
-    var groupId = $(this).val();
-
-    $('#permissionContent').html('');
-
-    $.ajax({
-        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-        method: 'post',
-        url: '{{ route('components.getGroupPermissionComponent') }}',
-        data: {
-          userId: '{{$user->id}}',
-          groupId: groupId,
-          type: 'create'
-        },
-        success: function (res) {
-            if (res.status) {
-              $('#permissionContent').html(res.data);
-            }
-        },
-        error: function(rs) {
-            Swal.fire({
-                icon: 'error',
-                text: rs.responseJSON.message,
-                showCancelButton: false,
-                confirmButtonText: '確認',
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    location.href = '{{ route($menu->slug.'.index') }}'
-                }
-            })
-        }
-    })
-});
-@else
 var init = function(){
   var groupId = '{{$user->role->group_id}}';
 
@@ -268,13 +150,12 @@ var init = function(){
               confirmButtonText: '確認',
           }).then((result) => {
               if (result.isConfirmed) {
-                location.href = '{{ route($menu->slug.'.index') }}'
+                  location.href = '{{ route('dashboard') }}'
               }
           })
       }
   })
 }
 init();
-@endif
 </script>
 @endsection

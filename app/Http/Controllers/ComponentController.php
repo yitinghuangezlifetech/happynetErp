@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Menu;
+use App\Models\Permission;
 use App\Models\GroupPermission;
 use App\Models\RolePermission;
 
@@ -20,11 +21,14 @@ class ComponentController extends Controller
             ->orderBy('sort', 'ASC')
             ->get();
 
-        $permissions = $this->getGroupPermissions($request->groupId);
+        $permissions = app(Permission::class)->get();
 
-        if (($user->role->super_admin == 1 || ($user->group_id == $request->groupId)) && $request->type!='create') {
-            $hasPermissions = $this->getRolePermissions($user->role_id);
-        } else {
+        if (($user->role->super_admin == 1 || ($user->group_id == $request->groupId)) && $request->type!='create')
+        {
+            $hasPermissions = $this->getOriginGroupPermissions($request->groupId);
+        } 
+        else
+        {
             $hasPermissions = [];
         }
 
@@ -65,8 +69,10 @@ class ComponentController extends Controller
         $permissions = app(GroupPermission::class)
             ->where('group_id', $groupId)
             ->get();
-        if ($permissions->count() > 0) {
-            foreach ($permissions as $permission) {
+        if ($permissions->count() > 0) 
+        {
+            foreach ($permissions as $permission) 
+            {
                 $menus[$permission->permission_id] = 1;
             }
         }
@@ -91,7 +97,8 @@ class ComponentController extends Controller
                     {
                         $menus[$permission->permission->menu->getParent->id][$permission->permission->menu_id][$permission->permission_id] = 1;
                     }
-                    catch (\Exception $e){
+                    catch (\Exception $e)
+                    {
                         $permission->permission->delete();
                     }
                 }

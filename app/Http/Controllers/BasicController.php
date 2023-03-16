@@ -85,7 +85,7 @@ class BasicController extends Controller implements InterfaceController
 
         try
         {
-            $list    = $this->model->getListByFilters($this->menu->menuDetails, $filters);
+            $list = $this->model->getListByFilters($this->menu->menuDetails, $filters);
         }
         catch (\Exception $e)
         {

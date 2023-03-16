@@ -7,6 +7,9 @@ use Artisan;
 use Illuminate\Http\Request;
 
 use App\Models\Menu;
+use App\Models\Permission;
+use App\Models\GroupPermission;
+use App\Models\RolePermission;
 
 class MenuController extends BasicController
 {
@@ -210,18 +213,31 @@ class MenuController extends BasicController
         {
             foreach ($request->data as $k1=>$data)
             {
-                app(Menu::class)->where('id', $data['id'])->update([
-                    'parent_id' => NULL,
-                    'sort' => $k1
-                ]);
+                $menu = app(Menu::class)->where('id', $data['id'])->first();
+
+                if ($menu)
+                {
+                    $menu->parent_id = NULL;
+                    $menu->sort = $k1;
+                    $menu->save();
+
+                    $this->destroyPermission($menu);
+                }
+
                 if (isset($data['children']) && count($data['children']) > 0)
                 {
                     foreach ($data['children'] as $k2=>$child) 
                     {
-                        app(Menu::class)->where('id', $child['id'])->update([
-                            'parent_id' => $data['id'],
-                            'sort' => $k2
-                        ]);
+                        $childMenu = app(Menu::class)->where('id', $child['id'])->first();
+
+                        if ($childMenu)
+                        {
+                            $childMenu->parent_id = $data['id'];
+                            $childMenu->sort = $k2;
+                            $childMenu->save();
+
+                            $this->createPermission($childMenu);
+                        }
                     }
                 }
             }
@@ -232,5 +248,45 @@ class MenuController extends BasicController
             'message'=>'更新資料成功',
             'data'=>null
         ], 200);
+    }
+
+    public function createPermission($menu)
+    {
+        $pass = false;
+        $actions = ['browse', 'create', 'edit', 'update', 'delete'];
+
+        if (empty($menu->slug) && is_null($menu->parent_id))
+        {
+            $this->destroyPermission($menu);
+        }
+        else
+        {
+            $permissions = app(Permission::class)->where('menu_id', $menu->id)->get();
+
+            if ($permissions->count() == 0)
+            {
+                foreach ($actions as $action)
+                {
+                    app(Permission::class)->create([
+                        'id' => uniqid(),
+                        'menu_id' => $menu->id,
+                        'code' => $action.'_'.$menu->slug
+                    ]);
+                }
+            }
+        }
+    }
+
+    public function destroyPermission($menu)
+    {
+        $logs = app(Permission::class)->where('menu_id', $menu->id)->get();
+
+        foreach ($logs??[] as $log)
+        {
+            app(GroupPermission::class)->where('permission_id', $log->id)->delete();
+            app(RolePermission::class)->where('permission_id', $log->id)->delete();
+
+            $log->delete();
+        }
     }
 }

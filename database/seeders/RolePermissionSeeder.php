@@ -34,7 +34,7 @@ class RolePermissionSeeder extends Seeder
         {
             foreach ($roles as $role)
             {
-                if ($role->group->name == '奕立生活科技有限公司')
+                if ($role->group->name == '系統管理')
                 {
                     if($role->super_admin == 1)
                     {
