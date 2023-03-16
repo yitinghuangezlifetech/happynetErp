@@ -28,7 +28,7 @@ class GroupPermissionSeeder extends Seeder {
 
         if ($groups->count() > 0 && $permissions->count() > 0) {
             foreach ($groups as $group) {
-                if ($group->name == '奕立生活科技有限公司') {
+                if ($group->name == '系統管理') {
                     foreach ($permissions as $permission) {
                         array_push($arr, [
                             'id' => uniqid(),

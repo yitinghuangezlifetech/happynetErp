@@ -31,7 +31,7 @@ class GroupSeeder extends Seeder {
         return [
             [
                 'id' => uniqid(),
-                'name' => '奕立生活科技有限公司'
+                'name' => '系統管理'
             ],
         ];
     }

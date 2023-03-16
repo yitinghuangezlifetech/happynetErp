@@ -127,32 +127,6 @@ class MenuSeeder extends Seeder
                 'sort' => 1
             ],
             [
-                'id' => uniqid(),
-                'menu_name' => '帳戶類別設定',
-                'name' => '帳戶類別',
-                'slug' => 'user_types',
-                'target' => '_self',
-                'icon_class' => 'far fa-circle nav-icon',
-                'model' => 'App\Models\UserType',
-                'controller'=>NULL,
-                'search_component' => 2,
-                'parent_id' => 2,
-                'sort' => 2
-            ],
-            [
-                'id' => uniqid(),
-                'menu_name' => '帳戶設定',
-                'name' => '帳戶',
-                'slug' => 'users',
-                'target' => '_self',
-                'icon_class' => 'far fa-circle nav-icon',
-                'model' => 'App\Models\User',
-                'controller'=>'App\Http\Controllers\UserController',
-                'search_component' => 1,
-                'parent_id' => 2,
-                'sort' => 3
-            ],
-            [
                 'id' => 3,
                 'menu_name' => '組織管理',
                 'name' => '組織',
@@ -193,6 +167,32 @@ class MenuSeeder extends Seeder
                 'search_component' => 1,
                 'parent_id' => 3,
                 'sort' => 2
+            ],
+            [
+                'id' => uniqid(),
+                'menu_name' => '帳戶類別設定',
+                'name' => '帳戶類別',
+                'slug' => 'user_types',
+                'target' => '_self',
+                'icon_class' => 'far fa-circle nav-icon',
+                'model' => 'App\Models\UserType',
+                'controller'=>NULL,
+                'search_component' => 2,
+                'parent_id' => 3,
+                'sort' => 3
+            ],
+            [
+                'id' => uniqid(),
+                'menu_name' => '帳戶設定',
+                'name' => '帳戶',
+                'slug' => 'users',
+                'target' => '_self',
+                'icon_class' => 'far fa-circle nav-icon',
+                'model' => 'App\Models\User',
+                'controller'=>'App\Http\Controllers\UserController',
+                'search_component' => 1,
+                'parent_id' => 3,
+                'sort' => 4
             ],
             [
                 'id' => 4,
