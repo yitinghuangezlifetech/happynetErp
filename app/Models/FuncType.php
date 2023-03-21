@@ -11,7 +11,9 @@ class FuncType extends AbstractModel
     public function getFieldProperties()
     {
         return [
+           
             [
+                
                 'field' => 'type_code',
                 'type' => 'text',
                 'show_name' => '類別代碼',
@@ -38,20 +40,10 @@ class FuncType extends AbstractModel
                 'show_name' => '類別代碼值',
                 'use_edit_link'=>1,
                 'join_search' => 1,
-                'required' => 1,
                 'browse' => 1,
                 'create' => 1,
                 'edit' => 1,
                 'sort' => 2,
-                'create_rule' => json_encode([
-                    'type_value'=>'required'
-                ]),
-                'update_rule' => json_encode([
-                    'type_value'=>'required'
-                ]),
-                'error_msg' => json_encode([
-                    ['type_value.required'=>'類別代碼值請勿空白']
-                ]),
             ],
             [
                 'field' => 'type_name',
@@ -65,13 +57,13 @@ class FuncType extends AbstractModel
                 'edit' => 1,
                 'sort' => 3,
                 'create_rule' => json_encode([
-                    'name'=>'required'
+                    'type_name'=>'required'
                 ]),
                 'update_rule' => json_encode([
-                    'name'=>'required'
+                    'type_name'=>'required'
                 ]),
                 'error_msg' => json_encode([
-                    ['name.required'=>'類別名稱請勿空白']
+                    ['type_name.required'=>'類別名稱請勿空白']
                 ]),
             ],
             [
@@ -101,15 +93,17 @@ class FuncType extends AbstractModel
             ],
             [
                 'field' => 'dsp',
-                'type' => 'text',
+                'type' => 'radio',
                 'show_name' => '顯示',
-                'use_edit_link'=>1,
-                'join_search' => 1,
                 'required' => 1,
                 'browse' => 1,
                 'create' => 1,
                 'edit' => 1,
                 'sort' => 6,
+                'options' => json_encode([
+                    ['text'=>'顯示', 'value'=>1, 'default'=>0],
+                    ['text'=>'不顯示', 'value'=>2, 'default'=>1],
+                ])
             ],
             [
                 'field' => 'created_at',
@@ -123,7 +117,10 @@ class FuncType extends AbstractModel
 
     public function getListByFilters($menuDetails, $filters=[], $orderBy='created_at', $sort='DESC')
     {
+
         $query = $this->newModelQuery();
+
+        //dd($filters);
 
         if(Schema::hasColumn($this->table, 'deleted_at'))
         {
@@ -133,7 +130,10 @@ class FuncType extends AbstractModel
         if ( count($filters) > 0)
         {
             if(!empty($filters['slug'])) {
+               
                 $query->where('type_code', $filters['slug']);
+                
+
             }
         }
 
