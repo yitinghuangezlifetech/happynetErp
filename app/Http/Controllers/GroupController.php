@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
+use Auth;
 use App\Models\Group;
 use App\Models\GroupPermission;
 use App\Models\GroupSystemTypeLog;
@@ -20,11 +21,46 @@ class GroupController extends BasicController
             ]);
         }
         
-        $list = app(Group::class)
-            ->whereNull('parent_id')
-            ->orderBy('sort', 'ASC')
-            ->orderBy('created_at', 'DESC')
-            ->get();
+        $arr = [];
+        $user = Auth::user();
+
+        if ($user->role->super_admin == 1)
+        {
+            if ($user->group->name != '系統管理')
+            {
+                foreach ($user->group->getChilds??[] as $group)
+                {
+                    if (!in_array($group->parent->id, $arr))
+                    {
+                        array_push($arr, $group->parent->id);
+                    }
+                }
+
+                $list = app(Group::class)
+                    ->whereNull('parent_id')
+                    ->whereIn('id', $arr)
+                    ->orderBy('sort', 'ASC')
+                    ->orderBy('created_at', 'DESC')
+                    ->get();
+            }
+            else
+            {
+                $list = app(Group::class)
+                    ->whereNull('parent_id')
+                    ->orderBy('sort', 'ASC')
+                    ->orderBy('created_at', 'DESC')
+                    ->get();
+            }
+        }
+        else
+        {
+            $list = app(Group::class)
+                ->whereNull('parent_id')
+                ->where('id', $user->group->parent->id)
+                ->orderBy('sort', 'ASC')
+                ->orderBy('created_at', 'DESC')
+                ->get();
+        }
 
         if(view()->exists($this->slug.'.index')) 
         {

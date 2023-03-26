@@ -41,15 +41,15 @@ return new class extends Migration
             $table->string('line', 60)->nullable()->comment('Line帳號');
             $table->string('county', 60)->nullable()->comment('戶籍-縣市');
             $table->string('district', 60)->nullable()->comment('戶籍-鄉鎮市區');
-            $table->string('zipcode', 5)->nullable()->comment('戶籍-郵遞區號');
+            $table->string('zipcode', 10)->nullable()->comment('戶籍-郵遞區號');
             $table->text('address')->nullable()->comment('戶籍-地址');
             $table->string('bill_county', 60)->nullable()->comment('帳單-縣市');
             $table->string('bill_district', 60)->nullable()->comment('帳單-鄉鎮市區');
-            $table->string('bill_zipcode', 5)->nullable()->comment('帳單-郵遞區號');
+            $table->string('bill_zipcode', 10)->nullable()->comment('帳單-郵遞區號');
             $table->text('bill_address')->nullable()->comment('帳單-地址');
             $table->string('business_county', 60)->nullable()->comment('營業-縣市');
             $table->string('business_district', 60)->nullable()->comment('營業-鄉鎮市區');
-            $table->string('business_zipcode', 5)->nullable()->comment('營業-郵遞區號');
+            $table->string('business_zipcode', 10)->nullable()->comment('營業-郵遞區號');
             $table->text('business_address')->nullable()->comment('營業-地址');
             $table->string('email', 120)->nullable()->comment('郵件信箱');
             $table->string('official_website', 120)->nullable()->comment('官方網站');

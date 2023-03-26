@@ -153,9 +153,6 @@ class User extends AbstractModel {
                 'create_rule' => json_encode([
                     'password'=>'required'
                 ]),
-                'update_rule' => json_encode([
-                    'password'=>'required'
-                ]),
                 'error_msg' => json_encode([
                     ['password.required'=>'密碼請勿空白']
                 ])
@@ -272,7 +269,31 @@ class User extends AbstractModel {
 
         if (!empty($filters) && count($filters) > 0)
         {
-            
+            if (!empty($filters['id']))
+            {
+                $query->where('id', $filters['id']);
+            }
+            if (!empty($filters['organization_id']))
+            {
+                $arr = [$filters['organization_id']];
+
+                $organization = app(Organization::class)->find($filters['organization_id']);
+                if ($organization)
+                {
+                    foreach ($organization->childs??[] as $child)
+                    {
+                        if(!in_array($child->id, $arr))
+                        {
+                            array_push($arr, $child->id);
+                        }
+                    }
+
+                    if (count($arr) > 0)
+                    {
+                        $query->whereIn('organization_id', $arr);
+                    }
+                }
+            }
             if (!empty($filters['role_id']))
             {
                 $query->where('role_id', $filters['role_id']);
@@ -281,13 +302,13 @@ class User extends AbstractModel {
             {
                 $query->where('email', 'like', '%'.$filters['email'].'%');
             }
+            if (!empty($filters['account']))
+            {
+                $query->where('account', 'like', '%'.$filters['account'].'%');
+            }
             if (!empty($filters['name']))
             {
                 $query->where('name', 'like', '%'.$filters['name'].'%');
-            }
-            if (!empty($filters['super_admin']) && !is_null($filters['super_admin']))
-            {
-                $query->where('super_admin', $filters['super_admin']);
             }
         }
 
@@ -304,6 +325,16 @@ class User extends AbstractModel {
         {
             return config('app.url').'/storage/'.$img;
         }
+    }
+
+    public function organization()
+    {
+        return $this->belongsTo(Organization::class, 'organization_id');
+    }
+
+    public function group()
+    {
+        return $this->belongsTo(Group::class, 'group_id');
     }
 
     public function role()

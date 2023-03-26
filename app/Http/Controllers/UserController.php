@@ -10,6 +10,63 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends BasicController
 {
+    public function index(Request $request) 
+    {
+        if ($request->user()->cannot('browse_'.$this->slug,  $this->model)) 
+        {
+            return view('alerts.error', [
+                'msg' => '您的權限不足, 請洽管理人員開通權限',
+                'redirectURL' => route('dashboard')
+            ]);
+        }
+
+        $user = Auth::user();
+       
+        $filters = $this->getFilters($request);
+        
+        if ($user->role->super_admin == 1)
+        {
+            if ($user->group->name != '系統管理')
+            {
+                $filters['organization_id'] = $user->organization_id;
+            }
+        }
+        else
+        {
+            $filters['id'] = $user->id;
+        }
+
+        try
+        {
+            $list = $this->model->getList($filters);
+        }
+        catch (\Exception $e)
+        {
+            $list = (new Collection([]))->paginate(20); 
+        }
+
+        if(view()->exists($this->slug.'.index')) 
+        {
+            $this->indexView = $this->slug.'.index';
+        } 
+        else 
+        {
+            if ($this->menu->sortable_enable == 1) 
+            {
+                $this->indexView = 'templates.sortable';
+            }
+            else
+            {
+                $this->indexView = 'templates.index';
+            }
+        }
+
+        return view($this->indexView, [
+            'filters' => $filters,
+            'list' => $list
+        ]);
+    }
+
     public function profile()
     {
         $data = Auth::guard('admin')->user();

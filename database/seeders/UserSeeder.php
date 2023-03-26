@@ -6,6 +6,8 @@ use DB;
 use App\Models\User;
 use App\Models\Role;
 use App\Models\Group;
+use App\Models\UserType;
+use App\Models\Organization;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -34,22 +36,55 @@ class UserSeeder extends Seeder
         $arr = [];
 
         $group = app(Group::class)->where('name', '系統管理')->first();
-        $role = app(Role::class)
-            ->where('group_id', $group->id)
-            ->where('name', '超級管理員')
-            ->first();
-            
-        if ($role)
+
+        foreach ($group->roles??[] as $role)
         {
-            array_push($arr, [
-                'id' => uniqid(),
-                'group_id' => $role->group_id,
-                'role_id' => $role->id,
-                'account' => 'admin',
-                'password' => Hash::make('admin'),
-                'name' => '超級管理員',
-                'status' => 1
-            ]);
+            if ($role->name == '超級管理員')
+            {
+                array_push($arr, [
+                    'id' => '641da01e270e2',
+                    'group_id' => $role->group_id,
+                    'role_id' => $role->id,
+                    'account' => 'admin',
+                    'password' => Hash::make('admin'),
+                    'name' => '超級管理員',
+                    'telecom_number' => fake()->numberBetween($min = 10000000, $max = 99999999),
+                    'status' => 1
+                ]);
+            }
+        }
+
+        $organizations = app(Organization::class)->get();
+
+        foreach ($organizations??[] as $organization)
+        {
+            $group = $organization->group;
+
+            if ($group)
+            {
+                foreach ($group->roles??[] as $role)
+                {
+                    for($i=1; $i<=1; $i++)
+                    {
+                        $userType = app(UserType::class)->inRandomOrder()->first();
+
+                        array_push($arr, [
+                            'id' => uniqid(),
+                            'group_id' => $role->group_id,
+                            'role_id' => $role->id,
+                            'organization_id' => $organization->id,
+                            'user_type_id' => $userType->id,
+                            'account' => fake()->unique()->word,
+                            'password' => Hash::make('1111'),
+                            'name' => fake()->name,
+                            'telecom_number' => fake()->numberBetween($min = 10000000, $max = 99999999),
+                            'status' => 1,
+                            'create_user_id' => '641da01e270e2',
+                            'update_user_id' => '641da01e270e2',
+                        ]);
+                    }
+                }
+            }
         }
         
         return $arr;

@@ -17,7 +17,7 @@ class PermissionSeeder extends Seeder {
     {
         DB::statement('SET FOREIGN_KEY_CHECKS=0;');
 
-        //app(Permission::class)->truncate();
+        app(Permission::class)->truncate();
 
         foreach ($this->getData() as $data) {
             app(Permission::class)->create($data);

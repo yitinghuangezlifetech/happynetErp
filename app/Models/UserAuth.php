@@ -54,7 +54,17 @@ class UserAuth extends Authenticatable
             return config('app.url').'/storage/'.$img;
         }
     }
-    
+
+    public function organization()
+    {
+        return $this->belongsTo(Organization::class, 'organization_id');
+    }
+
+    public function group()
+    {
+        return $this->belongsTo(Group::class, 'group_id');
+    }
+
     public function role()
     {
         return $this->belongsTo(Role::class, 'role_id');
@@ -70,6 +80,7 @@ class UserAuth extends Authenticatable
                 ->where('role_id', $this->role_id)
                 ->where('permission_id', $permission->id)
                 ->first();
+
             if ($hasPermission)
             {
                 return true;

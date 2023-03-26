@@ -37,6 +37,21 @@ class GroupPermissionSeeder extends Seeder {
                         ]);
                     }
                 }
+                else
+                {
+                    $menus = ['目錄設定', '群組設定', '角色設定', '身份設定', '組織類型設定', '帳戶類別設定', '費率類別設定'];
+
+                    foreach ($permissions as $permission) {
+                        if ($permission->menu && !in_array($permission->menu->menu_name, $menus))
+                        {
+                            array_push($arr, [
+                                'id' => uniqid(),
+                                'group_id' => $group->id,
+                                'permission_id' => $permission->id
+                            ]);
+                        }
+                    }
+                }
             }
         }
 

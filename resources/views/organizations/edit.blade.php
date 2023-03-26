@@ -143,7 +143,7 @@
             <select class="form-control" name="parent_id" id="parent_id">
               <option value="">請選擇</option>
               @foreach($organizations??[] as $organization)
-              <option value="{{$organization->id}}" @if($data->organization_type_id == $organization->id){{'selected'}}@endif>{{$organization->name}}</option>
+              <option value="{{$organization->id}}" @if($data->parent_id == $organization->id){{'selected'}}@endif>{{$organization->name}}</option>
               @endforeach
             </select>
           </div>

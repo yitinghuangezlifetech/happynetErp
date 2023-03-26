@@ -45,6 +45,33 @@ class RoleSeeder extends Seeder
                         'name' => '超級管理員'
                     ]);
                 }
+                else if ($group->name == '系統商')
+                {
+                    array_push($arr, [
+                        'id' => uniqid(),
+                        'group_id' => $group->id,
+                        'super_admin' => 2,
+                        'name' => '系統商管理員'
+                    ]);
+                }
+                else if ($group->name == '經銷商')
+                {
+                    array_push($arr, [
+                        'id' => uniqid(),
+                        'group_id' => $group->id,
+                        'super_admin' => 2,
+                        'name' => '經銷商管理員'
+                    ]);
+                }
+                else if ($group->name == '一般用戶')
+                {
+                    array_push($arr, [
+                        'id' => uniqid(),
+                        'group_id' => $group->id,
+                        'super_admin' => 2,
+                        'name' => '一般用戶管理員'
+                    ]);
+                }
             }
         }
 

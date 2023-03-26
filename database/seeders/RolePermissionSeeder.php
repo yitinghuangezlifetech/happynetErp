@@ -30,6 +30,8 @@ class RolePermissionSeeder extends Seeder
         $permissions = app(Permission::class)->get();
         $roles = app(Role::class)->get();
 
+        $menus = ['目錄設定', '群組設定', '角色設定', '身份設定', '組織類型設定', '帳戶類別設定', '費率類別設定'];
+
         if ($roles->count() > 0 && $permissions->count() > 0)
         {
             foreach ($roles as $role)
@@ -49,14 +51,9 @@ class RolePermissionSeeder extends Seeder
                     }
                     else
                     {
-
-                        $category = [
-                            '系統', ''
-                        ];
-
                         foreach ($permissions as $permission)
                         {
-                            if (!in_array($permission->menu->name, $category))
+                            if ($permission->menu && !in_array($permission->menu->menu_name, $menus))
                             {
                                 array_push($arr, [
                                     'id' => uniqid(),
@@ -64,6 +61,20 @@ class RolePermissionSeeder extends Seeder
                                     'permission_id' => $permission->id
                                 ]);
                             }
+                        }
+                    }
+                }
+                else
+                {
+                    foreach ($permissions as $permission)
+                    {
+                        if ($permission->menu && !in_array($permission->menu->menu_name, $menus))
+                        {
+                            array_push($arr, [
+                                'id' => uniqid(),
+                                'role_id' => $role->id,
+                                'permission_id' => $permission->id
+                            ]);
                         }
                     }
                 }

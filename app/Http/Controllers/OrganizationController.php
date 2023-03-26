@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
+use Auth;
 use App\Models\Group;
 use App\Models\FeeRate;
 use App\Models\Identity;
@@ -12,6 +13,55 @@ use App\Models\OrganizationType;
 
 class OrganizationController extends BasicController
 {
+    public function index(Request $request) 
+    {
+        if ($request->user()->cannot('browse_'.$this->slug,  $this->model)) 
+        {
+            return view('alerts.error', [
+                'msg' => '您的權限不足, 請洽管理人員開通權限',
+                'redirectURL' => route('dashboard')
+            ]);
+        }
+        
+        $user = Auth::user();
+       
+        $filters = $this->getFilters($request);
+        
+        if ($user->role->super_admin == 1)
+        {
+            $filters['id'] = $user->organization->id;
+            $filters['parent_id'] = $user->organization->id;
+        }
+        else
+        {
+            $filters['id'] = $user->organization->id;
+        }
+        
+
+        $list = $this->model->getListByFilters($this->menu->menuDetails, $filters);
+
+        if(view()->exists($this->slug.'.index')) 
+        {
+            $this->indexView = $this->slug.'.index';
+        } 
+        else 
+        {
+            if ($this->menu->sortable_enable == 1) 
+            {
+                $this->indexView = 'templates.sortable';
+            }
+            else
+            {
+                $this->indexView = 'templates.index';
+            }
+        }
+
+        return view($this->indexView, [
+            'filters' => $filters,
+            'list' => $list
+        ]);
+    }
+
     public function create(Request $request)
     {
         if ($request->user()->cannot('create_'.$this->slug,  $this->model))

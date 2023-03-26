@@ -2,8 +2,12 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+
 class Organization extends AbstractModel
 {
+    use HasFactory;
+    
     protected $table = 'organizations';
     protected $guarded = [];
 
@@ -635,7 +639,7 @@ class Organization extends AbstractModel
             ],
         ];
     }
-
+   
     public function parent()
     {
         return $this->belongsTo(Organization::class, 'parent_id');
@@ -662,7 +666,7 @@ class Organization extends AbstractModel
 
     public function customerRoles()
     {
-        $identity = app(Identity::class)->where('name', '用戶')->first();
+        $identity = app(Identity::class)->where('name', '一般用戶')->first();
         
         return $this->hasMany(Organization::class, 'parent_id')->where('identity_id', $identity->id);
     }

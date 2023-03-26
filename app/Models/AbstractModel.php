@@ -29,28 +29,58 @@ abstract class AbstractModel extends Model implements InterfaceModel
 
         if ( count($filters) > 0)
         {
+            $pass = 2;
+
             foreach ($menuDetails as $detail) {
                 if ( isset($filters[$detail->field]) && !empty($filters[$detail->field]) || !empty($filters['start_day']) && !empty($filters['end_day']) )
                 {
-                    switch ($detail->type)
+                    if ($detail->field == 'parent_id')
                     {
-                        case 'text':
-                        case 'text_area':
-                        case 'number':
-                        case 'email':
-                            $query->where($detail->field, 'like', '%'.$filters[$detail->field].'%');
-                            break;
-                        case 'date':
-                        case 'date_time':
-                            if (isset($filters['start_day']) && isset($filters['end_day'])) {
-                                $query->where($detail->field, '<=', $filters['start_day'])
-                                      ->where($detail->field, '>=', $filters['end_day']);
-                            }    
-                            break;
-                        default:
-                            $query->where($detail->field, $filters[$detail->field]);
-                            break;
+                        if ($pass == 2)
+                        {
+                            if (isset($filters['id']) && isset($filters['parent_id']))
+                            {
+                                $query->where(function($q)use($filters){
+                                    $q->where('id', $filters['id'])
+                                    ->orWhere('parent_id', $filters['parent_id']);
+                                });
+                            }
+                            else if (isset($filters['id']))
+                            {
+                                $query->where('id', $filters['id']);
+                            }
+                            else if (isset($filters['parent_id']))
+                            {
+                                $query->where('parent_id', $filters['parent_id']);
+                            }
+                            
+                            $pass = 1;
+                        }
                     }
+                    else
+                    {
+                        switch ($detail->type)
+                        {
+                            case 'text':
+                            case 'text_area':
+                            case 'number':
+                            case 'email':
+                                $query->where($detail->field, 'like', '%'.$filters[$detail->field].'%');
+                                break;
+                            case 'date':
+                            case 'date_time':
+                                if (isset($filters['start_day']) && isset($filters['end_day'])) {
+                                    $query->where($detail->field, '<=', $filters['start_day'])
+                                        ->where($detail->field, '>=', $filters['end_day']);
+                                }    
+                                break;
+                            default:
+                                $query->where($detail->field, $filters[$detail->field]);
+                                break;
+                        }
+                    }
+
+                    
                 }
             }
         }

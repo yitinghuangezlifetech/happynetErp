@@ -41,7 +41,7 @@ class IdentitySeeder extends Seeder
             ],
             [
                 'id' => uniqid(),
-                'name' => '用戶',
+                'name' => '一般用戶',
             ],
         ];
     }

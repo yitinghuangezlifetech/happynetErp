@@ -50,8 +50,8 @@ class ComponentController extends Controller
             ->get();
 
         $permissions = $this->getGroupPermissions($request->groupId);
-        $hasPermissions = $this->getRolePermissions($request->roleId);
-        
+        $hasPermissions = $this->getRolePermissions($request->roleID);
+
         $content = view('components.role_permissions', compact(
             'menuItems', 'permissions', 'hasPermissions'
         ))->render();
@@ -114,6 +114,7 @@ class ComponentController extends Controller
         $permissions = app(RolePermission::class)
             ->where('role_id', $roleId)
             ->get();
+
         if ($permissions->count() > 0)
         {
             foreach ($permissions as $permission)
