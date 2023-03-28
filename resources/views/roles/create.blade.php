@@ -48,7 +48,22 @@
             }
             $halfRows = '';
           @endphp
-          @if($detail->super_admin_use == 1 && $user->super_admin == 1)
+          @if($detail->field == 'group_id')
+          <div class="col-sm-6">
+            <div class="form-group">
+              <label for="group_id">所屬群組</label>
+              <select class="custom-select rounded-0" name="group_id" id="group_id">
+                <option value="">請選擇</option>
+                @foreach($groups??[] as $group)
+                <option value="{{$group->id}}">{{$group->name}}</option>
+                  @foreach($group->getChilds??[] as $child)
+                    @include('groups.option', ['child'=>$child, 'value'=>''])
+                  @endforeach
+                @endforeach
+              </select>
+            </div>
+          </div>
+          @elseif($detail->super_admin_use == 1 && $user->super_admin == 1)
           <div class="col-sm-6">
             @include('components.fields.'.$detail->type, ['type'=>'create', 'detail'=>$detail, 'value'=>''])
           </div>  

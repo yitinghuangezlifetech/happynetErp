@@ -24,20 +24,15 @@ class OrganizationController extends BasicController
         }
         
         $user = Auth::user();
-       
+
         $filters = $this->getFilters($request);
         
-        if ($user->role->super_admin == 1)
+        if ($user->organization)
         {
             $filters['id'] = $user->organization->id;
             $filters['parent_id'] = $user->organization->id;
         }
-        else
-        {
-            $filters['id'] = $user->organization->id;
-        }
-        
-
+       
         $list = $this->model->getListByFilters($this->menu->menuDetails, $filters);
 
         if(view()->exists($this->slug.'.index')) 
@@ -81,10 +76,7 @@ class OrganizationController extends BasicController
         $groups = app(Group::class)->orderBy('sort', 'ASC')->get();
         $feeRates = app(FeeRate::class)->where('status', 1)->get();
         $organizationTypes = app(OrganizationType::class)->get();
-        $organizations = app(Organization::class)
-            ->where('status', 1)
-            ->orderBy('created_at', 'DESC')
-            ->get();
+        $organizations = $this->getChildOrganizations();
 
         return view($this->createView, compact(
             'identities' , 'groups', 'feeRates',
@@ -106,10 +98,7 @@ class OrganizationController extends BasicController
         $groups = app(Group::class)->orderBy('sort', 'ASC')->get();
         $feeRates = app(FeeRate::class)->where('status', 1)->get();
         $organizationTypes = app(OrganizationType::class)->get();
-        $organizations = app(Organization::class)
-            ->where('status', 1)
-            ->orderBy('created_at', 'DESC')
-            ->get();
+        $organizations = $this->getChildOrganizations();
 
         $data = $this->model->find($id);
 
@@ -130,5 +119,21 @@ class OrganizationController extends BasicController
             'identities' , 'groups', 'feeRates',
             'organizations', 'data', 'organizationTypes'
         ));
+    }
+
+    private function getChildOrganizations()
+    {
+        $arr = [];
+        $user = Auth::user();
+
+        $organizations = app(Organization::class)
+            ->where(function($q)use($user){
+                $q->where('id', $user->organization->id)
+                  ->orWhere('parent_id', $user->organization->id);
+            })
+            ->where('status', 1)
+            ->get();
+
+        return $organizations;
     }
 }

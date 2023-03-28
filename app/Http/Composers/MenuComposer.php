@@ -3,6 +3,7 @@ namespace App\Http\Composers;
 
 use Auth;
 use App\Models\Menu;
+use App\Models\RolePermission;
 use Illuminate\View\View;
 
 class MenuComposer {

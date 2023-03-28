@@ -21,46 +21,7 @@ class GroupController extends BasicController
             ]);
         }
         
-        $arr = [];
-        $user = Auth::user();
-
-        if ($user->role->super_admin == 1)
-        {
-            if ($user->group->name != '系統管理')
-            {
-                foreach ($user->group->getChilds??[] as $group)
-                {
-                    if (!in_array($group->parent->id, $arr))
-                    {
-                        array_push($arr, $group->parent->id);
-                    }
-                }
-
-                $list = app(Group::class)
-                    ->whereNull('parent_id')
-                    ->whereIn('id', $arr)
-                    ->orderBy('sort', 'ASC')
-                    ->orderBy('created_at', 'DESC')
-                    ->get();
-            }
-            else
-            {
-                $list = app(Group::class)
-                    ->whereNull('parent_id')
-                    ->orderBy('sort', 'ASC')
-                    ->orderBy('created_at', 'DESC')
-                    ->get();
-            }
-        }
-        else
-        {
-            $list = app(Group::class)
-                ->whereNull('parent_id')
-                ->where('id', $user->group->parent->id)
-                ->orderBy('sort', 'ASC')
-                ->orderBy('created_at', 'DESC')
-                ->get();
-        }
+        $list = $this->getParentGroupByUser();
 
         if(view()->exists($this->slug.'.index')) 
         {
@@ -81,6 +42,26 @@ class GroupController extends BasicController
         return view($this->indexView, [
             'list' => $list
         ]);
+    }
+
+    public function create(Request $request)
+    {
+        if ($request->user()->cannot('create_'.$this->slug,  $this->model))
+        {
+            return view('alerts.error', [
+                'msg' => '您的權限不足, 請洽管理人員開通權限',
+                'redirectURL' => route('dashboard')
+            ]);
+        }
+
+        $groups = $this->getParentGroupByUser();
+
+        if(view()->exists($this->slug.'.create'))
+        {
+            $this->createView = $this->slug.'.create';
+        }
+
+        return view($this->createView, compact('groups'));
     }
 
     public function store(Request $request)
@@ -112,6 +93,39 @@ class GroupController extends BasicController
         return view('alerts.success', [
             'msg'=>'資料新增成功',
             'redirectURL'=>route($this->slug.'.index')
+        ]);
+    }
+
+    public function edit(Request $request, $id)
+    {
+        if ($request->user()->cannot('edit_'.$this->slug,  $this->model))
+        {
+            return view('alerts.error', [
+                'msg' => '您的權限不足, 請洽管理人員開通權限',
+                'redirectURL' => route('dashboard')
+            ]);
+        }
+
+        $data = $this->model->find($id);
+        $groups = $this->getParentGroupByUser();
+
+        if (!$data)
+        {
+            return view('alerts.error',[
+                'msg'=>'資料不存在',
+                'redirectURL'=>route($this->slug.'.index')
+            ]); 
+        }
+
+        if(view()->exists($this->slug.'.edit'))
+        {
+            $this->editView = $this->slug.'.edit';
+        }
+
+        return view($this->editView, [
+            'data'=>$data,
+            'id'=>$id,
+            'groups' => $groups
         ]);
     }
 
@@ -163,5 +177,51 @@ class GroupController extends BasicController
                 ]);
             }
         }
+    }
+
+    private function getParentGroupByUser()
+    {
+        $arr = [];
+        $user = Auth::user();
+
+        if ($user->role->super_admin == 1)
+        {
+            if ($user->group->name != '系統管理')
+            {
+                foreach ($user->group->getChilds??[] as $group)
+                {
+                    if (!in_array($group->parent->id, $arr))
+                    {
+                        array_push($arr, $group->parent->id);
+                    }
+                }
+
+                $groups = app(Group::class)
+                    ->whereNull('parent_id')
+                    ->whereIn('id', $arr)
+                    ->orderBy('sort', 'ASC')
+                    ->orderBy('created_at', 'DESC')
+                    ->get();
+            }
+            else
+            {
+                $groups = app(Group::class)
+                    ->whereNull('parent_id')
+                    ->orderBy('sort', 'ASC')
+                    ->orderBy('created_at', 'DESC')
+                    ->get();
+            }
+        }
+        else
+        {
+            $groups = app(Group::class)
+                ->whereNull('parent_id')
+                ->where('id', $user->group->parent->id)
+                ->orderBy('sort', 'ASC')
+                ->orderBy('created_at', 'DESC')
+                ->get();
+        }
+
+        return $groups;
     }
 }

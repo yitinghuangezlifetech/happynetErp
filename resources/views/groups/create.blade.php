@@ -20,7 +20,20 @@
               }
             }
           @endphp
-          @if($detail->super_admin_use == 1 && $user->role->super_admin == 1)
+          @if($detail->field == 'parent_id')
+          <div class="form-group">
+            <label for="parent_id">所屬群組></label>
+            <select class="custom-select rounded-0" name="parent_id" id="parent_id">
+              <option value="">請選擇</option>
+              @foreach($groups??[] as $group)
+              <option value="{{$group->id}}">{{$group->name}}</option>
+                @foreach($group->getChilds??[] as $child)
+                  @include('groups.option', ['child'=>$child, 'value'=>''])
+                @endforeach
+              @endforeach
+            </select>
+          </div>
+          @elseif($detail->super_admin_use == 1 && $user->role->super_admin == 1)
             @include('components.fields.'.$detail->type, ['type'=>'create', 'detail'=>$detail, 'value'=>''])
           @else  
             @if($detail->show_hidden_field == 1)

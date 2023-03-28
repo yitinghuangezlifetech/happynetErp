@@ -59,6 +59,13 @@ abstract class AbstractModel extends Model implements InterfaceModel
                     }
                     else
                     {
+                        if (isset($filters['id']) && isset($filters['parent_id']))
+                        {
+                            $query->where(function($q)use($filters){
+                                $q->where('id', $filters['id'])
+                                ->orWhere('parent_id', $filters['parent_id']);
+                            });
+                        }
                         switch ($detail->type)
                         {
                             case 'text':

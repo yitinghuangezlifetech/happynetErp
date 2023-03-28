@@ -39,7 +39,7 @@ class OrganizationSeeder extends Seeder
             }
 
             $type     = app(OrganizationType::class)->inRandomOrder()->first();
-            $identity = app(Identity::class)->where('name', '!=', '管理')->inRandomOrder()->first();
+            $identity = app(Identity::class)->where('name', '!=', '系統管理')->inRandomOrder()->first();
             $group    = app(Group::class)->where('name', $identity->name)->first();
 
             $data->organization_type_id = $type->id;
