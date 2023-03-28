@@ -33,6 +33,10 @@ class IdentitySeeder extends Seeder
         return [
             [
                 'id' => uniqid(),
+                'name' => '系統管理',
+            ],
+            [
+                'id' => uniqid(),
                 'name' => '系統商',
             ],
             [

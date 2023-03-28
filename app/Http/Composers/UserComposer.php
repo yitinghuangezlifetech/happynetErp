@@ -3,14 +3,25 @@ namespace App\Http\Composers;
 
 use Auth;
 use Illuminate\View\View;
+use Illuminate\Support\Facades\Route;
 
 class UserComposer {
     public function compose(View $view) {
-        if (Auth::guard('web')->check()) {
-            $user = Auth::guard('web')->user();
+
+        $route = Route::getCurrentRoute();
+        $prefix = $route->getPrefix();
+
+        if ($prefix == '')
+        {
+            $prefix = 'web';
+        }
+
+        if (Auth::guard($prefix)->check()) {
+            $user = Auth::guard($prefix)->user();
 
             $view->with('user', $user);
-        } else {
+        }
+        else {
             $view->with('user', []);
         }
     }

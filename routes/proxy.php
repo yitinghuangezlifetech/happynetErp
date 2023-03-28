@@ -35,9 +35,9 @@ Route::post('login', [AuthController::class, 'login'])->name('login');
 Route::get('logout', [AuthController::class, 'logout'])->name('logout');
 
 
-Route::middleware('auth:web')->group(function(){
+Route::middleware('auth:proxy')->group(function(){
     
-    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/', [DashboardController::class, 'index'])->name('proxy.dashboard');
 
     Route::prefix('menus')->group(function(){
         Route::post('sort', [MenuController::class, 'sort'])->name('menus.sort');
@@ -58,7 +58,7 @@ Route::middleware('auth:web')->group(function(){
     });
 
     Route::prefix('proxy_accounts')->group(function(){
-        Route::get('proxyLogin/{id}', [proxyAccountController::class, 'proxyLogin'])->name('proxy_accounts.proxyLogin');
+        Route::get('login/{id}', [proxyAccountController::class, 'login'])->name('proxy_accounts.login');
     });
 
     Route::prefix('sortables')->group(function(){
@@ -81,9 +81,13 @@ Route::middleware('auth:web')->group(function(){
 
                 if (preg_match('/\?/', $item->slug)) {
                     $slug = explode('?', $item->slug);
-                    Route::resource($slug[0], $controller);
+                    Route::resource($slug[0], $controller, [
+                        'as' => 'proxy'
+                    ]);
                 } else {
-                    Route::resource($item->slug, $controller);
+                    Route::resource($item->slug, $controller, [
+                        'as' => 'proxy'
+                    ]);
                 }
 
                 Route::prefix($item->slug)->group(function()use($item, $controller){

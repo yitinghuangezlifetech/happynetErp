@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use DB;
+use Storage;
 use App\Models\Menu;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -20,51 +21,66 @@ class MenuSeeder extends Seeder
 
         app(Menu::class)->truncate();
 
-        $id = '';
-        $uuid = '';
-
-        foreach ($this->getData() as $data)
+        if (Storage::disk('public')->exists('tableData/menus.txt'))
         {
-            $menu = app(Menu::class)->where('menu_name', $data['menu_name'])->first();
+            $content = json_decode(Storage::disk('public')->get('tableData/menus.txt'), true);
 
-            if ($menu)
+            if (is_array($content))
             {
-                if (!isset($data['parent_id']))
+                foreach ($content as $data)
                 {
-                    $id = $data['id'];
-                    $parentId = $menu->id;
+                    app(Menu::class)->create($data);
                 }
-                else
-                {
-                    $parentId = null;
-                }
-                unset($data['id']);
-                app(Menu::class)->where('id', $menu->id)->update($data);
-            } 
-            else 
+            }
+        }
+        else
+        {
+            $id = '';
+            $uuid = '';
+
+            foreach ($this->getData() as $data)
             {
-                if (isset($parentId)) 
-                {
-                    if($data['parent_id'] == $id)
-                    {
-                        $data['parent_id'] = $parentId;
-                    }
-                }
-                else
+                $menu = app(Menu::class)->where('menu_name', $data['menu_name'])->first();
+
+                if ($menu)
                 {
                     if (!isset($data['parent_id']))
                     {
                         $id = $data['id'];
-                        $uuid = uniqid();
-                        $data['id'] = $uuid;
+                        $parentId = $menu->id;
                     }
-                    else if($data['parent_id'] == $id)
+                    else
                     {
-                        $data['parent_id'] = $uuid;
+                        $parentId = null;
                     }
-                }
+                    unset($data['id']);
+                    app(Menu::class)->where('id', $menu->id)->update($data);
+                } 
+                else 
+                {
+                    if (isset($parentId)) 
+                    {
+                        if($data['parent_id'] == $id)
+                        {
+                            $data['parent_id'] = $parentId;
+                        }
+                    }
+                    else
+                    {
+                        if (!isset($data['parent_id']))
+                        {
+                            $id = $data['id'];
+                            $uuid = uniqid();
+                            $data['id'] = $uuid;
+                        }
+                        else if($data['parent_id'] == $id)
+                        {
+                            $data['parent_id'] = $uuid;
+                        }
+                    }
 
-                app(Menu::class)->create($data);
+                    app(Menu::class)->create($data);
+                }
             }
         }
 
@@ -193,6 +209,19 @@ class MenuSeeder extends Seeder
                 'search_component' => 1,
                 'parent_id' => 3,
                 'sort' => 4
+            ],
+            [
+                'id' => uniqid(),
+                'menu_name' => '代理帳戶設定',
+                'name' => '代理帳戶',
+                'slug' => 'proxy_accounts',
+                'target' => '_self',
+                'icon_class' => 'far fa-circle nav-icon',
+                'model' => 'App\Models\proxyAccount',
+                'controller'=>'App\Http\Controllers\proxyAccountController',
+                'search_component' => 1,
+                'parent_id' => 3,
+                'sort' => 5
             ],
             [
                 'id' => 4,
