@@ -9,14 +9,14 @@ class UserComposer {
     public function compose(View $view) {
 
         $route = Route::getCurrentRoute();
-        $prefix = $route->getPrefix();
+        $prefix = trim($route->getPrefix());
 
-        if (strpos($prefix, '/'))
+        if (strpos($prefix, '/') >= 0)
         {
             $prefix = explode('/', $prefix)[0];
         }
 
-        if ($prefix == '')
+        if ($prefix != 'proxy')
         {
             $prefix = 'web';
         }

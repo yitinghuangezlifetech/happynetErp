@@ -39,31 +39,8 @@ Route::middleware('auth:proxy')->group(function(){
     
     Route::get('/', [DashboardController::class, 'index'])->name('proxy.dashboard');
 
-    Route::prefix('menus')->group(function(){
-        Route::post('sort', [MenuController::class, 'sort'])->name('menus.sort');
-    });
-    
-    Route::prefix('users')->group(function(){
-        Route::get('profile', [UserController::class, 'profile'])->name('users.profile');
-        Route::post('updateProfile', [UserController::class, 'updateProfile'])->name('users.updateProfile');
-    });
-
-    Route::prefix('components')->group(function(){
-        Route::post('getRolePermissionComponent', [ComponentController::class, 'getRolePermissionComponent'])->name('components.getRolePermissionComponent');
-        Route::post('getGroupPermissionComponent', [ComponentController::class, 'getGroupPermissionComponent'])->name('components.getGroupPermissionComponent');
-    });
-
-    Route::prefix('status')->group(function(){
-        Route::post('changeStatus', [StatusController::class, 'changeStatus'])->name('status.changeStatus');
-    });
-
     Route::prefix('proxy_accounts')->group(function(){
         Route::get('login/{id}', [proxyAccountController::class, 'login'])->name('proxy_accounts.login');
-    });
-
-    Route::prefix('sortables')->group(function(){
-        Route::post('sort', [SortableController::class, 'sort'])->name('sortables.sort');
-        Route::post('hierarchySort', [SortableController::class, 'hierarchySort'])->name('sortables.hierarchySort');
     });
 
     if (Schema::hasTable('menus'))
