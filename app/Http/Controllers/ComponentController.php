@@ -13,8 +13,8 @@ use Illuminate\Http\Request;
 
 class ComponentController extends Controller
 {
-    public function getGroupPermissionComponent(Request $request) {
-
+    public function getGroupPermissionComponent(Request $request)
+    {
         $user = app(User::class)->find($request->userId);
         $menuItems = app(Menu::class)
             ->whereNull('parent_id')
