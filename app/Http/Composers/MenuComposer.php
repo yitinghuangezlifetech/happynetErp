@@ -5,11 +5,21 @@ use Auth;
 use App\Models\Menu;
 use App\Models\RolePermission;
 use Illuminate\View\View;
+use Illuminate\Support\Facades\Route;
 
 class MenuComposer {
     public function compose(View $view) {
-        if (Auth::guard('web')->check()) {
-            $user = Auth::guard('web')->user();
+
+        $route = Route::getCurrentRoute();
+        $prefix = $route->getPrefix();
+
+        if ($prefix == '')
+        {
+            $prefix = 'web';
+        }
+
+        if (Auth::guard($prefix)->check()) {
+            $user = Auth::guard($prefix)->user();
 
             if ($user->role) {
                 if ($user->role->permissions->count() > 0) {
@@ -62,6 +72,7 @@ class MenuComposer {
             } else {
                 $view->with('menus', []);
             }
+            $view->with('prefix', $prefix);
         } else {
             $view->with('menus', []);
         }

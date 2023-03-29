@@ -14,9 +14,7 @@ class DataSeeder extends Seeder
      */
     public function run()
     {
-        $this->call(IdentitySeeder::class);
-        $this->call(UserTypeSeeder::class);
         $this->call(ServiceTypeSeeder::class);
-        $this->call(OrganizationTypeSeeder::class);
+        $this->call(FuncTypeSeeder::class);
     }
 }

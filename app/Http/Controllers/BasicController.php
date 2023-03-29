@@ -36,9 +36,18 @@ class BasicController extends Controller implements InterfaceController
         if (!empty(Route::currentRouteName()))
         {
             $this->route = explode('.', Route::currentRouteName());
-            $this->slug = $this->route[0];
             
-            if (isset($this->route[0]))
+            if (count($this->route) > 2)
+            {
+                $this->slug = $this->route[1];
+            }
+            else
+            {
+                $this->slug = $this->route[0];
+            }
+            
+            
+            if (isset($this->route[0]) || isset($this->route[1]))
             {
                 if ($this->slug == 'reports') {
                     $slug = $this->slug.'?data='.$request->data;

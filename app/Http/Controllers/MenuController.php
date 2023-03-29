@@ -68,11 +68,11 @@ class MenuController extends BasicController
                     }
                 }
 
-                $id = $this->model->createData($formData);
+                $menu = $this->model->create($formData);
                 DB::commit();
 
+                $this->createPermission($menu);
                 Artisan::call('db:seed --class=MenuDetailSeeder');
-                Artisan::call('db:seed --class=PermissionSeeder');
             
                 return view('alerts.success', [
                     'msg'=>'資料新增成功',
@@ -142,8 +142,6 @@ class MenuController extends BasicController
                 $this->model->updateData($id, $formData);
 
                 DB::commit();
-
-                Artisan::call('db:seed --class=PermissionSeeder');
                 
                 return view('alerts.success',[
                     'msg'=>'資料更新成功',
