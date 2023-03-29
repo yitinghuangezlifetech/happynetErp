@@ -142,8 +142,6 @@ class MenuController extends BasicController
                 $this->model->updateData($id, $formData);
 
                 DB::commit();
-
-                Artisan::call('db:seed --class=PermissionSeeder');
                 
                 return view('alerts.success',[
                     'msg'=>'資料更新成功',
