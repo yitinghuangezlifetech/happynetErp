@@ -11,12 +11,12 @@ class UserComposer {
         $route = Route::getCurrentRoute();
         $prefix = $route->getPrefix();
 
-        if (strpos($prefix, '/'))
+        if (strpos($prefix, '/') >= 0)
         {
-            $prefix = explode('/', $prefix)[0];
+            $prefix = preg_replace('/\s(?=)/', '', explode('/', $prefix)[0]);
         }
 
-        if ($prefix == '')
+        if ($prefix != 'proxy')
         {
             $prefix = 'web';
         }
