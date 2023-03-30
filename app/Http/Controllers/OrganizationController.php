@@ -126,13 +126,23 @@ class OrganizationController extends BasicController
         $arr = [];
         $user = Auth::user();
 
-        $organizations = app(Organization::class)
-            ->where(function($q)use($user){
-                $q->where('id', $user->organization->id)
-                  ->orWhere('parent_id', $user->organization->id);
-            })
-            ->where('status', 1)
-            ->get();
+        if (empty($user->organization))
+        {
+            $organizations = app(Organization::class)
+                ->where('status', 1)
+                ->get();
+        }
+        else
+        {
+            $organizations = app(Organization::class)
+                ->where(function($q)use($user){
+                    $q->where('id', $user->organization->id)
+                    ->orWhere('parent_id', $user->organization->id);
+                })
+                ->where('status', 1)
+                ->get();
+        }
+        
 
         return $organizations;
     }
