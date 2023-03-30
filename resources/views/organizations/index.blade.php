@@ -41,7 +41,7 @@
               </td>
               <td class="text-center" style="vertical-align: middle">{{$data->system_no}}</td>
               <td class="text-center" style="vertical-align: middle">{{optional($data->group)->name}}</td>
-              <td class="text-center" style="vertical-align: middle">{{optional($data->identity)->name}}</td>
+              <td class="text-center" style="vertical-align: middle">{{optional($data->identity)->type_name}}</td>
               <td class="text-center" style="vertical-align: middle">{{$data->name}}</td>
               <td class="text-center" style="vertical-align: middle">{{optional($data->feeRate)->name}}</td>
               <td class="text-center" style="vertical-align: middle">{{$data->id_no}}</td>

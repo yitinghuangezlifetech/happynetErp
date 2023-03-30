@@ -8,6 +8,7 @@ use Auth;
 use App\Models\Group;
 use App\Models\FeeRate;
 use App\Models\Identity;
+use App\Models\FuncType;
 use App\Models\Organization;
 use App\Models\OrganizationType;
 
@@ -72,10 +73,10 @@ class OrganizationController extends BasicController
             $this->createView = $this->slug.'.create';
         }
 
-        $identities = app(Identity::class)->get();
+        $identities = app(FuncType::class)->where('type_code', 'identity_type')->first();
         $groups = app(Group::class)->orderBy('sort', 'ASC')->get();
         $feeRates = app(FeeRate::class)->where('status', 1)->get();
-        $organizationTypes = app(OrganizationType::class)->get();
+        $organizationTypes = app(FuncType::class)->where('type_code', 'org_type')->first();
         $organizations = $this->getChildOrganizations();
 
         return view($this->createView, compact(
@@ -94,10 +95,10 @@ class OrganizationController extends BasicController
             ]);
         }
 
-        $identities = app(Identity::class)->get();
+        $identities = app(FuncType::class)->where('type_code', 'identity_type')->first();
         $groups = app(Group::class)->orderBy('sort', 'ASC')->get();
         $feeRates = app(FeeRate::class)->where('status', 1)->get();
-        $organizationTypes = app(OrganizationType::class)->get();
+        $organizationTypes = app(FuncType::class)->where('type_code', 'org_type')->first();
         $organizations = $this->getChildOrganizations();
 
         $data = $this->model->find($id);

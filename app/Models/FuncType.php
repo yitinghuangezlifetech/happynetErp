@@ -11,9 +11,7 @@ class FuncType extends AbstractModel
     public function getFieldProperties()
     {
         return [
-           
             [
-                
                 'field' => 'type_code',
                 'type' => 'text',
                 'show_name' => '類別代碼',

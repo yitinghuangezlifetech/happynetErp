@@ -117,8 +117,8 @@
             <label for="organization_type_id">所屬類型</label>
             <select class="form-control" name="organization_type_id" id="organization_type_id">
               <option value="">請選擇</option>
-              @foreach($organizationTypes??[] as $organizationType)
-              <option value="{{$organizationType->id}}">{{$organizationType->name}}</option>
+              @foreach($organizationTypes->getChilds??[] as $organizationType)
+              <option value="{{$organizationType->id}}">{{$organizationType->type_name}}</option>
               @endforeach
             </select>
           </div>
@@ -130,8 +130,8 @@
             <label for="identity_id"><span style="color:red">*</span>身份別</label>
             <select class="form-control" name="identity_id" id="identity_id" required>
               <option value="">請選擇</option>
-              @foreach($identities??[] as $identity)
-              <option value="{{$identity->id}}">{{$identity->name}}</option>
+              @foreach($identities->getChilds??[] as $identity)
+              <option value="{{$identity->id}}">{{$identity->type_name}}</option>
               @endforeach
             </select>
           </div>

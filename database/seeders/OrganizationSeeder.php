@@ -7,7 +7,7 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 use App\Models\Group;
-use App\Models\Identity;
+use App\Models\FuncType;
 use App\Models\Organization;
 use App\Models\OrganizationType;
 
@@ -37,10 +37,21 @@ class OrganizationSeeder extends Seeder
             {
                 $parentId = session('parent_id');
             }
+            
+            $types    = app(FuncType::class)->where('type_code', 'org_type')->first();
+            
+            $i = rand(0, 1);
 
-            $type     = app(OrganizationType::class)->inRandomOrder()->first();
-            $identity = app(Identity::class)->where('name', '!=', '系統管理')->inRandomOrder()->first();
-            $group    = app(Group::class)->where('name', $identity->name)->first();
+            foreach ($types->getChilds??[] as $k=>$info)
+            {
+                if ($i == $k)
+                {
+                    $type = $info;
+                }
+            }   
+
+            $group    = app(Group::class)->where('name', '!=', '系統管理')->inRandomOrder()->first();
+            $identity = app(FuncType::class)->where('type_name', '=', $group->name)->first();
 
             $data->organization_type_id = $type->id;
             $data->identity_id = $identity->id;

@@ -652,21 +652,21 @@ class Organization extends AbstractModel
 
     public function systemRoles()
     {
-        $identity = app(Identity::class)->where('name', '系統商')->first();
+        $identity = app(FuncType::class)->where('type_name', '系統商')->first();
         
         return $this->hasMany(Organization::class, 'parent_id')->where('identity_id', $identity->id);
     }
 
     public function agentRoles()
     {
-        $identity = app(Identity::class)->where('name', '經銷商')->first();
+        $identity = app(FuncType::class)->where('type_name', '經銷商')->first();
         
         return $this->hasMany(Organization::class, 'parent_id')->where('identity_id', $identity->id);
     }
 
     public function customerRoles()
     {
-        $identity = app(Identity::class)->where('name', '一般用戶')->first();
+        $identity = app(FuncType::class)->where('type_name', '一般用戶')->first();
         
         return $this->hasMany(Organization::class, 'parent_id')->where('identity_id', $identity->id);
     }
@@ -678,12 +678,12 @@ class Organization extends AbstractModel
 
     public function identity()
     {
-        return $this->belongsTo(Identity::class, 'identity_id');
+        return $this->belongsTo(FuncType::class, 'identity_id');
     }
 
     public function organizationType()
     {
-        return $this->belongsTo(OrganizationType::class, 'organization_type_id');
+        return $this->belongsTo(FuncType::class, 'organization_type_id');
     }
 
     public function createUser()
