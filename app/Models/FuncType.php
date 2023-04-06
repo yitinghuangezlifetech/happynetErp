@@ -118,8 +118,6 @@ class FuncType extends AbstractModel
 
         $query = $this->newModelQuery();
 
-        //dd($filters);
-
         if(Schema::hasColumn($this->table, 'deleted_at'))
         {
             $query->whereNull('deleted_at');

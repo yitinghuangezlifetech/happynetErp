@@ -2,7 +2,11 @@
 
 namespace App\Exceptions;
 
+use Illuminate\Auth\AuthenticationException;
+use Illuminate\Session\TokenMismatchException;
+use Illuminate\Support\Facades\Redirect;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -44,7 +48,13 @@ class Handler extends ExceptionHandler
     public function register()
     {
         $this->reportable(function (Throwable $e) {
-            //
+            if ($e instanceof TokenMismatchException) {
+                return redirect()->back()->withInput($request->except('_token'))->withErrors(['csrf_token' => 'The CSRF token is invalid. Please try to resubmit the form.']);
+            }
+    
+            if ($e instanceof AuthenticationException) {
+                return redirect()->guest(route('loginForm')); // 重定向到登錄頁面
+            }
         });
     }
 }

@@ -5,9 +5,18 @@ $com = '';
 if($detail->has_relationship == 1) {
     $decodeData = json_decode($detail->relationship, true);
     if (count($decodeData) > 0) {
-        $options = app($decodeData['model'])->get();
+        if (!empty($detail->type_code))
+        {
+            $options = collect([]);
+            $main = app($decodeData['model'])->where('type_code', $detail->type_code)->first();
+            $options = $main->getChilds;
+        }
+        else
+        {
+            $options = app($decodeData['model'])->get();
+        }
         
-        foreach ($options as $option) {
+        foreach ($options??[] as $option) {
             $checked = '';
             if ($option->id == $value) {
                 $checked = 'selected';
