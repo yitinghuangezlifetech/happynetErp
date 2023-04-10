@@ -5,10 +5,10 @@ $com = '';
 if($detail->has_relationship == 1) {
     $decodeData = json_decode($detail->relationship, true);
     if (count($decodeData) > 0) {
-        if (!empty($detail->type_code))
+        if (isset($decodeData['type_code']))
         {
             $options = collect([]);
-            $main = app($decodeData['model'])->where('type_code', $detail->type_code)->first();
+            $main = app($decodeData['model'])->where('type_code', $decodeData['type_code'])->first();
             $options = $main->getChilds;
         }
         else
