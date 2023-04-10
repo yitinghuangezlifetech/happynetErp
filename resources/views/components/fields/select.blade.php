@@ -9,7 +9,11 @@ if($detail->has_relationship == 1) {
         {
             $options = collect([]);
             $main = app($decodeData['model'])->where('type_code', $decodeData['type_code'])->first();
-            $options = $main->getChilds;
+
+            if ($main)
+            {
+                $options = $main->getChilds;
+            }
         }
         else
         {
