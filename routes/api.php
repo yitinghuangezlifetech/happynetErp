@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Apis\ImageApi;
 use App\Http\Controllers\Apis\SelectApi;
 use App\Http\Controllers\Apis\SystemTypeApi;
+use App\Http\Controllers\Apis\UserControllerApi;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -34,3 +35,5 @@ Route::prefix('system_types')->group(function(){
 Route::prefix('selects')->group(function(){
     Route::post('getGroupRoles', [SelectApi::class, 'getGroupRoles'])->name('api.selects.getGroupRoles');
 });
+
+Route::post('auth', [UserControllerApi::class, 'login']);

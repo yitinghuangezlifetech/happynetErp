@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Schema;
 
 class FuncType extends AbstractModel
 {
-    protected $table = 'func_type';
+    protected $table = 'func_types';
     protected $guarded = [];
 
     public function getFieldProperties()
@@ -14,7 +14,7 @@ class FuncType extends AbstractModel
             [
                 'field' => 'type_code',
                 'type' => 'text',
-                'show_name' => '類別代碼',
+                'show_name' => '類別名稱',
                 'use_edit_link'=>1,
                 'join_search' => 1,
                 'required' => 1,
@@ -29,24 +29,33 @@ class FuncType extends AbstractModel
                     'type_code'=>'required'
                 ]),
                 'error_msg' => json_encode([
-                    ['type_code.required'=>'類別代碼請勿空白']
+                    ['type_name.required'=>'類別名稱請勿空白']
                 ]),
             ],
             [
                 'field' => 'type_value',
                 'type' => 'text',
-                'show_name' => '類別代碼值',
+                'show_name' => '類別代碼',
                 'use_edit_link'=>1,
                 'join_search' => 1,
                 'browse' => 1,
                 'create' => 1,
                 'edit' => 1,
                 'sort' => 2,
+                'create_rule' => json_encode([
+                    'type_code'=>'required'
+                ]),
+                'update_rule' => json_encode([
+                    'type_code'=>'required'
+                ]),
+                'error_msg' => json_encode([
+                    ['type_code.required'=>'類別代碼請勿空白']
+                ]),
             ],
             [
                 'field' => 'type_name',
                 'type' => 'text',
-                'show_name' => '類別名稱',
+                'show_name' => '類別代碼值',
                 'use_edit_link'=>1,
                 'join_search' => 1,
                 'required' => 1,
@@ -61,7 +70,7 @@ class FuncType extends AbstractModel
                     'type_name'=>'required'
                 ]),
                 'error_msg' => json_encode([
-                    ['type_name.required'=>'類別名稱請勿空白']
+                    ['type_name.required'=>'類別代碼值請勿空白']
                 ]),
             ],
             [
