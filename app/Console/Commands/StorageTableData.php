@@ -47,7 +47,6 @@ class StorageTableData extends Command
         }
         else
         {
-            Storage::disk('public')->delete('tableData/'.$this->argument('tableName').'.sql');
             Storage::disk('public')->put('tableData/'.$this->argument('tableName').'.sql', $sql);
         }
     }
