@@ -50,7 +50,7 @@ class ProjectRegulation extends AbstractModel
                 'relationship' => json_encode([
                     'model' => 'App\Models\FuncType',
                     'references_field' => 'id',
-                    'type_code' => 'sales_type',
+                    'type_code' => 'sales_types',
                     'show_field' => 'type_name'
                 ]),
                 'create_rule' => json_encode([
@@ -77,7 +77,7 @@ class ProjectRegulation extends AbstractModel
                 'relationship' => json_encode([
                     'model' => 'App\Models\FuncType',
                     'references_field' => 'id',
-                    'type_code' => 'apply_type',
+                    'type_code' => 'apply_types',
                     'show_field' => 'type_name'
                 ]),
                 'create_rule' => json_encode([
@@ -104,7 +104,7 @@ class ProjectRegulation extends AbstractModel
                 'relationship' => json_encode([
                     'model' => 'App\Models\FuncType',
                     'references_field' => 'id',
-                    'type_code' => 'service_type',
+                    'type_code' => 'service_types',
                     'show_field' => 'type_name'
                 ]),
                 'create_rule' => json_encode([
