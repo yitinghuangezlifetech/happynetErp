@@ -42,7 +42,7 @@ class UserSeeder extends Seeder
             if ($role->name == '超級管理員')
             {
                 array_push($arr, [
-                    'id' => '641da01e270e2',
+                    'id' => uniqid(),
                     'group_id' => $role->group_id,
                     'role_id' => $role->id,
                     'account' => 'admin',

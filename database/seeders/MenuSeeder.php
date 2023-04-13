@@ -21,9 +21,17 @@ class MenuSeeder extends Seeder
 
         app(Menu::class)->truncate();
 
-        if (Storage::disk('public')->exists('tableData/menus.txt'))
+        if (Storage::disk('public')->exists('tableData/menus.sql'))
         {
-            $content = json_decode(Storage::disk('public')->get('tableData/menus.txt'), true);
+            //$content = json_decode(preg_replace('/[\r\n]/', '', Storage::disk('public')->get('tableData/menus.txt')), true);
+
+            //dd(preg_replace('/[\r\n]/', '', Storage::disk('public')->get('tableData/menus.txt')));
+
+            DB::unprepared(Storage::disk('public')->get('tableData/menus.sql'));
+
+            $menus = app(Menu::class)->get();
+
+            dd($menus);
 
             if (is_array($content))
             {

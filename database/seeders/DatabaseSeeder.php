@@ -26,12 +26,12 @@ class DatabaseSeeder extends Seeder
         
         $this->call(MenuSeeder::class);
         $this->call(MenuDetailSeeder::class);
-        $this->call(GroupSeeder::class);
-        $this->call(RoleSeeder::class);
-        $this->call(IdentitySeeder::class);
-        $this->call(OrganizationTypeSeeder::class);
-        $this->call(OrganizationSeeder::class);
-        $this->call(UserTypeSeeder::class);
+        // $this->call(GroupSeeder::class);
+        // $this->call(RoleSeeder::class);
+        // $this->call(IdentitySeeder::class);
+        // $this->call(OrganizationTypeSeeder::class);
+        // $this->call(OrganizationSeeder::class);
+        // $this->call(UserTypeSeeder::class);
         $this->call(PermissionSeeder::class);
         $this->call(GroupPermissionSeeder::class);
         $this->call(RolePermissionSeeder::class);

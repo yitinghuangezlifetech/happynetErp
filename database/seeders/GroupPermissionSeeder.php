@@ -17,6 +17,7 @@ class GroupPermissionSeeder extends Seeder {
         app(GroupPermission::class)->truncate();
 
         foreach ($this->getData() as $data) {
+            dd($data);
             app(GroupPermission::class)->create($data);
         }
     }
@@ -25,6 +26,8 @@ class GroupPermissionSeeder extends Seeder {
         $arr = [];
         $permissions = app(Permission::class)->get();
         $groups = app(Group::class)->get();
+
+        dd($permissions);
 
         if ($groups->count() > 0 && $permissions->count() > 0) {
             foreach ($groups as $group) {
