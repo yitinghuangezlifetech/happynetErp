@@ -29,22 +29,26 @@ class StorageTableData extends Command
      */
     public function handle()
     {
-        $arr = [];
-        $logs = DB::select('select * from '.$this->argument('tableName'));
+        $sql = '';
+        $tableData = DB::table($this->argument('tableName'))->get();
 
-        foreach ($logs??[] as $data)
-        {
-            array_push($arr, $data);
+        foreach ($tableData as $row) {
+            $row = (array) $row;
+            $sql .= "INSERT INTO ".$this->argument('tableName')." (";
+            $sql .= implode(', ', array_keys($row)) . ') VALUES (';
+            $sql .= implode(', ', array_map(function ($value) {
+                return '"' . addslashes($value) . '"';
+            }, array_values($row))) . ");\n";
         }
 
-        if (!Storage::disk('public')->exists('tableData/'.$this->argument('tableName').'.txt'))
+        if (!Storage::disk('public')->exists('tableData/'.$this->argument('tableName').'.sql'))
         {
-            Storage::disk('public')->put('tableData/'.$this->argument('tableName').'.txt', json_encode($arr));
+            Storage::disk('public')->put('tableData/'.$this->argument('tableName').'.sql', $sql);
         }
         else
         {
-            Storage::disk('public')->delete('tableData/'.$this->argument('tableName').'.txt');
-            Storage::disk('public')->put('tableData/'.$this->argument('tableName').'.txt', json_encode($arr));
+            Storage::disk('public')->delete('tableData/'.$this->argument('tableName').'.sql');
+            Storage::disk('public')->put('tableData/'.$this->argument('tableName').'.sql', $sql);
         }
     }
 }

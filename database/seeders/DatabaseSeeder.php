@@ -35,7 +35,7 @@ class DatabaseSeeder extends Seeder
         $this->call(PermissionSeeder::class);
         $this->call(GroupPermissionSeeder::class);
         $this->call(RolePermissionSeeder::class);
-        $this->call(UserSeeder::class);
+        //$this->call(UserSeeder::class);
 
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
     }
