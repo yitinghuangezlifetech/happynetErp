@@ -30,9 +30,9 @@ use App\Http\Controllers\proxyAccountController;
 |
 */
 
-Route::get('login', [AuthController::class, 'loginForm'])->name('loginForm');
-Route::post('login', [AuthController::class, 'login'])->name('login');
-Route::get('logout', [AuthController::class, 'logout'])->name('logout');
+Route::get('login', [AuthController::class, 'loginForm'])->name('proxy.loginForm');
+Route::post('login', [AuthController::class, 'login'])->name('proxy.login');
+Route::get('logout', [AuthController::class, 'logout'])->name('proxy.logout');
 
 
 Route::middleware('auth:proxy')->group(function(){
