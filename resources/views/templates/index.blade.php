@@ -11,8 +11,8 @@
   <div class="col-md-12">
     <div class="card">
       @include('components.top_banner_bar', ['menu'=>$menu])
-      <div class="card-body">
-        <table class="table table-bordered">
+      <div class="card-body table-responsive p-0">
+        <table class="table table-bordered text-nowrap">
           <thead>
             <tr>
               <th class="bg-gradient-secondary" style="text-align: center"><input type="checkbox" class="checkAll"></th>
