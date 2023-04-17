@@ -12,8 +12,6 @@ class FuncTypeController extends BasicController
 {
     public function index(Request $request) 
     {
-
-
         if ($request->user()->cannot('browse_'.$this->slug,  $this->model)) 
         {
             return view('alerts.error', [
@@ -22,37 +20,29 @@ class FuncTypeController extends BasicController
             ]);
         }
 
-        $list = (new Collection([]))->paginate(20); 
         $filters = $this->getFilters($request);
-        $parent_id;
-        $filters['slug'] = $this->slug;
+        $filters['type_code'] = ($request->type_code != $this->slug) ? $request->type_code : NULL;
 
-        $orderBy='created_at'; 
-        $sort='DESC';
-        $querySysFunc = FuncType::query()->where('type_code', $filters['slug'])->first();
-        // dd($querySysFunc->id .' '. $querySysFunc->parent_id .' '. $filters['slug']);
-        if(!empty($filters['slug']) && !is_null($querySysFunc)) {
-          
-            $parent_id= $querySysFunc->id;
+        if ($this->slug != 'func_types')
+        {
+            $list = (new Collection([]))->paginate($filters['rows']??20); 
+            $data = $this->model->getDataByTypeCode($this->slug);
 
-            $queryList = app(FuncType::class)->newModelQuery();
-            $queryList->where('parent_id', $querySysFunc->id)
-            // $queryList->where('status', 1)
-            ->get();
-
-            if ($queryList->count() > 0)
+            if ($data)
             {
-                $list = $queryList->paginate($filters['rows']??10);
+                $list = $data->getChilds($filters['type_code'])->paginate($filters['rows']??20);
             }
         }
-        $this->indexView ='func_type.index';
-        if ($this->menu->sortable_enable == 1) 
+        else
         {
-            $this->indexView = 'func_type.sortable';
+            $list = $this->model->getListByFilters($this->menu->menuDetails, $filters);
         }
+
+        $this->indexView = 'func_type.sortable';
+
         return view($this->indexView, [
-            'parent_id' => $parent_id,
             'filters' => $filters,
+            'parent_id' => $data->id,
             'list' => $list
         ]);
     }

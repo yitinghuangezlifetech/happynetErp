@@ -208,7 +208,7 @@ class RoleController extends BasicController
                 ]);
             }
 
-            $data = $this->model->editData($id);
+            $data = $this->model->getData($id);
             
             app(User::class)->where('role_id', $id)->delete();
             app(RolePermission::class)->where('role_id', $id)->delete();

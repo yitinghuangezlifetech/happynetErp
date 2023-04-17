@@ -11,14 +11,9 @@
   <div class="col-md-12">
     <div class="card">
       <div class="card-header">
-          @if($menu->search_component == 1)
-          <button type="button" class="btn bg-gradient-secondary btn-sm searchBtn" style="float: left; margin-left: 5px;" data-toggle="modal" data-target="#exampleModal"><i class="fas fa-search"></i>&nbsp;查詢</button>
-          @endif
           @can('create_'.$menu->slug, app($menu->model))
-          <!-- <button type="button" class="btn bg-gradient-dark btn-sm" style="float: left; margin-left: 5px;" onclick="location.href='{{route($menu->slug.'.create')}}'"><i class="fas fa-plus"></i>&nbsp;建立{{$menu->name}}資料</button> -->
           <button type="button" class="btn bg-gradient-dark btn-sm" style="float: left; margin-left: 5px;" onclick="location.href='{{route($menu->slug.'.create','parent_id='.$parent_id)}}'"><i class="fas fa-plus"></i>&nbsp;建立{{$menu->name}}資料</button>
           <input type="hidden" name="parent_id" value="{{ $parent_id }}">
-
           @endcan
           @can('delete_'.$menu->slug, app($menu->model))
           <button type="button" class="btn bg-gradient-secondary btn-sm deleteBtn" style="float: left; margin-left: 5px;"><i class="fas fa-trash-alt"></i>&nbsp;刪除</button>

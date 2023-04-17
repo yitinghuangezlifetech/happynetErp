@@ -8,20 +8,9 @@
                 @csrf
                 <div class="card-body">
                     @php
-                        $i = 2;
+                        $i = 1;
                     @endphp
                     <div class="row">
-                        <div class="col-sm-6">
-                            <div class="form-group">
-                                <label for="rows"> 顯示筆數</label>
-                                <select class="form-control" name="rows">
-                                    <option value="">請選擇</option>
-                                    @for($i=10;$i<=200;$i+=20)
-                                    <option value="{{$i}}" @if($filters['rows']==$i){{'selected'}}@endif>{{$i}}</option>
-                                    @endfor
-                                </select>
-                            </div>
-                        </div>
                     @if($menu->menuSearchDetails->count() > 0)
                         @foreach($menu->menuSearchDetails as $detail)
                             @php

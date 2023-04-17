@@ -37,7 +37,14 @@ class StorageTableData extends Command
             $sql .= "INSERT INTO ".$this->argument('tableName')." (";
             $sql .= implode(', ', array_keys($row)) . ') VALUES (';
             $sql .= implode(', ', array_map(function ($value) {
-                return '"' . addslashes($value) . '"';
+                if (empty($value))
+                {
+                    return 'NULL';
+                }
+                else
+                {
+                    return '"' . addslashes($value) . '"';
+                }
             }, array_values($row))) . ");\n";
         }
 

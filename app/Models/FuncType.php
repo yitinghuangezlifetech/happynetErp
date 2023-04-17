@@ -122,37 +122,19 @@ class FuncType extends AbstractModel
         ];
     }
 
-    public function getListByFilters($menuDetails, $filters=[], $orderBy='created_at', $sort='DESC')
+    public function getChilds($typeCode=null)
     {
-
-        $query = $this->newModelQuery();
-
-        if(Schema::hasColumn($this->table, 'deleted_at'))
+        if (!is_null($typeCode))
         {
-            $query->whereNull('deleted_at');
+            return $this->hasMany(FuncType::class, 'parent_id')
+                ->where('type_code', 'like', '%'.$typeCode.'%')
+                ->orderBy('created_at', 'DESC');
         }
-
-        if ( count($filters) > 0)
+        else
         {
-            if(!empty($filters['slug'])) {
-               
-                $query->where('type_code', $filters['slug']);
-                
-
-            }
+            return $this->hasMany(FuncType::class, 'parent_id')
+                ->orderBy('created_at', 'DESC');
         }
-
-        $query->orderBy($orderBy, $sort);
-        $results = $query->paginate($filters['rows']??10);
-        $results->appends($filters);
-
-        return $results;
-    }
-
-
-    public function getChilds()
-    {
-        return $this->hasMany(FuncType::class, 'parent_id');
     }
 
     public function parent()
@@ -163,5 +145,10 @@ class FuncType extends AbstractModel
     public function systemTypes()
     {
         return $this->hasManyThrough(SystemType::class, GroupSystemTypeLog::class, 'group_id', 'id', 'id', 'system_type_id');
+    }
+
+    public function getDataByTypeCode($typeCode)
+    {
+        return $this->where('type_code', $typeCode)->first();
     }
 }

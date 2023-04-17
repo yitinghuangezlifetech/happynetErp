@@ -93,7 +93,7 @@ abstract class AbstractModel extends Model implements InterfaceModel
         }
 
         $query->orderBy($orderBy, $sort);
-        $results = $query->paginate($filters['rows']??10);
+        $results = $query->paginate($filters['rows']??20);
         $results->appends($filters);
 
         return $results;
@@ -153,7 +153,7 @@ abstract class AbstractModel extends Model implements InterfaceModel
         return $id;
     }
 
-    public function editData($id)
+    public function getData($id)
     {
        return $this->where('id', $id)->first();
     }

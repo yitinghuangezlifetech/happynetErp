@@ -179,7 +179,7 @@ class MenuController extends BasicController
         }
 
         try {
-            $data = $this->model->editData($id);
+            $data = $this->model->getData($id);
 
             if ($data->getChilds->count() > 0)
             {
