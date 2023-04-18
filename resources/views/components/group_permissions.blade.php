@@ -23,12 +23,15 @@
             <tbody>
             @foreach($menu->getChilds as $child)
                 <tr>
-                    <td style="vertical-align: middle">{{ $child->menu_name }}</td>
+                    <td style="vertical-align: middle;text-align:center">
+                        {{ $child->menu_name }}<br>
+                        <button type="button" class="btn btn-outline-secondary btn-xs selectAll" data-menuid="{{$child->id}}">全選</button>
+                    </td>
                     <td>
                         @foreach($child->permissions??[] as $item)
                         @php $action = explode('_', $item->code); @endphp
                         <div class="form-check">
-                        <input type="checkbox" class="form-check-input menuIem subMenu_{{$menu->id}}" id="{{ $item->code }}" name="permissions[]" value="{{ $item->id }}" @if(isset($hasPermissions[$item->id])){{'checked'}}@endif>
+                        <input type="checkbox" class="form-check-input menuIem subMenu_{{$menu->id}} childMenu_{{$child->id}}" id="{{ $item->code }}" name="permissions[]" value="{{ $item->id }}" @if(isset($hasPermissions[$item->id])){{'checked'}}@endif>
                         <label class="form-check-label" for="{{ $item->code }}">{{ ucwords($action[0]) }}</label>
                         </div>
                         @endforeach

@@ -41,7 +41,7 @@
                 <select class="custom-select rounded-0" name="group_id" id="group_id">
                   <option value="">請選擇</option>
                   @foreach($groups??[] as $group)
-                  <option value="{{$group->id}}">{{$group->name}}</option>
+                  <option value="{{$group->id}}" @if($data->group_id == $group->id){{'selected'}}@endif>{{$group->name}}</option>
                     @foreach($group->getChilds??[] as $child)
                       @include('groups.option', ['child'=>$child, 'value'=>$data->group_id])
                     @endforeach
@@ -201,6 +201,18 @@ $('body').on('click', '#checkAll', function(){
     })
   }
 });
+
+$('body').on('click', '.selectAll', function(){
+  const menuId = $(this).data('menuid');
+
+  $(`.childMenu_${menuId}`).each(function(){
+    if ($(this).prop('checked')) {
+      $(this).prop('checked', false);
+    } else {
+      $(this).prop('checked', true);
+    }
+  })
+})
 
 let checkBtn = (id) => {
   $(`.subMenu_${id}`).each(function(){

@@ -142,6 +142,11 @@ class MenuController extends BasicController
 
                 $this->model->updateData($id, $formData);
 
+                $menu = $this->model->getData($id);
+
+                $this->createOrUpdatePermission($menu);
+                Artisan::call('db:seed --class=MenuDetailSeeder');
+
                 DB::commit();
                 
                 return view('alerts.success',[
@@ -251,7 +256,6 @@ class MenuController extends BasicController
 
     public function createPermission($menu)
     {
-        $pass = false;
         $actions = ['browse', 'create', 'edit', 'update', 'delete'];
 
         if (empty($menu->slug) && is_null($menu->parent_id))
@@ -272,6 +276,30 @@ class MenuController extends BasicController
                         'code' => $action.'_'.$menu->slug
                     ]);
                 }
+            }
+        }
+    }
+
+    public function createOrUpdatePermission($menu)
+    {
+        $permissions = app(Permission::class)->where('menu_id', $menu->id)->delete();
+
+        $actions = ['browse', 'create', 'edit', 'update', 'delete'];
+
+        foreach ($actions as $action)
+        {
+            $log = app(Permission::class)
+                ->where('menu_id', $menu->id)
+                ->where('code', $action.'_'.$menu->slug)
+                ->first();
+            
+            if (!$log)
+            {
+                app(Permission::class)->create([
+                    'id' => uniqid(),
+                    'menu_id' => $menu->id,
+                    'code' => $action.'_'.$menu->slug
+                ]);
             }
         }
     }
