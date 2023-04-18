@@ -42,7 +42,7 @@ class FuncTypeController extends BasicController
 
         return view($this->indexView, [
             'filters' => $filters,
-            'parent_id' => $data->id,
+            'parent_id' => $data->id??null,
             'list' => $list
         ]);
     }
