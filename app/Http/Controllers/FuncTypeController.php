@@ -23,19 +23,12 @@ class FuncTypeController extends BasicController
         $filters = $this->getFilters($request);
         $filters['type_code'] = ($request->type_code != $this->slug) ? $request->type_code : NULL;
 
-        if ($this->slug != 'func_types')
-        {
-            $list = (new Collection([]))->paginate($filters['rows']??20); 
-            $data = $this->model->getDataByTypeCode($this->slug);
+        $list = (new Collection([]))->paginate($filters['rows']??20); 
+        $data = $this->model->getDataByTypeCode($this->slug);
 
-            if ($data)
-            {
-                $list = $data->getChilds($filters['type_code'])->paginate($filters['rows']??20);
-            }
-        }
-        else
+        if ($data)
         {
-            $list = $this->model->getListByFilters($this->menu->menuDetails, $filters);
+            $list = $data->getChilds($filters)->paginate($filters['rows']??20);
         }
 
         $this->indexView = 'func_type.sortable';

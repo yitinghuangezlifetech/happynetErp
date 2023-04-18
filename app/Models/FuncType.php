@@ -122,13 +122,26 @@ class FuncType extends AbstractModel
         ];
     }
 
-    public function getChilds($typeCode=null)
+    public function getChilds($filters=null)
     {
-        if (!is_null($typeCode))
+        $query = $this->hasMany(FuncType::class, 'parent_id');
+
+        if (!is_null($filters))
         {
-            return $this->hasMany(FuncType::class, 'parent_id')
-                ->where('type_code', 'like', '%'.$typeCode.'%')
-                ->orderBy('created_at', 'DESC');
+            if (isset($filters['type_code'])) 
+            {
+                $query->where('type_code', 'like', '%'.$filters['type_code'].'%');
+            }
+            if (isset($filters['type_value'])) 
+            {
+                $query->where('type_value', 'like', '%'.$filters['type_value'].'%');
+            }
+            if (isset($filters['type_name'])) 
+            {
+                $query->where('type_name', 'like', '%'.$filters['type_name'].'%');
+            }
+
+            return $query->orderBy('created_at', 'DESC');
         }
         else
         {
