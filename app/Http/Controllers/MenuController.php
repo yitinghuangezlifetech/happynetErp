@@ -15,8 +15,7 @@ class MenuController extends BasicController
 {
     public function index(Request $request)
     {
-        $list = app(Menu::class)->where('no_show', 2)
-            ->whereNull('parent_id')
+        $list = app(Menu::class)->whereNull('parent_id')
             ->orderBy('sort', 'ASC')
             ->orderBy('created_at', 'DESC')
             ->get();

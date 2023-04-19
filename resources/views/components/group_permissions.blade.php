@@ -18,10 +18,10 @@
             </div>
         </div>
         <div class="card-body">
-            @if($menu->getChilds->count() > 0)
+            @if($menu->getAllChilds->count() > 0)
             <table class="table">
             <tbody>
-            @foreach($menu->getChilds as $child)
+            @foreach($menu->getAllChilds as $child)
                 <tr>
                     <td style="vertical-align: middle;text-align:center">
                         {{ $child->menu_name }}<br>
