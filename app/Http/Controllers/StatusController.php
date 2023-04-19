@@ -49,7 +49,9 @@ class StatusController extends BasicController
             $data->{$request->field} = $request->status;
             $data->save();
 
-            if ($request->slug == 'project_products')
+            $specials = ['projects', 'project_products'];
+
+            if (in_array($request->slug, $specials))
             {
                 if ($request->status == 2)
                 {
