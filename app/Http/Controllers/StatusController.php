@@ -49,6 +49,20 @@ class StatusController extends BasicController
             $data->{$request->field} = $request->status;
             $data->save();
 
+            if ($request->slug == 'project_products')
+            {
+                if ($request->status == 2)
+                {
+                    $data->invalid_date = date('Y-m-d H:i:s');
+                    $data->save();
+                }
+                else
+                {
+                    $data->invalid_date = NULL;
+                    $data->save();
+                }
+            }
+
             return response()->json([
                 'status' => true,
                 'message' => '狀態更新成功',
