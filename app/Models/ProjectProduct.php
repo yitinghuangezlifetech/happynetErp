@@ -280,11 +280,62 @@ class ProjectProduct extends AbstractModel
                 ]),
             ],
             [
+                'field' => 'engineer',
+                'type' => 'text',
+                'show_name' => '技術員',
+                'join_search' => 1,
+                'required' => 1,
+                'browse' => 2,
+                'create' => 1,
+                'edit' => 1,
+                'sort' => 16,
+                'create_rule' => json_encode([
+                    'engineer'=>'required'
+                ]),
+                'update_rule' => json_encode([
+                    'engineer'=>'required'
+                ]),
+                'error_msg' => json_encode([
+                    ['engineer.required'=>'技術員請勿空白']
+                ]),
+            ],
+            [
+                'field' => 'auditor',
+                'type' => 'text',
+                'show_name' => '稽核人',
+                'join_search' => 1,
+                'required' => 2,
+                'browse' => 2,
+                'create' => 1,
+                'edit' => 1,
+                'sort' => 17,
+            ],
+            [
+                'field' => 'status',
+                'type' => 'radio',
+                'show_name' => '狀態',
+                'browse' => 1,
+                'create' => 1,
+                'edit' => 1,
+                'sort' => 18,
+                'options' => json_encode([
+                    ['text'=>'啟用', 'value'=>1, 'default'=>0],
+                    ['text'=>'停用', 'value'=>2, 'default'=>1],
+                ])
+            ],
+            [
                 'field' => 'created_at',
                 'type' => 'date_time',
                 'show_name' => '資料建立日期',
                 'browse' => 1,
-                'sort' => 2
+                'sort' => 19
+            ],
+            [
+                'field' => 'invalid_date',
+                'type' => 'date_time',
+                'show_name' => '停用日期',
+                'browse' => 1,
+                'sort' => 20
             ],
         ];
     }
