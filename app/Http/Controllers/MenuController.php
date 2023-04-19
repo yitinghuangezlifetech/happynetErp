@@ -144,10 +144,10 @@ class MenuController extends BasicController
 
                 $menu = $this->model->getData($id);
 
+                DB::commit();
+
                 $this->createOrUpdatePermission($menu);
                 Artisan::call('db:seed --class=MenuDetailSeeder');
-
-                DB::commit();
                 
                 return view('alerts.success',[
                     'msg'=>'資料更新成功',
