@@ -313,8 +313,8 @@ class Project extends AbstractModel
                 'type' => 'radio',
                 'show_name' => '狀態',
                 'browse' => 1,
-                'create' => 1,
-                'edit' => 1,
+                'create' => 2,
+                'edit' => 2,
                 'sort' => 18,
                 'options' => json_encode([
                     ['text'=>'啟用', 'value'=>1, 'default'=>0],
