@@ -27,9 +27,9 @@
                         <i class="fas fa-trash-alt btn delBtn" title="刪除" data-id="{{ $data->id }}" onmousedown="menuDelete('{{ $data->id }}')"></i>
                       </div>
                   </div>
-                  @if($data->getChilds->isNotEmpty())
+                  @if($data->getAllChilds->isNotEmpty())
                       <ol class="dd-list">
-                      @foreach($data->getChilds as $child)
+                      @foreach($data->getAllChilds as $child)
                           <li class="dd-item" data-id="{{$child->id}}">
                               <div class="dd-handle" style="z-index: 0;vertical-align: middle">
                                   {{$child->menu_name}}
