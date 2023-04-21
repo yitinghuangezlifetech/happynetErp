@@ -23,9 +23,10 @@ class FeeRateRule extends AbstractModel
                 'sort' => 0,
                 'has_relationship' => 1,
                 'relationship' => json_encode([
-                    'model' => 'App\Models\FeeRateType',
+                    'model' => 'App\Models\FuncType',
                     'references_field' => 'id',
-                    'show_field' => 'name'
+                    'type_code' => 'rate_types',
+                    'show_field' => 'type_name'
                 ]),
                 'create_rule' => json_encode([
                     'fee_rate_type_id'=>'required'

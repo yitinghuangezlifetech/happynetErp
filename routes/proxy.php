@@ -40,7 +40,7 @@ Route::middleware('auth:proxy')->group(function(){
     Route::get('/', [DashboardController::class, 'index'])->name('proxy.dashboard');
 
     Route::prefix('proxy_accounts')->group(function(){
-        Route::get('login/{id}', [proxyAccountController::class, 'login'])->name('proxy_accounts.login');
+        Route::get('login/{id}', [proxyAccountController::class, 'login'])->name('proxy.proxy_accounts.login');
     });
 
     if (Schema::hasTable('menus'))
@@ -68,8 +68,8 @@ Route::middleware('auth:proxy')->group(function(){
                 }
 
                 Route::prefix($item->slug)->group(function()use($item, $controller){
-                    Route::post('multipleDestroy', $controller.'@multipleDestroy')->name($item->slug.'.multipleDestroy');
-                    Route::post('importData', $controller.'@importData')->name($item->slug.'.importData');
+                    Route::post('multipleDestroy', $controller.'@multipleDestroy')->name('proxy.'.$item->slug.'.multipleDestroy');
+                    Route::post('importData', $controller.'@importData')->name('proxy.'.$item->slug.'.importData');
                 });
             }
         }

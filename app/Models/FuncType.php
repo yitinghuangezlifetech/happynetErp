@@ -14,7 +14,7 @@ class FuncType extends AbstractModel
             [
                 'field' => 'type_code',
                 'type' => 'text',
-                'show_name' => '類別名稱',
+                'show_name' => '類別代碼',
                 'use_edit_link'=>1,
                 'join_search' => 1,
                 'required' => 1,
@@ -35,7 +35,7 @@ class FuncType extends AbstractModel
             [
                 'field' => 'type_value',
                 'type' => 'text',
-                'show_name' => '類別代碼',
+                'show_name' => '類別代碼值',
                 'use_edit_link'=>1,
                 'join_search' => 1,
                 'browse' => 1,
@@ -55,7 +55,7 @@ class FuncType extends AbstractModel
             [
                 'field' => 'type_name',
                 'type' => 'text',
-                'show_name' => '類別代碼值',
+                'show_name' => '類別名稱',
                 'use_edit_link'=>1,
                 'join_search' => 1,
                 'required' => 1,
@@ -90,8 +90,8 @@ class FuncType extends AbstractModel
                 'type' => 'radio',
                 'show_name' => '狀態',
                 'browse' => 1,
-                'create' => 1,
-                'edit' => 1,
+                'create' => 2,
+                'edit' => 2,
                 'sort' => 5,
                 'options' => json_encode([
                     ['text'=>'啟用', 'value'=>1, 'default'=>0],
@@ -104,8 +104,8 @@ class FuncType extends AbstractModel
                 'show_name' => '顯示',
                 'required' => 1,
                 'browse' => 1,
-                'create' => 1,
-                'edit' => 1,
+                'create' => 2,
+                'edit' => 2,
                 'sort' => 6,
                 'options' => json_encode([
                     ['text'=>'顯示', 'value'=>1, 'default'=>0],
@@ -163,5 +163,20 @@ class FuncType extends AbstractModel
     public function getDataByTypeCode($typeCode)
     {
         return $this->where('type_code', $typeCode)->first();
+    }
+
+    public function getChildsByTypeCode($typeCode)
+    {
+        $data = $this->where('type_code', $typeCode)->first();
+
+        if ($data)
+        {
+            return app(FuncType::class)
+                ->where('parent_id', $data->id)
+                ->orderBy('created_at', 'DESC')
+                ->get();
+        }
+
+        return (new Collection([]))->get(); 
     }
 }
