@@ -51,7 +51,8 @@ class OrganizationSeeder extends Seeder
             }   
 
             $group    = app(Group::class)->where('name', '!=', '系統管理')->inRandomOrder()->first();
-            $identity = app(FuncType::class)->where('type_name', '=', $group->name)->first();
+            $type = app(FuncType::class)->where('type_code', 'identity_types')->first();
+            $identity = $type->getChildNoFilter;
 
             $data->organization_type_id = $type->id;
             $data->identity_id = $identity->id;
