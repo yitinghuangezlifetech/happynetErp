@@ -152,7 +152,7 @@ class FuncType extends AbstractModel
 
     public function getChildNoFilter()
     {
-        return $this->hasMany(FuncType::class, 'parent_id')->inRandomOrder()->first();
+        return $this->hasMany(FuncType::class, 'parent_id');
     }
 
     public function parent()
