@@ -17,7 +17,17 @@ if($detail->has_relationship == 1) {
         }
         else
         {
-            $options = app($decodeData['model'])->get();
+            if (isset($decodeData['parent_id']))
+            {
+                if ($decodeData['parent_id']=='')
+                {
+                    $options = app($decodeData['model'])->whereNull('parent_id')->get();
+                }
+            }
+            else
+            {
+                $options = app($decodeData['model'])->get();
+            }
         }
         
         foreach ($options??[] as $option) {

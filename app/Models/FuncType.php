@@ -130,15 +130,15 @@ class FuncType extends AbstractModel
         {
             if (isset($filters['type_code'])) 
             {
-                $query->where('type_code', 'like', '%'.$filters['type_code'].'%');
+                $query->where('type_code', 'like', '"%'.$filters['type_code'].'%"');
             }
             if (isset($filters['type_value'])) 
             {
-                $query->where('type_value', 'like', '%'.$filters['type_value'].'%');
+                $query->where('type_value', 'like', '"%'.$filters['type_value'].'%"');
             }
             if (isset($filters['type_name'])) 
             {
-                $query->where('type_name', 'like', '%'.$filters['type_name'].'%');
+                $query->where('type_name', 'like', '"%'.$filters['type_name'].'%"');
             }
 
             return $query->orderBy('created_at', 'DESC');

@@ -19,6 +19,7 @@ use App\Http\Controllers\ReportController;
 use App\Http\Controllers\PendingCheckController;
 use App\Http\Controllers\QuestionnaireController;
 use App\Http\Controllers\proxyAccountController;
+use App\Http\Controllers\BonusGroupController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -41,6 +42,9 @@ Route::middleware('auth:web')->group(function(){
 
     Route::prefix('menus')->group(function(){
         Route::post('sort', [MenuController::class, 'sort'])->name('menus.sort');
+    });
+    Route::prefix('bouns_groups')->group(function(){
+        Route::post('sort', [BonusGroupController::class, 'sort'])->name('bouns_groups.sort');
     });
     
     Route::prefix('users')->group(function(){
