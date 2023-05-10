@@ -64,6 +64,5 @@
 
 @include('layouts.js')
 @yield('js')
-@yield('second_js')
 </body>
 </html>

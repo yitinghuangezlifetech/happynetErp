@@ -18,8 +18,10 @@ class MenuDetailSeeder extends Seeder
     {
         app(MenuDetail::class)->truncate();
 
-        foreach ($this->getData() as $data)
+        foreach ($this->getData() as $sort=>$data)
         {
+            $data['sort'] = $sort;
+            
             app(MenuDetail::class)->create($data);
         }
     }

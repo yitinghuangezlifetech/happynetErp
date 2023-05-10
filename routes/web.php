@@ -20,6 +20,7 @@ use App\Http\Controllers\PendingCheckController;
 use App\Http\Controllers\QuestionnaireController;
 use App\Http\Controllers\proxyAccountController;
 use App\Http\Controllers\BonusGroupController;
+use App\Http\Controllers\SpeedApplySetController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -68,6 +69,10 @@ Route::middleware('auth:web')->group(function(){
     Route::prefix('sortables')->group(function(){
         Route::post('sort', [SortableController::class, 'sort'])->name('sortables.sort');
         Route::post('hierarchySort', [SortableController::class, 'hierarchySort'])->name('sortables.hierarchySort');
+    });
+
+    Route::prefix('speed_apply_sets')->group(function(){
+        Route::post('preview', [SpeedApplySetController::class, 'preview'])->name('speed_apply_sets.preview');
     });
 
     if (Schema::hasTable('menus'))

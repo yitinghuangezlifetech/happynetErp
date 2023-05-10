@@ -195,6 +195,7 @@
         @endif
     </div>
   </div>
+  </div>
   @if($menu->seo_enable == 1)
   @include('components.seo', ['data'=>$data->seo, 'id'=>optional($data->seo)->id, 'model'=>$menu->model])
   @endif
