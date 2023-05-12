@@ -244,7 +244,7 @@
         <div class="card-body">
           <div class="form-group row">
             <label for="topic_type_${row}">欄位屬性</label>
-            <select class="custom-select form-control-border topicType" name="field[${row}][field_attribute_id]" id="field_attribute_${row}" data-row="${row}" required>
+            <select class="custom-select form-control-border topicType" name="field[${row}][field_attribute]" id="field_attribute_${row}" data-row="${row}" required>
               <option value="">請選擇欄位屬性</option>
               @foreach($types??[] as $type)
               <option value="{{$type->val}}">{{$type->name}}</option>
@@ -286,7 +286,7 @@
         <div class="card-body">
           <div class="form-group row">
             <label for="field_attribute_${row}_${item}_${subRow}">欄位屬性</label>
-            <select class="custom-select form-control-border childTopicType" name=field[${row}][items][${item}][child][${subRow}][field_attribute_id]" id="field_attribute_${row}_${item}_${subRow}" data-row="${row}" data-item="${item}" data-subrow="${subRow}" required">
+            <select class="custom-select form-control-border childTopicType" name=field[${row}][items][${item}][child][${subRow}][field_attribute]" id="field_attribute_${row}_${item}_${subRow}" data-row="${row}" data-item="${item}" data-subrow="${subRow}" required">
               <option value="">請選擇欄位屬性</option>
               @foreach($types??[] as $type)
               <option value="{{$type->val}}">{{$type->name}}</option>
@@ -354,7 +354,7 @@
                       <button type="button" class="btn btn-xs childMultipleMinus" data-row="${row}" data-item="${item}" data-subrow="${subRow}" data-itemcount="${itemCount}"><i class="fas fa-minus"></i></button>
                   </span>
                   <span class="input-group-text">
-                      <button type="button" class="btn btn-xs childMultiplePlus" data-row="${row}" data-item="${item}" data-subrow="${subRow}" data-itemcount="${itemCount}">><i class="fas fa-plus"></i></button>
+                      <button type="button" class="btn btn-xs childMultiplePlus" data-row="${row}" data-item="${item}" data-subrow="${subRow}" data-itemcount="${itemCount}"><i class="fas fa-plus"></i></button>
                   </span>
                 </div>
               </div>
@@ -436,24 +436,25 @@
 
     $('body').on('click', '.childMultiplePlus', function(){
       var row = $(this).data('row');
+      var item = $(this).data('item')
       var subRow = $(this).data('subrow');
-      var itemCount = parseInt($('.content_'+row+'_'+subRow+' div[id^="child_item_"]').length);
+      var itemCount = parseInt($(`.content_${row}_${item}_${subRow} div[id^="child_item_"]`).length);
       var str = `
-        <div class="col-sm-12" id="child_item_${row}_${subRow}_${itemCount}" style="margin-top: 10px;">
+        <div class="col-sm-12" id="child_item_${row}_${item}_${subRow}_${itemCount}" style="margin-top: 10px;">
           <div class="input-group">
-            <input type="text" class="form-control" name="field[${row}][child][${subRow}][items][${itemCount}][name]" placeholder="請輸入選項名稱" required>
+            <input type="text" class="form-control" name="field[${row}][items][${item}][child][${subRow}][items][${itemCount}][name]" placeholder="請輸入選項名稱" required>
             <div class="input-group-append">
               <span class="input-group-text">
-                  <button type="button" class="btn btn-xs childMultipleMinus" data-row="${row}" data-subrow="${subRow}" data-item="${itemCount}"><i class="fas fa-minus"></i></button>
+                  <button type="button" class="btn btn-xs childMultipleMinus" data-row="${row}" data-subrow="${subRow}" data-item="${item}" data-itemcount="${itemCount}"><i class="fas fa-minus"></i></button>
               </span>
               <span class="input-group-text">
-                  <button type="button" class="btn btn-xs childMultiplePlus" data-row="${row}" data-subrow="${subRow}" data-item="${itemCount}"><i class="fas fa-plus"></i></button>
+                  <button type="button" class="btn btn-xs childMultiplePlus" data-row="${row}" data-subrow="${subRow}" data-item="${item}" data-itemcount="${itemCount}"><i class="fas fa-plus"></i></button>
               </span>
             </div>
           </div>
         </div>
       `;
-      $(`.content_${row}_${subRow}`).append(str);
+      $(`.content_${row}_${item}_${subRow}`).append(str);
     })
 
     $('body').on('click', '.multipleMinus', function(){
@@ -469,7 +470,7 @@
             icon: 'warning',
         })
       } else {
-        $('#item_'+item).remove();
+        $(`#item_${row}_${item}`).remove();
       }
     })
 
@@ -477,7 +478,8 @@
       var row = $(this).data('row');
       var subRow = $(this).data('subrow');
       var item = $(this).data('item');
-      var itemCount = parseInt($(`.content_${row}_${subRow} div[id^="child_item_"]`).length) - 1;
+      var parentItemCount = $(this).data('itemcount');
+      var itemCount = parseInt($(`.content_${row}_${item}_${subRow} div[id^="child_item_"]`).length) - 1;
       
       if (itemCount === 0) {
         Swal.fire({
@@ -487,7 +489,7 @@
             icon: 'warning',
         })
       } else {
-        $(`#child_item_${row}_${subRow}_${itemCount}`).remove();
+        $(`#child_item_${row}_${item}_${subRow}_${parentItemCount}`).remove();
       }
     })
   })

@@ -203,7 +203,116 @@
         <button type="button" class="btn btn-block btn-outline-secondary btn-sm addSubject" style="color:white"><i class="fas fa-plus-circle"></i> 增加項目</button>
       </div>
     </div>
-    <div class="card-body" id="subjectContent"></div>
+    <div class="card-body" id="subjectContent">
+    @foreach($data->contents??[] as $k=>$content)
+      <div class="card card-secondary disabled" id="car_{{$k}}" style="margin-top: 10px;">
+        <input type="hidden" name="field[{{$k}}][sort]" id="sort_{{$k}}" value="{{$content->sort}}">
+        <div class="card-header">
+          <h3 class="card-title main-title">項目{{$content->sort+=1}}</h3>
+          <div style="float: right;">
+            <table>
+              <tr>
+                <td><button type="button" class="btn btn-block btn-outline-secondary btn-sm removeSubject" style="color:white;" data-row="{{$k}}"><i class="fas fa-trash-alt"></i>&nbsp;刪除</button></td>
+              </tr>
+            </table>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="form-group row">
+            <label for="topic_type_{{$k}}">欄位屬性</label>
+            <select class="custom-select form-control-border topicType" name="field[{{$k}}][field_attribute]" id="field_attribute_{{$k}}" data-row="{{$k}}" required>
+              <option value="">請選擇欄位屬性</option>
+              @foreach($types??[] as $type)
+              <option value="{{$type->val}}" @if($content->field_attribute == $type->val){{'selected'}}@endif>{{$type->name}}</option>
+              @endforeach
+            </select>
+          </div>
+          <div class="form-group row">
+            <label for="subject_${row}">欄位名稱</label>
+            <input type="text" class="form-control" name="field[{{$k}}][title]" id="subject_{{$k}}" value="{{$content->title}}" placeholder="請輸入欄位名稱" required>
+          </div>
+          <div id="options_{{$k}}" @if($content->items->count() == 0) style="display:none" @endif>
+            <div class="form-group row">
+              <label>選項設定</label>
+            </div>
+            <div class="form-group row content_{{$k}}">
+            @foreach($content->items??[] as $k1=>$item)
+              <div class="col-sm-12" id="item_{{$k}}_{{$k1}}" style="margin-top: 10px;">
+                <div class="input-group">
+                  <input type="text" class="form-control" name="field[{{$k}}][items][{{$k1}}][name]" value="{{$item->name}}" placeholder="請輸入選項名稱" required>
+                  <div class="input-group-append">
+                    <span class="input-group-text">
+                        <button type="button" class="btn btn-xs multipleMinus" data-row="{{$k}}" data-item="{{$k1}}"><i class="fas fa-minus"></i></button>
+                    </span>
+                    <span class="input-group-text">
+                        <button type="button" class="btn btn-xs multiplePlus" data-row="{{$k}}"><i class="fas fa-plus"></i></button>
+                    </span>
+                    <span class="input-group-text">
+                      <button type="button" class="btn btn-block btn-outline-secondary btn-sm addChildSubject" data-row="{{$k}}" data-item="{{$k1}}" style="color:black;"><i class="fas fa-plus-circle"></i> 增加子項目</button>
+                    </span>
+                  </div>
+                </div>
+                <div id="childSubject_{{$k}}_{{$k1}}" @if($item->childrens->count() == 0) style="display:none" @endif>
+                @foreach($item->childrens??[] as $k2=>$child)
+                  @php $number = $k2 + 1;@endphp
+                  <div class="card card-warning disabled" id="sub_car_{{$k}}_{{$k1}}_{{$k2}}" style="margin-top: 10px;">
+                    <div class="card-header">
+                      <h3 class="card-title">子項目{{$number}}</h3>
+                      <div style="float: right;">
+                        <table>
+                          <tr>
+                            <td><button type="button" class="btn btn-block btn-outline-default btn-sm removeChildSubject" style="color:red;" data-row="{{$k}}" data-item="{{$k1}}" data-subrow="{{$k2}}"><i class="fas fa-trash-alt"></i>&nbsp;刪除</button></td>
+                          </tr>
+                        </table>
+                      </div>
+                    </div>
+                    <div class="card-body">
+                      <div class="form-group row">
+                        <label for="field_attribute_{{$k}}_{{$k1}}_{{$k2}}">欄位屬性</label>
+                        <select class="custom-select form-control-border childTopicType" name="field[{{$k}}][items][{{$k1}}][child][{{$k2}}][field_attribute]" id="field_attribute_{{$k}}_{{$k1}}_{{$k2}}" data-row="{{$k}}" data-item="{{$k1}}" data-subrow="{{$k2}}" required">
+                          <option value="">請選擇欄位屬性</option>
+                          @foreach($types??[] as $type)
+                          <option value="{{$type->val}}" @if($child->field_attribute==$type->val){{'selected'}}@endif>{{$type->name}}</option>
+                          @endforeach
+                        </select>
+                      </div>
+                      <div class="form-group row">
+                        <label for="subject_{{$k}}_{{$k1}}_{{$k2}}">欄位名稱</label>
+                        <input type="text" class="form-control" name="field[{{$k}}][items][{{$k1}}][child][{{$k2}}][title]" id="subject_{{$k}}_{{$k1}}_{{$k2}}" value="{{$child->title}}" placeholder="請輸入欄位名稱" required>
+                      </div>
+                      <div id="options_{{$k}}_{{$k1}}_{{$k2}}" @if($child->items->count()==0) style="display:none" @endif>
+                        <div class="form-group row">
+                          <label>選項設定</label>
+                        </div>
+                        <div class="form-group row content_{{$k}}_{{$k1}}_{{$k2}}">
+                        @foreach($child->items??[] as $k3=>$item)
+                          <div class="col-sm-12" id="child_item_{{$k}}_{{$k1}}_{{$k2}}_{{$k3}}" style="margin-top: 10px;">
+                            <div class="input-group">
+                              <input type="text" class="form-control" name="field[{{$k}}][items][{{$k1}}][child][{{$k2}}][items][{{$k3}}][name]" value="{{$item->name}}" placeholder="請輸入選項名稱" required>
+                              <div class="input-group-append">
+                                <span class="input-group-text">
+                                    <button type="button" class="btn btn-xs childMultipleMinus" data-row="{{$k}}" data-subrow="{{$k2}}" data-item="{{$k1}}" data-itemcount="{{$k3}}"><i class="fas fa-minus"></i></button>
+                                </span>
+                                <span class="input-group-text">
+                                    <button type="button" class="btn btn-xs childMultiplePlus" data-row="{{$k}}" data-subrow="{{$k2}}" data-item="{{$k1}}" data-itemcount="{{$k3}}"><i class="fas fa-plus"></i></button>
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        @endforeach
+                        </div>
+                      </div>
+                  </div>
+                @endforeach
+                </div>
+              </div>
+            @endforeach
+            </div>
+          </div>
+        </div>
+      </div>
+    @endforeach
+    </div>
   </div>
   <div class="card">
     <div class="card-footer text-center">
@@ -261,9 +370,9 @@
     })
 
     $('.save').click(function(){
-      $('#form').attr('action', '{{route($menu->slug.'.store')}}')
+      $('#form').attr('action', '{{route($menu->slug.'.update', $data->id)}}')
       $('#form').attr('target', '_self')
-      $('input[name="_method"]').val('post');
+      $('input[name="_method"]').val('put');
       $('#form').submit();
     })
 
@@ -287,7 +396,7 @@
         <div class="card-body">
           <div class="form-group row">
             <label for="topic_type_${row}">欄位屬性</label>
-            <select class="custom-select form-control-border topicType" name="field[${row}][field_attribute_id]" id="field_attribute_${row}" data-row="${row}" required>
+            <select class="custom-select form-control-border topicType" name="field[${row}][field_attribute]" id="field_attribute_${row}" data-row="${row}" required>
               <option value="">請選擇欄位屬性</option>
               @foreach($types??[] as $type)
               <option value="{{$type->val}}">{{$type->name}}</option>
@@ -306,7 +415,7 @@
           </div>
       </div>
       `;
-      $('#subjectContent').append(str);
+      $('#subjectContent').prepend(str);
     });
 
     $('body').on('click', '.addChildSubject', function(){
@@ -329,7 +438,7 @@
         <div class="card-body">
           <div class="form-group row">
             <label for="field_attribute_${row}_${item}_${subRow}">欄位屬性</label>
-            <select class="custom-select form-control-border childTopicType" name=field[${row}][items][${item}][child][${subRow}][field_attribute_id]" id="field_attribute_${row}_${item}_${subRow}" data-row="${row}" data-item="${item}" data-subrow="${subRow}" required">
+            <select class="custom-select form-control-border childTopicType" name=field[${row}][items][${item}][child][${subRow}][field_attribute]" id="field_attribute_${row}_${item}_${subRow}" data-row="${row}" data-item="${item}" data-subrow="${subRow}" required">
               <option value="">請選擇欄位屬性</option>
               @foreach($types??[] as $type)
               <option value="{{$type->val}}">{{$type->name}}</option>
@@ -397,7 +506,7 @@
                       <button type="button" class="btn btn-xs childMultipleMinus" data-row="${row}" data-item="${item}" data-subrow="${subRow}" data-itemcount="${itemCount}"><i class="fas fa-minus"></i></button>
                   </span>
                   <span class="input-group-text">
-                      <button type="button" class="btn btn-xs childMultiplePlus" data-row="${row}" data-item="${item}" data-subrow="${subRow}" data-itemcount="${itemCount}">><i class="fas fa-plus"></i></button>
+                      <button type="button" class="btn btn-xs childMultiplePlus" data-row="${row}" data-item="${item}" data-subrow="${subRow}" data-itemcount="${itemCount}"><i class="fas fa-plus"></i></button>
                   </span>
                 </div>
               </div>
@@ -439,9 +548,7 @@
                 </span>
               </div>
             </div>
-            <div id="childSubject_${row}_${itemCount}" style="display:none">
-              <hr>
-            </div>
+            <div id="childSubject_${row}_${itemCount}" style="display:none"></div>
           </div>
           `;
           $(`#options_${row}`).show();
@@ -473,9 +580,7 @@
               </span>
             </div>
           </div>
-          <div id="childSubject_${row}_${itemCount}" style="display:none">
-            <hr>
-          </div>
+          <div id="childSubject_${row}_${itemCount}" style="display:none"></div>
         </div>
       `;
       $('.content_'+row).append(str);
@@ -483,25 +588,25 @@
 
     $('body').on('click', '.childMultiplePlus', function(){
       var row = $(this).data('row');
+      var item = $(this).data('item')
       var subRow = $(this).data('subrow');
-      var itemCount = parseInt($('.content_'+row+'_'+subRow+' div[id^="child_item_"]').length);
+      var itemCount = parseInt($(`.content_${row}_${item}_${subRow} div[id^="child_item_"]`).length);
       var str = `
-        <div class="col-sm-12" id="child_item_${row}_${subRow}_${itemCount}" style="margin-top: 10px;">
+        <div class="col-sm-12" id="child_item_${row}_${item}_${subRow}_${itemCount}" style="margin-top: 10px;">
           <div class="input-group">
-            <input type="text" class="form-control" name="field[${row}][child][${subRow}][items][${itemCount}][name]" placeholder="請輸入選項名稱" required>
+            <input type="text" class="form-control" name="field[${row}][items][${item}][child][${subRow}][items][${itemCount}][name]" placeholder="請輸入選項名稱" required>
             <div class="input-group-append">
               <span class="input-group-text">
-                  <button type="button" class="btn btn-xs childMultipleMinus" data-row="${row}" data-subrow="${subRow}" data-item="${itemCount}"><i class="fas fa-minus"></i></button>
+                  <button type="button" class="btn btn-xs childMultipleMinus" data-row="${row}" data-subrow="${subRow}" data-item="${item}" data-itemcount="${itemCount}"><i class="fas fa-minus"></i></button>
               </span>
               <span class="input-group-text">
-                  <button type="button" class="btn btn-xs childMultiplePlus" data-row="${row}" data-subrow="${subRow}" data-item="${itemCount}"><i class="fas fa-plus"></i></button>
+                  <button type="button" class="btn btn-xs childMultiplePlus" data-row="${row}" data-subrow="${subRow}" data-item="${item}" data-itemcount="${itemCount}"><i class="fas fa-plus"></i></button>
               </span>
             </div>
           </div>
         </div>
       `;
-      $('.content_'+row+'_').append(str);
-      $(`.content_${row}_${subRow}`).append(str);
+      $(`.content_${row}_${item}_${subRow}`).append(str);
     })
 
     $('body').on('click', '.multipleMinus', function(){
@@ -517,7 +622,7 @@
             icon: 'warning',
         })
       } else {
-        $('#item_'+item).remove();
+        $(`#item_${row}_${item}`).remove();
       }
     })
 
@@ -525,7 +630,8 @@
       var row = $(this).data('row');
       var subRow = $(this).data('subrow');
       var item = $(this).data('item');
-      var itemCount = parseInt($(`.content_${row}_${subRow} div[id^="child_item_"]`).length) - 1;
+      var parentItemCount = $(this).data('itemcount');
+      var itemCount = parseInt($(`.content_${row}_${item}_${subRow} div[id^="child_item_"]`).length) - 1;
       
       if (itemCount === 0) {
         Swal.fire({
@@ -535,31 +641,9 @@
             icon: 'warning',
         })
       } else {
-        $(`#child_item_${row}_${subRow}_${itemCount}`).remove();
+        $(`#child_item_${row}_${item}_${subRow}_${parentItemCount}`).remove();
       }
     })
-    
-    $(".deleteBtn").click(function(){
-      $('#delete_form')[0].action = '{{ route($menu->slug.'.multipleDestroy') }}';
-        Swal.fire({
-            type: 'warning',
-            title: '訊息提示',
-            text: "是否要刪除資料？",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: '是的, 刪除資料!',
-            cancelButtonText: '取消',
-        }).then((result) => {
-            if (result.value) {
-              $('#delete_form').html('');
-              $('#delete_form').append('@csrf');
-              $('#delete_form').append(`<input type="hidden" name="ids[]" value="{{$data->id}}">`);
-              $('#delete_form').submit();
-            }
-        })
-    }) 
   })
 </script>
 @endsection

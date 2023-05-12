@@ -5,7 +5,7 @@
     <div class="container-fluid">
         <div class="row mb-2">
         <div class="col-sm-12 text-center">
-            <h4>{{$request->name}}  申請單預覽</h4>
+            <h4>{{$request->name}}<br>內容預覽</h4>
         </div>
         </div>
     </div><!-- /.container-fluid -->
@@ -29,7 +29,7 @@
                 <div id="collapseOne_{{$k}}" class="collapse show" data-parent="#accordion">
                     <div class="card-body">
                         <div class="form-group">
-                        @switch($field['field_attribute_id'])
+                        @switch($field['field_attribute'])
                             @case('text')
                                 <input type="text" class="form-control form-control-border">
                                 @break
@@ -57,6 +57,23 @@
                                 <div class="form-check">
                                     <input class="form-check-input" type="checkbox" name="checkbox">
                                     <label class="form-check-label">{{$item['name']}}</label>
+                                    @if(isset($item['child']))
+                                        <table class="table">
+                                        @foreach($item['child'] as $child)
+                                        <tr>
+                                            <td style="text-align: left">{{$child['title']}}</td>
+                                            <td style="text-align: left">
+                                                @foreach($child['items'] as $item)
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" name="checkbox">
+                                                    <label class="form-check-label">{{$item['name']}}</label>
+                                                </div>
+                                                @endforeach
+                                            </td>
+                                        </tr>
+                                        @endforeach
+                                    </table>
+                                    @endif
                                 </div>
                                 @endforeach
                                 @break;
@@ -68,7 +85,7 @@
                 <div id="collapseOne_{{$k}}" class="collapse show" data-parent="#accordion">
                     <div class="card-body">
                         <div class="form-group">
-                        @switch($field['field_attribute_id'])
+                        @switch($field['field_attribute'])
                             @case('text')
                                 <input type="text" class="form-control form-control-border">
                                 @break
@@ -83,6 +100,9 @@
                                     data-show-remove="true"
                                 />
                                 @break
+                            @case('sign_area')
+                                <div class="signBoard" style="background-color: #fcfcbf; border-style: dashed solid; max-width:100%;height:auto;"></div>
+                                @break;
                         @endswitch
                         </div>
                     </div>
@@ -98,4 +118,10 @@
 
 @section('js')
 <script src="/admins/js/components/image.js"></script>
+<script src="/admins/plugins/jSignature/jSignature.min.js"></script>
+<script>
+$(document).ready(function(){
+    $(".signBoard").jSignature({ 'width': '100%', 'height': 300});
+})
+</script>
 @endsection

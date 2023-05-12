@@ -39,8 +39,8 @@ class Product extends AbstractModel
             ],
             [
                 'field' => 'product_type_id',
-                'type' => 'text',
-                'show_name' => '產品類型',
+                'type' => 'select',
+                'show_name' => '商品類型',
                 'use_edit_link'=>2,
                 'join_search' => 1,
                 'required' => 1,
@@ -62,13 +62,13 @@ class Product extends AbstractModel
                     'product_type_id'=>'required'
                 ]),
                 'error_msg' => json_encode([
-                    ['product_type_id.required'=>'產品類型請勿空白']
+                    ['product_type_id.required'=>'商品類型請勿空白']
                 ]),
             ],
             [
                 'field' => 'name',
                 'type' => 'text',
-                'show_name' => '產品名稱',
+                'show_name' => '商品名稱',
                 'use_edit_link'=>2,
                 'join_search' => 1,
                 'required' => 1,
@@ -83,13 +83,13 @@ class Product extends AbstractModel
                     'name'=>'required'
                 ]),
                 'error_msg' => json_encode([
-                    ['name.required'=>'產品名稱請勿空白']
+                    ['name.required'=>'商品名稱請勿空白']
                 ]),
             ],
             [
                 'field' => 'model_no',
                 'type' => 'text',
-                'show_name' => '產品型號',
+                'show_name' => '商品型號',
                 'use_edit_link'=>2,
                 'join_search' => 2,
                 'required' => 2,
@@ -99,21 +99,9 @@ class Product extends AbstractModel
                 'sort' => 4
             ],
             [
-                'field' => 'spec',
-                'type' => 'text',
-                'show_name' => '產品規格',
-                'use_edit_link'=>2,
-                'join_search' => 2,
-                'required' => 2,
-                'browse' => 2,
-                'create' => 1,
-                'edit' => 1,
-                'sort' => 5
-            ],
-            [
                 'field' => 'price',
                 'type' => 'text',
-                'show_name' => '產品價格',
+                'show_name' => '商品價格',
                 'use_edit_link'=>2,
                 'join_search' => 2,
                 'required' => 1,
@@ -128,7 +116,7 @@ class Product extends AbstractModel
                     'price'=>'required'
                 ]),
                 'error_msg' => json_encode([
-                    ['price.required'=>'產品價格請勿空白']
+                    ['price.required'=>'商品價格請勿空白']
                 ]),
             ],
             [
@@ -142,34 +130,6 @@ class Product extends AbstractModel
                 'create' => 1,
                 'edit' => 1,
                 'sort' => 7,
-            ],
-            [
-                'field' => 'discount_type',
-                'type' => 'text',
-                'show_name' => '折讓類型',
-                'use_edit_link'=>2,
-                'join_search' => 2,
-                'required' => 2,
-                'browse' => 2,
-                'create' => 1,
-                'edit' => 1,
-                'sort' => 8,
-                'options' => json_encode([
-                    ['text'=>'價錢', 'value'=>1, 'default'=>0],
-                    ['text'=>'%數', 'value'=>2, 'default'=>0],
-                ]),
-            ],
-            [
-                'field' => 'discount',
-                'type' => 'text',
-                'show_name' => '折讓',
-                'use_edit_link'=>2,
-                'join_search' => 2,
-                'required' => 2,
-                'browse' => 2,
-                'create' => 1,
-                'edit' => 1,
-                'sort' => 9,
             ],
             [
                 'field' => 'deposit_amount',

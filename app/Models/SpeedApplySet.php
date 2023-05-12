@@ -39,4 +39,9 @@ class SpeedApplySet extends AbstractModel
             ],
         ];
     }
+
+    public function contents()
+    {
+        return $this->hasMany(SpeedApplyContent::class, 'speed_apply_set_id');
+    }
 }
