@@ -4,10 +4,11 @@ namespace App\Http\Controllers;
 
 use DB;
 use Illuminate\Http\Request;
+use App\Models\ProjectRegulationLog;
 
-use App\Models\ProjectRegulation;
+use App\Models\Project;
 
-class ProjectController extends BasicController
+class ProjectRegulationController extends BasicController
 {
     public function create(Request $request)
     {
@@ -19,12 +20,14 @@ class ProjectController extends BasicController
             ]);
         }
 
+        $projects = $this->model->getProjects();
+
         if(view()->exists($this->slug.'.create'))
         {
             $this->createView = $this->slug.'.create';
         }
 
-        return view($this->createView);
+        return view($this->createView, compact('projects'));
     }
 
     public function store(Request $request)
@@ -50,15 +53,17 @@ class ProjectController extends BasicController
         DB::beginTransaction();
 
         try {
-            $formData = $request->except('_token');
+            $formData = $request->except('_token', 'projects');
             $formData['id'] = uniqid();
+
+            $projects = $request->projects;
 
             if ($this->model->checkColumnExist('create_user_id'))
             {
                 $formData['create_user_id'] = Auth::user()->id;
             }
 
-            if ($this->menu->menuDetails->count() > 0)
+            if ($this->menu->menuDetails->count() > 0) 
             {
                 foreach ($this->menu->menuDetails as $detail)
                 {
@@ -76,6 +81,8 @@ class ProjectController extends BasicController
 
                 $id = $this->model->createData($formData);
                 DB::commit();
+
+                $this->proccessProjects($id, $projects);
             
                 return view('alerts.success', [
                     'msg'=>'資料新增成功',
@@ -113,6 +120,7 @@ class ProjectController extends BasicController
         }
 
         $data = $this->model->find($id);
+        $projects = $this->model->getProjects();
 
         if (!$data)
         {
@@ -122,6 +130,8 @@ class ProjectController extends BasicController
             ]); 
         }
 
+        $logs = $this->getLogs($data);
+
         if(view()->exists($this->slug.'.edit'))
         {
             $this->editView = $this->slug.'.edit';
@@ -129,7 +139,9 @@ class ProjectController extends BasicController
 
         return view($this->editView, [
             'data'=>$data,
-            'id'=>$id
+            'id'=>$id,
+            'projects'=>$projects,
+            'logs'=>$logs
         ]);
     }
 
@@ -155,7 +167,8 @@ class ProjectController extends BasicController
         DB::beginTransaction();
 
         try {
-            $formData = $request->except('_token', '_method');
+            $formData = $request->except('_token', '_method', 'projects');
+            $projects = $request->projects;
 
             if ($this->model->checkColumnExist('update_user_id'))
             {
@@ -181,6 +194,8 @@ class ProjectController extends BasicController
                 $this->model->updateData($id, $formData);
 
                 DB::commit();
+
+                $this->proccessProjects($id, $projects);
     
                 return view('alerts.success',[
                     'msg'=>'資料更新成功',
@@ -206,7 +221,7 @@ class ProjectController extends BasicController
         }
     }
 
-    public function getRegulations(Request $request)
+    public function getProjects(Request $request)
     {
         $logs = [];
         $filters = [
@@ -216,12 +231,12 @@ class ProjectController extends BasicController
 
         if (isset($request->project_regulation_id))
         {
-            $data = $this->model->find($request->project_id);
+            $data = $this->model->find($request->project_regulation_id);
             $logs = $this->getLogs($data);
         }
 
-        $regulations = app(ProjectRegulation::class)->getDataByFilters($filters);
-        $content = view('projects.project_table', compact('regulations', 'logs'))->render();
+        $projects = app(Project::class)->getDataByFilters($filters);
+        $content = view('project_regulations.project_table', compact('projects', 'logs'))->render();
 
         return response()->json([
             'status'=>true,
@@ -230,13 +245,31 @@ class ProjectController extends BasicController
         ], 200);
     }
 
+    private function proccessProjects($id, $projects=[])
+    {
+        $project = [];
+
+        if (!empty($projects))
+        {
+            app(ProjectRegulationLog::class)->where('project_regulation_id', $id)->delete();
+
+            foreach ($projects??[] as $projectId)
+            {
+                $project['id'] = uniqid();
+                $project['project_regulation_id'] = $id;
+                $project['project_id'] = $projectId;
+                app(ProjectRegulationLog::class)->create($project);
+            }
+        }
+    }
+
     private function getLogs($data)
     {
         $arr = [];
 
         foreach ($data->logs??[] as $log)
         {
-            $arr[$log->project_regulation_id] = 1;
+            $arr[$log->project_id] = 1;
         }
 
         return $arr;

@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string('sales_type_id', 36)->nullable()->comment('銷售模式');
             $table->string('apply_type_id', 36)->nullable()->comment('申請類別');
             $table->string('close_period_id', 36)->nullable()->comment('結算區間');
-            $table->string('service_type_id', 36)->nullable()->comment('服務類別');
+            $table->string('product_type_id', 36)->nullable()->comment('商品類別');
             $table->date('effective_day')->nullable()->comment('生效日期');
             $table->date('expiration_day')->nullable()->comment('截止日期');
             $table->tinyInteger('pay_way')->nullable()->comment('付款方式(值1:先付, 值2:後付)');

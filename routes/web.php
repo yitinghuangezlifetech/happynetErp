@@ -21,6 +21,8 @@ use App\Http\Controllers\QuestionnaireController;
 use App\Http\Controllers\proxyAccountController;
 use App\Http\Controllers\BonusGroupController;
 use App\Http\Controllers\SpeedApplySetController;
+use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\ProjectRegulationController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -73,6 +75,14 @@ Route::middleware('auth:web')->group(function(){
 
     Route::prefix('speed_apply_sets')->group(function(){
         Route::post('preview', [SpeedApplySetController::class, 'preview'])->name('speed_apply_sets.preview');
+    });
+
+    Route::prefix('project_regulations')->group(function(){
+        Route::post('getProjects', [ProjectRegulationController::class, 'getProjects'])->name('project_regulations.getProjects');
+    });
+
+    Route::prefix('projects')->group(function(){
+        Route::post('getRegulations', [ProjectController::class, 'getRegulations'])->name('projects.getRegulations');
     });
 
     if (Schema::hasTable('menus'))

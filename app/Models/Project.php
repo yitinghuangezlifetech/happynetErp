@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
+
 class Project extends AbstractModel
 {
     protected $table = 'projects';
@@ -177,9 +180,9 @@ class Project extends AbstractModel
                 ]),
             ],
             [
-                'field' => 'service_type_id',
+                'field' => 'product_type_id',
                 'type' => 'select',
-                'show_name' => '服務類別',
+                'show_name' => '商品類別',
                 'join_search' => 1,
                 'required' => 1,
                 'browse' => 1,
@@ -190,17 +193,17 @@ class Project extends AbstractModel
                 'relationship' => json_encode([
                     'model' => 'App\Models\FuncType',
                     'references_field' => 'id',
-                    'type_code' => 'service_types',
+                    'type_code' => 'product_types',
                     'show_field' => 'type_name'
                 ]),
                 'create_rule' => json_encode([
-                    'service_type_id'=>'required'
+                    'product_type_id'=>'required'
                 ]),
                 'update_rule' => json_encode([
-                    'service_type_id'=>'required'
+                    'product_type_id'=>'required'
                 ]),
                 'error_msg' => json_encode([
-                    ['service_type_id.required'=>'請選擇服務類別']
+                    ['product_type_id.required'=>'請選擇商品類別']
                 ]),
             ],
             [
@@ -336,5 +339,32 @@ class Project extends AbstractModel
                 'sort' => 20
             ],
         ];
+    }
+
+    public function getDataByFilters($filters=[])
+    {
+        $query = $this->newModelQuery();
+
+        if(Schema::hasColumn($this->table, 'deleted_at'))
+        {
+            $query->whereNull('deleted_at');
+        }
+
+        if (!empty($filters))
+        {
+            if (!empty($filters['sales_type_id']))
+            {
+                $query->where('sales_type_id', $filters['sales_type_id']);
+            }
+            if (!empty($filters['product_type_id']))
+            {
+                $query->where('product_type_id', $filters['product_type_id']);
+            }
+        }
+
+        $query->orderBy('created_at', 'DESC');
+        $results = $query->get();
+
+        return $results;
     }
 }
