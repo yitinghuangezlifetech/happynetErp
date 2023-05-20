@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
+
 class Product extends AbstractModel
 {
     protected $table = 'products';
@@ -19,7 +22,6 @@ class Product extends AbstractModel
                 'browse' => 1,
                 'create' => 1,
                 'edit' => 1,
-                'sort' => 1,
                 'has_relationship' => 1,
                 'relationship' => json_encode([
                     'model' => 'App\Models\FuncType',
@@ -47,7 +49,6 @@ class Product extends AbstractModel
                 'browse' => 1,
                 'create' => 1,
                 'edit' => 1,
-                'sort' => 2,
                 'has_relationship' => 1,
                 'relationship' => json_encode([
                     'model' => 'App\Models\FuncType',
@@ -75,7 +76,6 @@ class Product extends AbstractModel
                 'browse' => 1,
                 'create' => 1,
                 'edit' => 1,
-                'sort' => 3,
                 'create_rule' => json_encode([
                     'name'=>'required'
                 ]),
@@ -87,16 +87,26 @@ class Product extends AbstractModel
                 ]),
             ],
             [
-                'field' => 'model_no',
-                'type' => 'text',
-                'show_name' => '商品型號',
+                'field' => 'empty',
+                'create' => 1,
+                'edit' => 1,
+            ],
+            [
+                'field' => 'fee_rate_id',
+                'type' => 'select',
+                'show_name' => '費率模組',
                 'use_edit_link'=>2,
-                'join_search' => 2,
+                'join_search' => 1,
                 'required' => 2,
                 'browse' => 2,
                 'create' => 1,
                 'edit' => 1,
-                'sort' => 4
+                'has_relationship' => 1,
+                'relationship' => json_encode([
+                    'model' => 'App\Models\FeeRate',
+                    'references_field' => 'id',
+                    'show_field' => 'name'
+                ])
             ],
             [
                 'field' => 'price',
@@ -104,20 +114,10 @@ class Product extends AbstractModel
                 'show_name' => '商品價格',
                 'use_edit_link'=>2,
                 'join_search' => 2,
-                'required' => 1,
+                'required' => 2,
                 'browse' => 1,
                 'create' => 1,
                 'edit' => 1,
-                'sort' => 6,
-                'create_rule' => json_encode([
-                    'price'=>'required'
-                ]),
-                'update_rule' => json_encode([
-                    'price'=>'required'
-                ]),
-                'error_msg' => json_encode([
-                    ['price.required'=>'商品價格請勿空白']
-                ]),
             ],
             [
                 'field' => 'rent_month',
@@ -129,7 +129,6 @@ class Product extends AbstractModel
                 'browse' => 2,
                 'create' => 1,
                 'edit' => 1,
-                'sort' => 7,
             ],
             [
                 'field' => 'deposit_amount',
@@ -141,25 +140,6 @@ class Product extends AbstractModel
                 'browse' => 2,
                 'create' => 1,
                 'edit' => 1,
-                'sort' => 10,
-            ],
-            [
-                'field' => 'fee_rate_id',
-                'type' => 'select',
-                'show_name' => '使用費率',
-                'use_edit_link'=>2,
-                'join_search' => 2,
-                'required' => 2,
-                'browse' => 2,
-                'create' => 1,
-                'edit' => 1,
-                'sort' => 10,
-                'has_relationship' => 1,
-                'relationship' => json_encode([
-                    'model' => 'App\Models\FeeRate',
-                    'references_field' => 'id',
-                    'show_field' => 'name'
-                ]),
             ],
             [
                 'field' => 'status',
@@ -183,7 +163,6 @@ class Product extends AbstractModel
                 'browse' => 1,
                 'create' => 2,
                 'edit' => 2,
-                'sort' => 12,
                 'has_relationship' => 1,
                 'relationship' => json_encode([
                     'model' => 'App\Models\User',
@@ -196,7 +175,6 @@ class Product extends AbstractModel
                 'type' => 'date_time',
                 'show_name' => '資料建立日期',
                 'browse' => 1,
-                'sort' => 13
             ],
             [
                 'field' => 'update_user_id',
@@ -207,7 +185,6 @@ class Product extends AbstractModel
                 'browse' => 1,
                 'create' => 2,
                 'edit' => 2,
-                'sort' => 14,
                 'has_relationship' => 1,
                 'relationship' => json_encode([
                     'model' => 'App\Models\User',
@@ -220,8 +197,45 @@ class Product extends AbstractModel
                 'type' => 'date_time',
                 'show_name' => '資料修改日期',
                 'browse' => 1,
-                'sort' => 15
             ],
         ];
+    }
+
+    public function getDataByFilters($filters=[])
+    {
+        $query = $this->newModelQuery();
+
+        if(Schema::hasColumn($this->table, 'deleted_at'))
+        {
+            $query->whereNull('deleted_at');
+        }
+
+        if (!empty($filters))
+        {
+            if (!empty($filters['sales_type_id']))
+            {
+                $query->where('sales_type_id', $filters['sales_type_id']);
+            }
+
+            if (!empty($filters['product_type_id']))
+            {
+                $query->where('product_type_id', $filters['product_type_id']);
+            }
+        }
+
+        $query->orderBy('created_at', 'DESC');
+        $results = $query->get();
+
+        return $results;
+    }
+
+    public function getProductsByTypeId($typeId)
+    {
+        $query = $this->newModelQuery();
+        $query->where('product_type_id', $typeId)
+              ->orderBy('created_at', 'DESC');
+        $results = $query->get();
+
+        return $results;
     }
 }

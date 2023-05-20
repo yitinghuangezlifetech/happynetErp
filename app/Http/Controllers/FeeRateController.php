@@ -84,7 +84,7 @@ class FeeRateController extends BasicController
                 $data = $this->model->create($formData);
                 DB::commit();
 
-                $this->proccessFeeRateLogs($data, $rates);
+                $this->proccessFeeRateLogs($data->id, $rates);
             
                 return view('alerts.success', [
                     'msg'=>'資料新增成功',
@@ -111,14 +111,125 @@ class FeeRateController extends BasicController
         }
     }
 
-    private function proccessFeeRateLogs($main, $rates=[])
+    public function edit(Request $request, $id)
     {
-        app(FeeRateLog::class)->where('fee_rate_id', $main->id)->delete();
+        if ($request->user()->cannot('edit_'.$this->slug,  $this->model))
+        {
+            return view('alerts.error', [
+                'msg' => '您的權限不足, 請洽管理人員開通權限',
+                'redirectURL' => route('dashboard')
+            ]);
+        }
+
+        $data = $this->model->find($id);
+        $rateTypes = app(FuncType::class)->getChildsByTypeCode('rate_types');
+        $callTargets = app(FuncType::class)->getChildsByTypeCode('call_targets');
+
+        if (!$data)
+        {
+            return view('alerts.error',[
+                'msg'=>'資料不存在',
+                'redirectURL'=>route($this->slug.'.index')
+            ]); 
+        }
+
+        if(view()->exists($this->slug.'.edit'))
+        {
+            $this->editView = $this->slug.'.edit';
+        }
+
+        return view($this->editView, [
+            'data'=>$data,
+            'id'=>$id,
+            'rateTypes'=>$rateTypes,
+            'callTargets'=>$callTargets,
+        ]);
+    }
+
+    public function update(Request $request, $id)
+    {
+        if ($request->user()->cannot('update_'.$this->slug,  $this->model))
+        {
+            return view('alerts.error', [
+                'msg' => '您的權限不足, 請洽管理人員開通權限',
+                'redirectURL' => route('dashboard')
+            ]);
+        }
+        $validator = $this->updateRule($request->all());
+
+        if (!is_array($validator) && $validator->fails())
+        {
+            return view('alerts.error',[
+                'msg'=>$validator->errors()->all()[0],
+                'redirectURL'=>route($this->slug.'.index')
+            ]);
+        }
+
+        DB::beginTransaction();
+
+        try {
+            $formData = $request->except('_token', '_method', 'rates');
+            $rates = $request->rates;
+
+            if ($this->model->checkColumnExist('update_user_id'))
+            {
+                $formData['update_user_id'] = Auth::user()->id;
+            }
+
+            if ($this->menu->menuDetails->count() > 0)
+            {
+                foreach ($this->menu->menuDetails as $detail)
+                {
+                    if (isset($formData[$detail->field]))
+                    {
+                        if ($detail->type == 'image' || $detail->type == 'file')
+                        {
+                            if (is_object($formData[$detail->field]) && $formData[$detail->field]->getSize() > 0)
+                            {
+                                $formData[$detail->field] = $this->storeFile($formData[$detail->field], $this->slug);
+                            }
+                        }
+                    }
+                }
+
+                $this->model->updateData($id, $formData);
+
+                DB::commit();
+
+                $this->proccessFeeRateLogs($id, $rates);
+    
+                return view('alerts.success',[
+                    'msg'=>'資料更新成功',
+                    'redirectURL'=>route($this->slug.'.index')
+                ]);
+            }
+
+            DB::rollBack();
+
+            return view('alerts.error', [
+                'msg'=>'資料更新失敗, 無該功能項之細項設定',
+                'redirectURL'=>route($this->slug.'.index')
+            ]);
+        } 
+        catch (\Exception $e)
+        {
+            DB::rollBack();
+
+            return view('alerts.error',[
+                'msg'=>$e->getMessage(),
+                'redirectURL'=>route($this->slug.'.index')
+            ]);
+        }
+    }
+
+    private function proccessFeeRateLogs($mainId, $rates=[])
+    {
+        app(FeeRateLog::class)->where('fee_rate_id', $mainId)->delete();
 
         foreach ($rates??[] as $rate)
         {
             $rate['id'] = uniqid();
-            $rate['fee_rate_id'] = $main->id;
+            $rate['fee_rate_id'] = $mainId;
             app(FeeRateLog::class)->create($rate);
         }
     }

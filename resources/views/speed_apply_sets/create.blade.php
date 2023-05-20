@@ -163,7 +163,7 @@
     </div>
     <div class="card-body" id="subjectContent"></div>
   </div>
-  <div class="card">
+  <div class="card" id="footerArea">
     <div class="card-footer text-center">
       <button type="button" class="btn bg-gradient-dark save">儲存</button>
       <button type="button" class="btn bg-gradient-secondary preview"><i class="fas fa-eye"></i>&nbsp;預覽</button>

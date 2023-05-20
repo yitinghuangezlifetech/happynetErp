@@ -5,32 +5,12 @@ namespace App\Http\Controllers;
 use DB;
 use Illuminate\Http\Request;
 
-use App\Models\FuncType;
 use App\Models\Product;
-use App\Models\ProjectProduct;
+use App\Models\ProductType;
+use App\Models\ContractProductLog;
 
-class ProjectController extends BasicController
+class ContractController extends BasicController
 {
-    public function create(Request $request)
-    {
-        if ($request->user()->cannot('create_'.$this->slug,  $this->model))
-        {
-            return view('alerts.error', [
-                'msg' => '您的權限不足, 請洽管理人員開通權限',
-                'redirectURL' => route('dashboard')
-            ]);
-        }
-
-        $types = app(FuncType::class)->getChildsByTypeCode('product_types');
-
-        if(view()->exists($this->slug.'.create'))
-        {
-            $this->createView = $this->slug.'.create';
-        }
-
-        return view($this->createView, compact('types'));
-    }
-
     public function store(Request $request)
     {
         if ($request->user()->cannot('create_'.$this->slug,  $this->model))
@@ -120,9 +100,7 @@ class ProjectController extends BasicController
         }
 
         $data = $this->model->find($id);
-        $types = app(FuncType::class)->getChildsByTypeCode('product_types');
-        $logs = $this->getLogs($data);
-        $obj = app(Product::class);
+        $products = $this->model->getProductsByType($data->product_type_id);
 
         if (!$data)
         {
@@ -140,9 +118,7 @@ class ProjectController extends BasicController
         return view($this->editView, [
             'data'=>$data,
             'id'=>$id,
-            'types'=>$types,
-            'logs'=>$logs,
-            'obj'=>$obj
+            'products'=>$products,
         ]);
     }
 
@@ -222,43 +198,21 @@ class ProjectController extends BasicController
         }
     }
 
-    public function proccessProducts($id, $products=[])
+    public function getProducts(Request $request)
     {
-        if (!empty($products))
-        {
-            app(ProjectProduct::class)->where('project_id', $id)->delete();
-
-            foreach ($products??[] as $product)
-            {
-                if (isset($product['items']) && count($product['items']) > 0)
-                {
-                    foreach ($product['items'] as $productId)
-                    {
-                        $data['id'] = uniqid();
-                        $data['project_id'] = $id;
-                        $data['product_type_id'] = $product['product_type_id'];
-                        $data['product_id'] = $productId;
-
-                        app(ProjectProduct::class)->create($data);
-                    }
-                }
-            }
-        }
-    }
-
-    public function getProductsByFilters(Request $request)
-    {
+        $logs = [];
         $filters = [
-            'sales_type_id' => $request->sales_type_id,
-            'product_type_id' => $request->product_type_id,
+            'product_type_id' => $request->product_type_id
         ];
 
-        $row = $request->row;
-        $products = app(Product::class)->getDataByFilters($filters);
+        if (isset($request->contract_id))
+        {
+            $data = $this->model->find($request->contract_id);
+            $logs = $this->getLogs($data);
+        }
 
-        $content = view('tables.product', compact(
-            'products', 'row'
-        ))->render();
+        $products = app(Product::class)->getDataByFilters($filters);
+        $content = view('contracts.products_table', compact('products', 'logs'))->render();
 
         return response()->json([
             'status'=>true,
@@ -267,13 +221,29 @@ class ProjectController extends BasicController
         ], 200);
     }
 
+    private function proccessProducts($id, $products=[])
+    {
+        if (!empty($products))
+        {
+            app(ContractProductLog::class)->where('contract_id', $id)->delete();
+
+            foreach ($products??[] as $productId)
+            {
+                $product['id'] = uniqid();
+                $product['contract_id'] = $id;
+                $product['product_id'] = $productId;
+                app(ContractProductLog::class)->create($product);
+            }
+        }
+    }
+
     private function getLogs($data)
     {
         $arr = [];
 
-        foreach ($data->logs??[] as $k=>$log)
+        foreach ($data->logs??[] as $log)
         {
-            $arr[$log->product_type_id][$log->product_id] = 1;
+            $arr[$log->product_id] = 1;
         }
 
         return $arr;

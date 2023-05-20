@@ -11,3 +11,12 @@
 <link rel="stylesheet" href="/admins/plugins/sweetalert2/sweetalert2.min.css"> 
 <link rel="stylesheet" href="/admins/plugins/dropify/dropify.css">
 <link rel="stylesheet" type="text/css" href="/admins/css/multi-select.css">
+<style>
+#footerArea {
+    position: fixed;
+    right: 0%;
+    top: 95%;
+    transform: translateY(-50%);
+    z-index: 99999;
+}  
+</style>

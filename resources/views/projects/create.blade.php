@@ -156,13 +156,14 @@
   </div>
   <div class="card card-secondary">
     <div class="card-header">
-      <h3 class="card-title">專案條文綁定</h3>
+      <h3 class="card-title">綁定商品</h3>
+      <div style="float: right;">
+        <button type="button" class="btn btn-block btn-outline-secondary btn-sm addProducts" style="color:white"><i class="fas fa-plus-circle"></i> 增加商品</button>
+      </div>
     </div>
-    <div class="card-body table-responsive p-0" id="prjectContent">
-      
-    </div>
+    <div class="card-body" id="productItemArea"></div>
   </div>
-  <div class="card">
+  <div class="card" id="footerArea">
     <div class="card-footer text-center">
       <button type="submit" class="btn bg-gradient-dark">儲存</button>
       <button type="button" class="btn bg-gradient-secondary" onclick="javascript:location.href='{{route($slug.'.index')}}'">回上一頁</button>
@@ -183,6 +184,8 @@
     @endforeach
   @endif
   <script>
+  let productTypeArr = [];
+
   $(document).ready(function(){
     @if($menu->menuCreateDetails->count() > 0)
         @foreach($menu->menuCreateDetails as $detail)
@@ -195,49 +198,99 @@
     @endif
 
     $('#sales_type_id').change(function(){
-      const id = $(this).val();
-
-      $('#prjectContent').html('');
-
-      $.ajax({
-          headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-          method: 'post',
-          url: '{{ route('projects.getRegulations') }}',
-          data: {
-            sales_type_id: id
-          },
-          success: function(rs) {
-            $('#prjectContent').html(rs.data);
-          }
-      })
+      productTypeArr = [];
+      $('#productItemArea').html('');
     })
 
-    $('#product_type_id').change(function(){
+    $('body').on('click', '.addProducts', function(){
       const saleTypeId = $('#sales_type_id').val();
-      const id = $(this).val();
-
-      $('#prjectContent').html('');
+      let row = parseInt($('#productItemArea .card').length);
+      let number = row + 1;
+      let str = '';
 
       if (saleTypeId == '') {
         Swal.fire({
           icon: 'error',
           title: '訊息提示',
-          text: '請選擇要銷售模式'
+          text: '請選擇專案銷售模式'
         })
       } else {
-        $.ajax({
-            headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-            method: 'post',
-            url: '{{ route('projects.getRegulations') }}',
-            data: {
-              sales_type_id: saleTypeId,
-              product_type_id: id,
-            },
-            success: function(rs) {
-              $('#prjectContent').html(rs.data);
-            }
-        })
+        str += `
+        <div class="card card-secondary disabled" id="car_${row}" style="margin-top: 10px;">
+          <div class="card-header">
+            <h3 class="card-title main-title">商品${number}</h3>
+            <div style="float: right;">
+              <table>
+                <tr>
+                  <td><button type="button" class="btn btn-block btn-outline-secondary btn-sm removeProduct" style="color:white;" data-row="0"><i class="fas fa-trash-alt"></i>&nbsp;刪除</button></td>
+                </tr>
+              </table>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="form-group row">
+              <label for="product_type_id_${row}">商品類別</label>
+              <select class="custom-select form-control-border productType" name="products[${row}][product_type_id]" id="product_type_id_${row}" data-row="${row}" required>
+                <option value="">請選擇商品類別</option>
+                @foreach($types??[] as $type)
+                <option value="{{$type->id}}">{{$type->type_name}}</option>
+                @endforeach
+              </select>
+            </div>
+            <div class="form-group row productList_${row}"></div>
+        </div>
+        `;
+
+        $('#productItemArea').prepend(str);
       }
+    })
+
+    $('body').on('change', '.productType', function(){
+      const saleTypeId = $('#sales_type_id').val();
+      const id = $(this).val();
+      const row = $(this).data('row');
+
+      $(`#productList_${row}`).html('');
+
+      if (productTypeArr.includes(id)) {
+        $(this).val('');
+
+        Swal.fire({
+          icon: 'error',
+          title: '訊息提示',
+          text: '您已選了該類型的商品, 請重新選擇'
+        })
+      } else {
+        if (saleTypeId == '') {
+          Swal.fire({
+            icon: 'error',
+            title: '訊息提示',
+            text: '請選擇專案銷售模式'
+          })
+        } else {
+          $.ajax({
+              headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+              method: 'post',
+              url: '{{ route('tables.getProductsByFilters') }}',
+              data: {
+                sales_type_id: saleTypeId,
+                product_type_id: id,
+                row: row
+              },
+              success: function(rs) {
+                productTypeArr.push(id);
+
+                $(`.productList_${row}`).html(rs.data);
+              }
+          })
+        }
+      }
+    })
+
+    $('body').on('click', '.removeProduct', function(){
+      const row = $(this).data('row');
+
+      $(`#card_${row}`).remove();
     })
   })
   </script>

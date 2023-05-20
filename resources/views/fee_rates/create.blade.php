@@ -117,7 +117,7 @@
     </div>
   </div>
 </div>
-<div class="card">
+<div class="card" id="footerArea">
   <div class="card-footer text-center">
     <button type="submit" class="btn bg-gradient-dark">儲存</button>
     <button type="button" class="btn bg-gradient-secondary" onclick="javascript:location.href='{{route($slug.'.index')}}'">回上一頁</button>
@@ -133,8 +133,6 @@ let targets = [];
 $('.addAreaBtn').click(function(){
   let rows = parseInt($('#rateArea .card').length);
   let len = 0;
-
-  console.log(targets);
 
   do {
     rows++;

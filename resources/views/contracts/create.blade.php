@@ -154,9 +154,12 @@
         @endif
     </div>
   </div>
-  @if($menu->seo_enable == 1)
-  @include('components.seo', ['data'=>null])
-  @endif
+  <div class="card card-secondary">
+    <div class="card-header">
+      <h3 class="card-title">合約商品綁定</h3>
+    </div>
+    <div class="card-body table-responsive p-0" id="productsArea"></div>
+  </div>
   <div class="card" id="footerArea">
     <div class="card-footer text-center">
       <button type="submit" class="btn bg-gradient-dark">儲存</button>
@@ -188,6 +191,24 @@
           @endswitch
         @endforeach
     @endif
+
+    $('#product_type_id').change(function(){
+      const id = $(this).val();
+
+      $('#productsArea').html('');
+
+      $.ajax({
+            headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+            method: 'post',
+            url: '{{ route('contracts.getProducts') }}',
+            data: {
+              product_type_id: id,
+            },
+            success: function(rs) {
+              $('#productsArea').html(rs.data);
+            }
+        })
+    })
   })
   </script>
 @endsection

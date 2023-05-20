@@ -68,4 +68,9 @@ class FeeRate extends AbstractModel
             ],
         ];
     }
+
+    public function logs()
+    {
+        return $this->hasMany(FeeRateLog::class, 'fee_rate_id');
+    }
 }

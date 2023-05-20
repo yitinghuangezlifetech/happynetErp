@@ -23,6 +23,7 @@ use App\Http\Controllers\BonusGroupController;
 use App\Http\Controllers\SpeedApplySetController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ProjectRegulationController;
+use App\Http\Controllers\ContractController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -81,8 +82,12 @@ Route::middleware('auth:web')->group(function(){
         Route::post('getProjects', [ProjectRegulationController::class, 'getProjects'])->name('project_regulations.getProjects');
     });
 
-    Route::prefix('projects')->group(function(){
-        Route::post('getRegulations', [ProjectController::class, 'getRegulations'])->name('projects.getRegulations');
+    Route::prefix('contracts')->group(function(){
+        Route::post('getProducts', [ContractController::class, 'getProducts'])->name('contracts.getProducts');
+    });
+
+    Route::prefix('tables')->group(function(){
+        Route::post('getProductsByFilters', [ProjectController::class, 'getProductsByFilters'])->name('tables.getProductsByFilters');
     });
 
     if (Schema::hasTable('menus'))

@@ -18,8 +18,6 @@ class CheckApiKey
     {
         
         $apiKey = $request->header('apikey');
-        $account = $request->input('password');
-        // return response()->json(['request' => 'request'.$account  ], 401);
         if (!$apiKey || $apiKey !== env('HAPPYNET_APIKEY')) {
 
             return response()->json(['Middleware message' => 'Invalid API key' .$apiKey ], 401);

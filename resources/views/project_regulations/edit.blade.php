@@ -202,7 +202,7 @@
     </div>
     <div class="card-body table-responsive p-0" id="prjectContent"></div>
   </div>
-  <div class="card">
+  <div class="card" id="footerArea">
     <div class="card-footer text-center">
       <button type="submit" class="btn bg-gradient-dark">儲存</button>
       <button type="button" class="btn bg-gradient-secondary deleteBtn"><i class="fas fa-trash-alt"></i>&nbsp;刪除</button>

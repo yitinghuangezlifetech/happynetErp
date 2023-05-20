@@ -185,7 +185,7 @@
   @if($menu->seo_enable == 1)
   @include('components.seo', ['data'=>null])
   @endif
-  <div class="card">
+  <div class="card" id="footerArea">
     <div class="card-footer text-center">
       <button type="submit" class="btn bg-gradient-dark">儲存</button>
       <button type="button" class="btn bg-gradient-secondary" onclick="javascript:location.href='{{route($slug.'.index')}}'">回上一頁</button>

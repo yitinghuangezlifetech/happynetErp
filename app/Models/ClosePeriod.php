@@ -52,26 +52,6 @@ class ClosePeriod extends AbstractModel
                 ]),
             ],
             [
-                'field' => 'month_range',
-                'type' => 'number',
-                'show_name' => '結算月數',
-                'join_search' => 2,
-                'required' => 1,
-                'browse' => 1,
-                'create' => 1,
-                'edit' => 1,
-                'sort' => 3,
-                'create_rule' => json_encode([
-                    'month_range'=>'required'
-                ]),
-                'update_rule' => json_encode([
-                    'month_range'=>'required'
-                ]),
-                'error_msg' => json_encode([
-                    ['month_range.required'=>'結算月數請勿空白']
-                ]),
-            ],
-            [
                 'field' => 'create_user_id',
                 'type' => 'select',
                 'show_name' => '建立人員',

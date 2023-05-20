@@ -139,7 +139,7 @@
   </div>
   <div class="card-body" id="permissionContent"></div>
 </div>
-<div class="card">
+<div class="card" id="footerArea">
   <div class="card-footer text-center">
     <button type="submit" class="btn bg-gradient-dark">儲存</button>
     <button type="button" class="btn bg-gradient-secondary deleteBtn"><i class="fas fa-trash-alt"></i>&nbsp;刪除</button>
@@ -260,6 +260,18 @@ $('#group_id').change(function(){
     })
 });
 @endif
+
+// window.addEventListener('scroll', function() {
+//   var element = document.getElementById('footerArea'); // 将 "yourElementId" 替换为你要固定的元素的实际 ID
+//   var windowHeight = window.innerHeight; // 取得窗口的高度
+//   var scrollPosition = window.scrollY; // 取得垂直滚动的位置
+
+//   // 計算元素的新位置
+//   var newPosition = windowHeight - (windowHeight * 0.2) - element.offsetHeight;
+
+//   // 設定元素的新位置
+//   element.style.bottom = newPosition + 'px';
+// });
 
 var init = function(){
   $.ajax({

@@ -3,7 +3,7 @@
       @php
           $lineCount = 1;
       @endphp
-      @foreach($regulations??[] as $regulation)
+      @foreach($products??[] as $product)
         @php
             $rows = $loop->count;
             $line = ceil($rows / 5);
@@ -12,8 +12,8 @@
         <tr>
         @endif
           <td style="text-align: center;max-width:20%; width:20%">
-            <input type="checkbox" name="projects[]" value="{{$regulation->id}}" @if(isset($logs[$regulation->id])){{'checked'}}@endif>
-            {{$regulation->name}}
+            <input type="checkbox" name="products[]" value="{{$product->id}}" @if(isset($logs[$product->id])){{'checked'}}@endif>
+            {{$product->name}}
         </td>
         @if($loop->iteration % 5 == 0)
         @php

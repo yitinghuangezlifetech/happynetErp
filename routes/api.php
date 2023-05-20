@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Apis\ImageApi;
 use App\Http\Controllers\Apis\SelectApi;
+use App\Http\Controllers\Apis\TableApi;
 use App\Http\Controllers\Apis\SystemTypeApi;
 use App\Http\Controllers\Apis\UserControllerApi;
 /*

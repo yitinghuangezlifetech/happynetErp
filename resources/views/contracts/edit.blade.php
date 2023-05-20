@@ -196,9 +196,12 @@
     </div>
   </div>
   </div>
-  @if($menu->seo_enable == 1)
-  @include('components.seo', ['data'=>$data->seo, 'id'=>optional($data->seo)->id, 'model'=>$menu->model])
-  @endif
+  <div class="card card-secondary">
+    <div class="card-header">
+      <h3 class="card-title">合約商品綁定</h3>
+    </div>
+    <div class="card-body table-responsive p-0" id="productsArea"></div>
+  </div>
   <div class="card" id="footerArea">
     <div class="card-footer text-center">
       <button type="submit" class="btn bg-gradient-dark">儲存</button>
@@ -253,7 +256,26 @@
               $('#delete_form').submit();
             }
         })
-    }) 
+    })
+
+    const init = () => {
+      const productTypeId = $('#edit_product_type_id').val();
+
+      $.ajax({
+          headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+          method: 'post',
+          url: '{{ route('contracts.getProducts') }}',
+          data: {
+            contract_id: '{{$data->id}}', 
+            product_type_id: productTypeId,
+          },
+          success: function(rs) {
+            $('#productsArea').html(rs.data);
+          }
+      })
+    }
+
+    init();
   })
 </script>
 @endsection

@@ -154,9 +154,39 @@
         @endif
     </div>
   </div>
-  @if($menu->seo_enable == 1)
-  @include('components.seo', ['data'=>null])
-  @endif
+  <div class="card card-secondary">
+    <div class="card-header">
+      <h3 class="card-title">選擇商品</h3>
+      <div style="float: right;">
+        <button type="button" class="btn btn-block btn-outline-secondary btn-sm addProducts" style="color:white"><i class="fas fa-plus-circle"></i> 增加商品</button>
+      </div>
+    </div>
+    <div class="card-body" id="productItemArea">
+      <div class="card card-secondary disabled" id="car_0" style="margin-top: 10px;">
+        <div class="card-header">
+          <h3 class="card-title main-title">商品1</h3>
+          <div style="float: right;">
+            <table>
+              <tr>
+                <td><button type="button" class="btn btn-block btn-outline-secondary btn-sm removeSubject" style="color:white;" data-row="0"><i class="fas fa-trash-alt"></i>&nbsp;刪除</button></td>
+              </tr>
+            </table>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="form-group row">
+            <label for="product_type_id_0">商品類別</label>
+            <select class="custom-select form-control-border productType" name="products[0][product_type_id]" id="product_type_id_0" data-row="0" required>
+              <option value="">請選擇商品類別</option>
+              @foreach($types??[] as $type)
+              <option value="{{$type->id}}">{{$type->type_name}}</option>
+              @endforeach
+            </select>
+          </div>
+          <div class="form-group row productList_0"></div>
+      </div>
+    </div>
+  </div>
   <div class="card" id="footerArea">
     <div class="card-footer text-center">
       <button type="submit" class="btn bg-gradient-dark">儲存</button>
@@ -167,27 +197,11 @@
 @endsection
 
 @section('js')
-  @if(count($jsArr) > 0)
-    @foreach($jsArr as $js)
-    <script src="/admins/js/components/{{$js}}"></script>
-    @endforeach
-  @endif
-  @if(count($assignJsArr) > 0)
-    @foreach($jsArr as $js)
-    <script src="/admins/js/assigns/{{$js}}"></script>
-    @endforeach
-  @endif
-  <script>
-  $(document).ready(function(){
-    @if($menu->menuCreateDetails->count() > 0)
-        @foreach($menu->menuCreateDetails as $detail)
-          @switch($detail->type)
-            @case('multiple_select')
-              $('#{{$detail->field_id}}').multiSelect();
-              @break
-          @endswitch
-        @endforeach
-    @endif
-  })
-  </script>
+<script src="/admins/js/components/image.js"></script>
+<script src="/admins/plugins/jSignature/jSignature.min.js"></script>
+<script>
+$(document).ready(function(){
+    $(".signBoard").jSignature({ 'width': '100%', 'height': 300});
+})
+</script>
 @endsection

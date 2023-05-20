@@ -269,7 +269,6 @@ class BasicController extends Controller implements InterfaceController
         DB::beginTransaction();
 
         try {
-            dd($request->all());
             $formData = $request->except('_token', '_method');
 
             if ($this->model->checkColumnExist('update_user_id'))

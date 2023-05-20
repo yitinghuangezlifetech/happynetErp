@@ -494,7 +494,7 @@
       </div>
     </div>
   </div>
-  <div class="card">
+  <div class="card" id="footerArea">
     <div class="card-body">
       <div class="card-footer text-center">
         <button type="submit" class="btn bg-gradient-dark">儲存</button>
