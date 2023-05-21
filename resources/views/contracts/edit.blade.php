@@ -292,31 +292,6 @@
         </div>
       </div>
       <div class="card-body">
-        <input type="hidden" name="regulations[{{$loop->iteration}}][sort]" id="sort_{{$loop->iteration}}" value="{{$log->sort}}">
-        <div class="row">
-          <div class="col-sm-6">
-            <div class="form-group">
-              <label for="term_type_id_{{$loop->iteration}}">條文類型</label>
-              <select class="custom-select form-control-border termType" name="regulations[{{$loop->iteration}}][term_type_id]" id="term_type_id_{{$loop->iteration}}" data-row="{{$loop->iteration}}" required>
-                <option value="">請選擇條文類型</option>
-                @foreach($termTypes??[] as $type)
-                <option value="{{$type->id}}" @if($type->id==$log->term->term_type_id){{'selected'}}@endif>{{$type->type_name}}</option>
-                @endforeach
-              </select>
-            </div>
-          </div>
-          <div class="col-sm-6">
-            <div class="form-group">
-              <label for="regulation_product_type_id_{{$loop->iteration}}">適用商品類型</label>
-              <select class="custom-select form-control-border regulationProductType" name="regulations[{{$loop->iteration}}][product_type_id]" id="regulation_product_type_id_{{$loop->iteration}}" data-row="{{$loop->iteration}}">
-                <option value="">請選擇商品類別</option>
-                @foreach($types??[] as $type)
-                <option value="{{$type->id}}" @if($type->id==$log->term->product_type_id){{'selected'}}@endif>{{$type->type_name}}</option>
-                @endforeach
-              </select>
-            </div>
-          </div>
-        </div>
         <div class="row">
           <div class="col-sm-12">
             <div class="form-group" id="regulationItem_{{$loop->iteration}}">
