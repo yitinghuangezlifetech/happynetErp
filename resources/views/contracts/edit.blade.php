@@ -543,9 +543,15 @@
         $('#regulationArea').prepend(str);
 
         let number = 1;
+        let sort = 0;
         $('#regulationArea .main-title').each(function(){
           $(this).html(`<i class="fas fa-arrows-alt" style="cursor:pointer"></i>&nbsp;&nbsp;條文${number}`);
           number++;
+        })
+
+        $('#regulationArea input[id^="sort_"]').each(function(){
+            $(this).val(sort);
+            sort++;
         })
       }
     })
