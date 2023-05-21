@@ -333,6 +333,10 @@
   let productTypeArr = [];
   let terms = [];
 
+  @foreach($data->terms??[] as $log)
+    terms.push('{{$log->term_id}}');
+  @endforeach
+
   $(document).ready(function(){
     @if($menu->menuCreateDetails->count() > 0)
         @foreach($menu->menuCreateDetails as $detail)
