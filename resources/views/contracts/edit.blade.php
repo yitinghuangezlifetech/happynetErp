@@ -297,7 +297,7 @@
             <div class="form-group" id="regulationItem_{{$loop->iteration}}">
             {{$log->term->title}}：{{$log->term->describe}}
             <input type="hidden" name="regulations[{{$loop->iteration}}][sort]" id="sort_{{$log->sort}}" value="{{$log->sort}}">
-            <input type="hidden" name="regulations[{{$loop->iteration}}][term_id]" value="{{$log->term_id}}">
+            <input type="hidden" class="term_id" name="regulations[{{$loop->iteration}}][term_id]" value="{{$log->term_id}}">
             </div>
           </div>
         </div>
@@ -592,7 +592,15 @@
       const row = $(this).data('row');
 
       $(`#regulationItem_${row} .term_id`).each(function(){
-        if ($(this).prop('checked')) {
+        if ($(this).prop('type') == 'checkobx') {
+          if ($(this).prop('checked')) {
+            let index = terms.indexOf($(this).val());
+
+            if (index !== -1) {
+              terms.splice(index, 1);
+            }
+          }
+        } else {
           let index = terms.indexOf($(this).val());
 
           if (index !== -1) {
