@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
-class ContractProductLog extends AbstractModel
+class ContractTermLog extends AbstractModel
 {
-    protected $table = 'contract_product_logs';
+    protected $table = 'contract_term_logs';
     protected $guarded = [];
 
     public function getFieldProperties() {}
@@ -14,8 +14,8 @@ class ContractProductLog extends AbstractModel
         return $this->belongsTo(Contract::class, 'contract_id');
     }
 
-    public function product()
+    public function term()
     {
-        return $this->belongsTo(Product::class, 'product_id');
+        return $this->belongsTo(Term::class, 'term_id');
     }
 }

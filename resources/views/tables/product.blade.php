@@ -12,7 +12,7 @@
         <tr>
         @endif
           <td style="text-align: left;max-width:20%; width:20%">
-            <input type="checkbox" name="products[{{$row}}][items][]" value="{{$product->id}}" @if(isset($logs[$product->id])){{'checked'}}@endif>
+            <input type="checkbox" class="items" name="products[{{$row}}][items][]" value="{{$product->id}}" @if(isset($logs[$product->id])){{'checked'}}@endif>
             {{$product->name}}
         </td>
         @if($loop->iteration % 5 == 0)

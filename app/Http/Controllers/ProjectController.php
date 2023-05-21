@@ -246,27 +246,6 @@ class ProjectController extends BasicController
         }
     }
 
-    public function getProductsByFilters(Request $request)
-    {
-        $filters = [
-            'sales_type_id' => $request->sales_type_id,
-            'product_type_id' => $request->product_type_id,
-        ];
-
-        $row = $request->row;
-        $products = app(Product::class)->getDataByFilters($filters);
-
-        $content = view('tables.product', compact(
-            'products', 'row'
-        ))->render();
-
-        return response()->json([
-            'status'=>true,
-            'message'=>'取得資料成功',
-            'data'=>$content
-        ], 200);
-    }
-
     private function getLogs($data)
     {
         $arr = [];

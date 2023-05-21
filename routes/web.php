@@ -23,6 +23,7 @@ use App\Http\Controllers\BonusGroupController;
 use App\Http\Controllers\SpeedApplySetController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ProjectRegulationController;
+use App\Http\Controllers\TableContrller;
 use App\Http\Controllers\ContractController;
 /*
 |--------------------------------------------------------------------------
@@ -87,7 +88,8 @@ Route::middleware('auth:web')->group(function(){
     });
 
     Route::prefix('tables')->group(function(){
-        Route::post('getProductsByFilters', [ProjectController::class, 'getProductsByFilters'])->name('tables.getProductsByFilters');
+        Route::post('getProductsByFilters', [TableContrller::class, 'getProductsByFilters'])->name('tables.getProductsByFilters');
+        Route::post('getTermsByFilters', [TableContrller::class, 'getTermsByFilters'])->name('tables.getTermsByFilters');
     });
 
     if (Schema::hasTable('menus'))

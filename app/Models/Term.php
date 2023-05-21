@@ -137,4 +137,30 @@ class Term extends AbstractModel
             ],
         ];
     }
+
+    public function getTermsByFilters($filters=[])
+    {
+        $query = $this->newModelQuery();
+        
+        if (!empty($filters))
+        {
+            if (!empty($filters['term_type_id']))
+            {
+                $query->where('term_type_id', $filters['term_type_id']);
+            }
+            if (!empty($filters['sales_type_id']))
+            {
+                $query->where('sales_type_id', $filters['sales_type_id']);
+            }
+            if (!empty($filters['product_type_id']))
+            {
+                $query->where('product_type_id', $filters['product_type_id']);
+            }
+        }
+
+        $query->orderBy('created_at', 'DESC');
+        $results = $query->get();
+
+        return $results;
+    }
 }

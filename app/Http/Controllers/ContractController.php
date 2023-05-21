@@ -5,12 +5,34 @@ namespace App\Http\Controllers;
 use DB;
 use Illuminate\Http\Request;
 
+use App\Models\FuncType;
 use App\Models\Product;
-use App\Models\ProductType;
+use App\Models\ContractTermLog;
 use App\Models\ContractProductLog;
 
 class ContractController extends BasicController
 {
+    public function create(Request $request)
+    {
+        if ($request->user()->cannot('create_'.$this->slug,  $this->model))
+        {
+            return view('alerts.error', [
+                'msg' => '您的權限不足, 請洽管理人員開通權限',
+                'redirectURL' => route('dashboard')
+            ]);
+        }
+
+        $termTypes = app(FuncType::class)->getChildsByTypeCode('term_types');
+        $types = app(FuncType::class)->getChildsByTypeCode('product_types');
+
+        if(view()->exists($this->slug.'.create'))
+        {
+            $this->createView = $this->slug.'.create';
+        }
+
+        return view($this->createView, compact('termTypes', 'types'));
+    }
+
     public function store(Request $request)
     {
         if ($request->user()->cannot('create_'.$this->slug,  $this->model))
@@ -34,9 +56,10 @@ class ContractController extends BasicController
         DB::beginTransaction();
 
         try {
-            $formData = $request->except('_token', 'products');
+            $formData = $request->except('_token', 'products', 'regulations');
             $formData['id'] = uniqid();
             $products = $request->products;
+            $regulations = $request->regulations;
 
             if ($this->model->checkColumnExist('create_user_id'))
             {
@@ -63,6 +86,7 @@ class ContractController extends BasicController
                 DB::commit();
 
                 $this->proccessProducts($id, $products);
+                $this->proccessRegulations($id, $regulations);
             
                 return view('alerts.success', [
                     'msg'=>'資料新增成功',
@@ -100,7 +124,11 @@ class ContractController extends BasicController
         }
 
         $data = $this->model->find($id);
-        $products = $this->model->getProductsByType($data->product_type_id);
+        $logs = $this->getProductLog($data);
+        $obj = app(Product::class);
+        $termTypes = app(FuncType::class)->getChildsByTypeCode('term_types');
+        $types = app(FuncType::class)->getChildsByTypeCode('product_types');
+
 
         if (!$data)
         {
@@ -118,7 +146,10 @@ class ContractController extends BasicController
         return view($this->editView, [
             'data'=>$data,
             'id'=>$id,
-            'products'=>$products,
+            'logs'=>$logs,
+            'obj'=>$obj,
+            'types'=>$types,
+            'termTypes'=>$termTypes,
         ]);
     }
 
@@ -144,8 +175,9 @@ class ContractController extends BasicController
         DB::beginTransaction();
 
         try {
-            $formData = $request->except('_token', '_method', 'products');
+            $formData = $request->except('_token', '_method', 'products', 'regulations');
             $products = $request->products;
+            $regulations = $request->regulations;
 
             if ($this->model->checkColumnExist('update_user_id'))
             {
@@ -173,6 +205,7 @@ class ContractController extends BasicController
                 DB::commit();
 
                 $this->proccessProducts($id, $products);
+                $this->proccessRegulations($id, $regulations);
     
                 return view('alerts.success',[
                     'msg'=>'資料更新成功',
@@ -198,27 +231,16 @@ class ContractController extends BasicController
         }
     }
 
-    public function getProducts(Request $request)
+    public function getProductLog($contract)
     {
-        $logs = [];
-        $filters = [
-            'product_type_id' => $request->product_type_id
-        ];
+        $arr = [];
 
-        if (isset($request->contract_id))
+        foreach ($contract->products??[] as $info)
         {
-            $data = $this->model->find($request->contract_id);
-            $logs = $this->getLogs($data);
+            $arr[$info->product_type_id][$info->product_id] = 1;
         }
 
-        $products = app(Product::class)->getDataByFilters($filters);
-        $content = view('contracts.products_table', compact('products', 'logs'))->render();
-
-        return response()->json([
-            'status'=>true,
-            'message'=>'取得資料成功',
-            'data'=>$content
-        ], 200);
+        return $arr;
     }
 
     private function proccessProducts($id, $products=[])
@@ -227,12 +249,35 @@ class ContractController extends BasicController
         {
             app(ContractProductLog::class)->where('contract_id', $id)->delete();
 
-            foreach ($products??[] as $productId)
+            foreach ($products??[] as $info)
             {
-                $product['id'] = uniqid();
-                $product['contract_id'] = $id;
-                $product['product_id'] = $productId;
-                app(ContractProductLog::class)->create($product);
+                foreach ($info['items'] as $productId)
+                {
+                    $data['id'] = uniqid();
+                    $data['contract_id'] = $id;
+                    $data['product_type_id'] = $info['product_type_id'];
+                    $data['product_id'] = $productId;
+
+                    app(ContractProductLog::class)->create($data);
+                }
+            }
+        }
+    }
+
+    private function proccessRegulations($id, $regulations=[])
+    {
+        if (!empty($regulations))
+        {
+            app(ContractTermLog::class)->where('contract_id', $id)->delete();
+
+            foreach ($regulations??[] as $regulation)
+            {
+                $data['id'] = uniqid();
+                $data['contract_id'] = $id;
+                $data['term_id'] = $regulation['term_id'];
+                $data['sort'] = $regulation['sort'];
+
+                app(ContractTermLog::class)->create($data);
             }
         }
     }
