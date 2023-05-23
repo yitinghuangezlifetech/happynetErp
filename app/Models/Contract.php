@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
+
 class Contract extends AbstractModel
 {
     protected $table = 'contracts';
@@ -195,5 +198,21 @@ class Contract extends AbstractModel
     public function terms()
     {
         return $this->hasMany(ContractTermLog::class, 'contract_id')->orderBy('sort', 'ASC');
+    }
+
+    public function getActiveContracts()
+    {
+        $query = $this->newModelQuery();
+
+        if(Schema::hasColumn($this->table, 'deleted_at'))
+        {
+            $query->whereNull('deleted_at');
+        }
+
+        $query->where('status', 1)
+              ->orderBy('created_at', 'DESC');
+        $result = $query->get();
+
+        return $result;
     }
 }

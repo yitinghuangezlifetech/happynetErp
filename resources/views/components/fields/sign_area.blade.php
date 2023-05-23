@@ -15,16 +15,14 @@
     {!! $detail->note !!}
     </label>
     @if(!empty($value))
-    <input 
-        type="file" 
-        class="form-control dropify" 
-        name="{{ $detail->field }}" 
-        data-id="{{$id}}"
-        data-model="{{$model}}"
-        data-field="{{$detail->field}}"
-        data-default-file="{{$value}}"
-        data-show-remove="true"
-        /><br>
+    <div id="{{$detail->field}}_area">
+        <img src="{{$value}}" style="max-width:100%;height:auto;">
+    </div>
+    @else
+    <div id="{{$detail->field}}_area"></div>
     @endif
-    <div class="signBoard" style="background-color: #fcfcbf; border-style: dashed solid; max-width:100%;height:auto;"></div>
+    <div class="signBoard" id="{{$detail->field}}_board" style="background-color: #fcfcbf; border-style: dashed solid; max-width:100%;height:auto;"></div>
+    <br>
+    <button type="button" class="btn bg-gradient-warning btn-sm" onclick="resetSign('{{$detail->field}}_area', '{{$detail->field}}_board')">清除</button>
+    <button type="button" class="btn bg-gradient-info btn-sm" onclick="convertToBase64('{{$detail->field}}_area', '{{$detail->field}}_board')">確認</button>
 </div>

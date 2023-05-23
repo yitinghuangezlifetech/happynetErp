@@ -183,12 +183,32 @@ class Menu extends AbstractModel
 
     public function menuCreateDetails()
     {
-        return $this->hasMany(MenuDetail::class, 'menu_id')->where('create', 1)->orderBy('sort', 'ASC');
+        return $this->hasMany(MenuDetail::class, 'menu_id')
+            ->where('create', 1)
+            ->where('create_show', 1)
+            ->orderBy('sort', 'ASC');
+    }
+
+    public function menuCreateAllDetails()
+    {
+        return $this->hasMany(MenuDetail::class, 'menu_id')
+            ->where('create', 1)
+            ->orderBy('sort', 'ASC');
     }
 
     public function menuEditDetails()
     {
-        return $this->hasMany(MenuDetail::class, 'menu_id')->where('edit', 1)->orderBy('sort', 'ASC');
+        return $this->hasMany(MenuDetail::class, 'menu_id')
+            ->where('edit', 1)
+            ->where('edit_show', 1)
+            ->orderBy('sort', 'ASC');
+    }
+
+    public function menuEditAllDetails()
+    {
+        return $this->hasMany(MenuDetail::class, 'menu_id')
+            ->where('edit', 1)
+            ->orderBy('sort', 'ASC');
     }
 
     public function menuSearchDetails()

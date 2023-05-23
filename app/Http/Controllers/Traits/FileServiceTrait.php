@@ -44,6 +44,27 @@ trait FileServiceTrait
     }
 
     /**
+     * 儲存base64檔案
+     * @author Wayne <jp21.wayne@gmail.com>
+     * @param $file: 檔案物件
+     * @param $directory: 檔案存放目錄
+     * @param $fileName: 存放檔名
+     * @return string
+     */
+    public function storeBase64($file, $directory, $fileName) {
+        if ($file === null || $file === '') {
+            return null;
+        }
+
+        $base64_str = explode(",", $file);
+        $decFile = base64_decode(end($base64_str));
+        $filePath = $directory . '/' . $fileName;
+        Storage::disk('public')->put($filePath, $decFile);
+
+        return $filePath;
+    }
+
+    /**
      * 刪除檔案
      * @author Wayne <wayne@howdesign.com.tw>
      * @param $filePath: 檔案存在位置

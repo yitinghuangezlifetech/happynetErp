@@ -268,4 +268,25 @@ class Project extends AbstractModel
     {
         return $this->hasMany(ProjectProduct::class, 'project_id');
     }
+
+    public function getActiveProjects()
+    {
+        $now = date('Y-m-d');
+
+        $query = $this->newModelQuery();
+
+        if(Schema::hasColumn($this->table, 'deleted_at'))
+        {
+            $query->whereNull('deleted_at');
+        }
+
+        $query->where('effective_day', '<', $now)
+            ->where('expiration_day', '>=', $now)
+            ->where('status', 1)
+            ->orderBy('created_at', 'DESC');
+
+        $result = $query->get();
+
+        return $result;
+    }
 }

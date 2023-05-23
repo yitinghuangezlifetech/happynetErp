@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Apis\ImageApi;
 use App\Http\Controllers\Apis\SelectApi;
 use App\Http\Controllers\Apis\TableApi;
+use App\Http\Controllers\Apis\PublicApi;
 use App\Http\Controllers\Apis\SystemTypeApi;
 use App\Http\Controllers\Apis\UserControllerApi;
 /*
@@ -35,6 +36,14 @@ Route::prefix('system_types')->group(function(){
 
 Route::prefix('selects')->group(function(){
     Route::post('getGroupRoles', [SelectApi::class, 'getGroupRoles'])->name('api.selects.getGroupRoles');
+});
+
+Route::prefix('public')->group(function(){
+    Route::post('getOrganization', [PublicApi::class, 'getOrganization'])->name('api.public.getOrganization');
+    Route::post('getOrganizationByIdentity', [PublicApi::class, 'getOrganizationByIdentity'])->name('api.public.getOrganizationByIdentity');
+    Route::post('getOrganizationUsers', [PublicApi::class, 'getOrganizationUsers'])->name('api.public.getOrganizationUsers');
+    Route::post('getContractRegulations', [PublicApi::class, 'getContractRegulations'])->name('api.public.getContractRegulations');
+    Route::post('getContractProducts', [PublicApi::class, 'getContractProducts'])->name('api.public.getContractProducts');
 });
 
 Route::post('auth', [UserControllerApi::class, 'login']);
