@@ -44,6 +44,7 @@ Route::prefix('public')->group(function(){
     Route::post('getOrganizationUsers', [PublicApi::class, 'getOrganizationUsers'])->name('api.public.getOrganizationUsers');
     Route::post('getContractRegulations', [PublicApi::class, 'getContractRegulations'])->name('api.public.getContractRegulations');
     Route::post('getContractProducts', [PublicApi::class, 'getContractProducts'])->name('api.public.getContractProducts');
+    Route::post('getProjectProducts', [PublicApi::class, 'getProjectProducts'])->name('api.public.getProjectProducts');
 });
 
 Route::post('auth', [UserControllerApi::class, 'login']);

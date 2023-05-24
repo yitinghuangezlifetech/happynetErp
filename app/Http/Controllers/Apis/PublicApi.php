@@ -7,12 +7,46 @@ use Illuminate\Http\Request;
 
 use App\Models\User;
 use App\Models\Product;
+use App\Models\Project;
 use App\Models\Contract;
 use App\Models\FuncType;
 use App\Models\Organization;
 
 class PublicApi extends Controller
 {
+    public function getProjectProducts(Request $request)
+    {
+        $data = app(Project::class)->find($request->project_id);
+
+        if ($data)
+        {
+            $logs = [];
+
+            foreach ($data->logs??[] as $k=>$log)
+            {
+                $logs[$log->product_type_id][$log->product_id] = 1;
+            }
+
+            $obj = app(Product::class);
+
+            $content = view('applies.product_item', compact(
+                'logs', 'obj',
+            ))->render();
+
+            return response()->json([
+                'status' => false,
+                'message' => '取得資料成功',
+                'data' => $content
+            ], 200);
+        }
+
+        return response()->json([
+            'status' => false,
+            'message' => '該專案不存在, 請洽工程師',
+            'data' => null
+        ], 404);
+    }
+
     public function getContractProducts(Request $request)
     {
         $data = app(Contract::class)->find($request->contract_id);

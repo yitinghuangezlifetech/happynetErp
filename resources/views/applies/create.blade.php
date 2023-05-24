@@ -261,10 +261,13 @@
       const planTypeId = selected.data('plantype');
       const applyTypeId = selected.data('applytype');
 
+      $('#productsArea').html('');
+      $('#regulationArea').html('');
+
       if (id == '') {
         $('#project_id').attr('disabled', false);
         $('#contract_name').val('');
-
+        
         //方案類別
         $('#plan_type_id').val('');
         $('#plan_type_id option').remove();
@@ -345,6 +348,9 @@
       const contractName = selected.text();
       const applyTypeId = selected.data('applytype');
 
+      $('#productsArea').html('');
+      $('#regulationArea').html('');
+
       if (id == '') {
         $('#contract_id').attr('disabled', false);
         $('#contract_name').val('');
@@ -358,7 +364,6 @@
         @endforeach
 
       } else {
-
         $('#contract_id').attr('disabled', true);
         $('#contract_name').val(contractName);
 
@@ -368,6 +373,25 @@
           if ($(this).val() != applyTypeId) {
             $(this).remove();
           }
+        })
+
+        $.ajax({
+            headers: { 'apikey': '{{env('HAPPYNET_APIKEY')}}'  },
+            method: 'post',
+            url: '{{ route('api.public.getProjectProducts') }}',
+            data: {
+              project_id: id
+            },
+            success: function(rs) {
+              $('#productsArea').append(rs.data);
+            },
+            error: function(rs) {
+              Swal.fire({
+                icon: 'error',
+                title: '訊息提示',
+                text: rs.responseJSON.message
+              })
+            }
         })
       }  
     })

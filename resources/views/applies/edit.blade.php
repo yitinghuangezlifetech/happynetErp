@@ -385,10 +385,16 @@
           $(this).remove();
         }
       })
+
+      @if(!empty($data->contract_id))
+      $('#edit_project_id').attr('disabled', true);
+      @elseif(!empty($data->project_id))
+      $('#edit_contract_id').attr('disabled', true);
+      @endif
     }
     init();
 
-    $('#contract_id').change(function(){
+    $('#edit_contract_id').change(function(){
       const id = $(this).val();
       const selected = $(this).find('option:selected');
       const contractName = selected.text();
@@ -396,38 +402,40 @@
       const applyTypeId = selected.data('applytype');
 
       if (id == '') {
-        $('#project_id').attr('disabled', false);
-        $('#contract_name').val('');
+        $('#edit_project_id').attr('disabled', false);
+        $('#edit_contract_name').val('');
+        $('#productsArea').html('');
+        $('#regulationArea').html('');
 
         //方案類別
-        $('#plan_type_id').val('');
-        $('#plan_type_id option').remove();
-        $('#plan_type_id').append(`<option value="">請選擇</option>`);
+        $('#edit_plan_type_id').val('');
+        $('#edit_plan_type_id option').remove();
+        $('#edit_plan_type_id').append(`<option value="">請選擇</option>`);
         @foreach($planTypes??[] as $type)
-        $('#plan_type_id').append(`<option value="{{$type->id}}">{{$type->type_name}}</option>`);
+        $('#edit_plan_type_id').append(`<option value="{{$type->id}}">{{$type->type_name}}</option>`);
         @endforeach
 
         //申請類別
-        $('#apply_type_id').val('');
-        $('#apply_type_id option').remove();
-        $('#apply_type_id').append(`<option value="">請選擇</option>`);
+        $('#edit_apply_type_id').val('');
+        $('#edit_apply_type_id option').remove();
+        $('#edit_apply_type_id').append(`<option value="">請選擇</option>`);
         @foreach($applyTypes??[] as $type)
-        $('#apply_type_id').append(`<option value="{{$type->id}}">{{$type->type_name}}</option>`);
+        $('#edit_apply_type_id').append(`<option value="{{$type->id}}">{{$type->type_name}}</option>`);
         @endforeach
 
       } else {
-        $('#project_id').attr('disabled', true);
-        $('#contract_name').val(contractName);
-        $('#plan_type_id').val(planTypeId);
-        $('#apply_type_id').val(applyTypeId);
+        $('#edit_project_id').attr('disabled', true);
+        $('#edit_contract_name').val(contractName);
+        $('#edit_plan_type_id').val(planTypeId);
+        $('#edit_apply_type_id').val(applyTypeId);
 
-        $('#plan_type_id option').each(function(){
+        $('#edit_plan_type_id option').each(function(){
           if ($(this).val() != planTypeId) {
             $(this).remove();
           }
         })
 
-        $('#apply_type_id option').each(function(){
+        $('#edit_apply_type_id option').each(function(){
           if ($(this).val() != applyTypeId) {
             $(this).remove();
           }
@@ -473,44 +481,66 @@
       }  
     })
 
-    $('#project_id').change(function(){
+    $('#edit_project_id').change(function(){
       const id = $(this).val();
       const selected = $(this).find('option:selected');
       const contractName = selected.text();
       const applyTypeId = selected.data('applytype');
 
+      $('#productsArea').html('');
+      $('#regulationArea').html('');
+
       if (id == '') {
-        $('#contract_id').attr('disabled', false);
-        $('#contract_name').val('');
+        $('#edit_contract_id').attr('disabled', false);
+        $('#edit_contract_name').val('');
 
         //申請類別
-        $('#apply_type_id').val('');
-        $('#apply_type_id option').remove();
-        $('#apply_type_id').append(`<option value="">請選擇</option>`);
+        $('#edit_apply_type_id').val('');
+        $('#edit_apply_type_id option').remove();
+        $('#edit_apply_type_id').append(`<option value="">請選擇</option>`);
         @foreach($applyTypes??[] as $type)
-        $('#apply_type_id').append(`<option value="{{$type->id}}">{{$type->type_name}}</option>`);
+        $('#edit_apply_type_id').append(`<option value="{{$type->id}}">{{$type->type_name}}</option>`);
         @endforeach
 
       } else {
 
-        $('#contract_id').attr('disabled', true);
-        $('#contract_name').val(contractName);
+        $('#edit_contract_id').attr('disabled', true);
+        $('#edit_contract_name').val(contractName);
 
-        $('#apply_type_id').val(applyTypeId);
+        $('#edit_apply_type_id').val(applyTypeId);
 
-        $('#apply_type_id option').each(function(){
+        $('#edit_apply_type_id option').each(function(){
           if ($(this).val() != applyTypeId) {
             $(this).remove();
           }
         })
+
+        $.ajax({
+            headers: { 'apikey': '{{env('HAPPYNET_APIKEY')}}'  },
+            method: 'post',
+            url: '{{ route('api.public.getProjectProducts') }}',
+            data: {
+              project_id: id
+            },
+            success: function(rs) {
+              $('#productsArea').append(rs.data);
+            },
+            error: function(rs) {
+              Swal.fire({
+                icon: 'error',
+                title: '訊息提示',
+                text: rs.responseJSON.message
+              })
+            }
+        })
       }  
     })
 
-    $('#identity_id').change(function(){
+    $('#edit_identity_id').change(function(){
       const id = $(this).val();
       
-      $('#organization_id option').remove();
-      $('#organization_id').append(`<option value="">請選擇</option>`);
+      $('#edit_organization_id option').remove();
+      $('#edit_organization_id').append(`<option value="">請選擇</option>`);
 
       $.ajax({
           headers: { 'apikey': '{{env('HAPPYNET_APIKEY')}}'  },
@@ -526,7 +556,7 @@
               options += `<option value="${info.id}">${info.name}</option>`;
             })
 
-            $('#organization_id').append(options);
+            $('#edit_organization_id').append(options);
           },
           error: function(rs) {
             Swal.fire({
@@ -538,7 +568,7 @@
       })
     })
 
-    $('#organization_id').change(function(){
+    $('#edit_organization_id').change(function(){
       const id = $(this).val();
 
       $('#user_id option').remove();
@@ -558,7 +588,7 @@
               options += `<option value="${info.id}">${info.name}(帳號:${info.account})</option>`;
             })
 
-            $('#user_id').append(options);
+            $('#edit_user_id').append(options);
           },
           error: function(rs) {
             Swal.fire({
@@ -577,12 +607,12 @@
             id: id
           },
           success: function(rs) {
-            $('#system_no').attr('readonly', true);
-            $('#system_no').val(rs.data.system_no);
+            $('#edit_system_no').attr('readonly', true);
+            $('#edit_system_no').val(rs.data.system_no);
           },
           error: function(rs) {
 
-            $('#system_no').attr('readonly', false);
+            $('#edit_system_no').attr('readonly', false);
 
             Swal.fire({
               icon: 'error',
@@ -615,7 +645,7 @@
     });
 
     $('body').on('click', '.addProducts', function(){
-      const saleTypeId = $('#sales_type_id').val();
+      const saleTypeId = $('#edit_sales_type_id').val();
       let row = 0;
       let str = '';
 
