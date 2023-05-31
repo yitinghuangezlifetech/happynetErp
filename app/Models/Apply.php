@@ -550,9 +550,11 @@ class Apply extends AbstractModel
                 'field' => 'status',
                 'type' => 'select',
                 'show_name' => '狀態',
+                'required' => 1,
                 'browse' => 1,
                 'create' => 2,
-                'edit' => 2,
+                'edit' => 1,
+                'edit_show' => 2,
                 'options' => json_encode([
                     ['text'=>'通過', 'value'=>1, 'default'=>0],
                     ['text'=>'不通過', 'value'=>2, 'default'=>0],

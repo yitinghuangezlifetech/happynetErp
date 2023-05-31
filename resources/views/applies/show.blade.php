@@ -25,8 +25,8 @@
         }
         $i = 1;
       @endphp
-      @if($menu->menuEditDetails->count() > 0)
-          @foreach($menu->menuEditDetails as $detail)
+      @if($menu->menuEditAllDetails->count() > 0)
+          @foreach($menu->menuEditAllDetails as $detail)
             @if($loop->first)
               <div class="row">
             @endif
@@ -180,9 +180,11 @@
                         <img src="{{ $data->{$detail->field} }}" width="150px" height="150px">
                       </div>
                       @else
-                      <div class="col-sm-6">
-                        @include('components.fields.'.$detail->type, ['type'=>'edit', 'detail'=>$detail, 'id'=>$data->id, 'model'=>$menu->model, 'value'=>$data->{$detail->field}])
-                      </div>
+                          @if($detail->field != 'technician_id' && $detail->field != 'technician_sign')
+                          <div class="col-sm-6">
+                            @include('components.fields.'.$detail->type, ['type'=>'edit', 'detail'=>$detail, 'id'=>$data->id, 'model'=>$menu->model, 'value'=>$data->{$detail->field}])
+                          </div>
+                          @endif
                       @endif
                     @endif
                   @endif
@@ -337,6 +339,7 @@
     const init = () => {
       $('body input').attr('disabled', true);
       $('body select').attr('disabled', true);
+      $('body textarea').attr('disabled', true);
       $('.removeRegulation').remove();
       $('.bg-gradient-warning').remove();
       $('.bg-gradient-info').remove();
