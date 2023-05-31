@@ -23,4 +23,9 @@ class ApplyProductLog extends AbstractModel
     {
         return $this->belongsTo(Product::class, 'product_id');
     }
+
+    public function productType()
+    {
+        return $this->belongsTo(FuncType::class, 'product_type_id', 'id');
+    }
 }
