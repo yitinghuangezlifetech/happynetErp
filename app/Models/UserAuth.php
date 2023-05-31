@@ -70,6 +70,11 @@ class UserAuth extends Authenticatable
         return $this->belongsTo(Role::class, 'role_id');
     }
 
+    public function position()
+    {
+        return $this->belongsTo(FuncType::class, 'position_id', 'id');
+    }
+
     public function hasPermission($action)
     {
         $permission = app(Permission::class)->where('code', $action)->first();

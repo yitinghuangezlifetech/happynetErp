@@ -552,12 +552,13 @@ class Apply extends AbstractModel
                 'show_name' => '狀態',
                 'browse' => 1,
                 'create' => 2,
-                'edit' => 1,
+                'edit' => 2,
                 'options' => json_encode([
                     ['text'=>'通過', 'value'=>1, 'default'=>0],
                     ['text'=>'不通過', 'value'=>2, 'default'=>0],
                     ['text'=>'待審核', 'value'=>3, 'default'=>0],
                     ['text'=>'未送件', 'value'=>4, 'default'=>1],
+                    ['text'=>'已送件', 'value'=>5, 'default'=>0],
                 ])
             ],
             [

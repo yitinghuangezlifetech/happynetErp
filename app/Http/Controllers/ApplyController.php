@@ -134,6 +134,38 @@ class ApplyController extends BasicController
         }
     }
 
+    public function show(Request $request, $id)
+    {
+        $data = $this->model->find($id);
+        $logs = $this->getProductLog($data);
+        $obj = app(Product::class);
+        $termTypes = app(FuncType::class)->getChildsByTypeCode('term_types');
+        $types = app(FuncType::class)->getChildsByTypeCode('product_types');
+
+
+        if (!$data)
+        {
+            return view('alerts.error',[
+                'msg'=>'資料不存在',
+                'redirectURL'=>route($this->slug.'.index')
+            ]); 
+        }
+
+        if(view()->exists($this->slug.'.show'))
+        {
+            $this->editView = $this->slug.'.show';
+        }
+
+        return view($this->editView, [
+            'data'=>$data,
+            'id'=>$id,
+            'logs'=>$logs,
+            'obj'=>$obj,
+            'types'=>$types,
+            'termTypes'=>$termTypes,
+        ]);
+    }
+
     public function edit(Request $request, $id)
     {
         if ($request->user()->cannot('edit_'.$this->slug,  $this->model))
@@ -236,11 +268,21 @@ class ApplyController extends BasicController
                 $data = $this->model->find($id);
                 $this->proccessProducts($data, $products);
                 $this->proccessRegulations($data, $regulations);
-    
-                return view('alerts.success',[
-                    'msg'=>'資料更新成功',
-                    'redirectURL'=>route($this->slug.'.index')
-                ]);
+
+                if ($formData['status'] == 5)
+                {
+                    return view('alerts.success',[
+                        'msg'=>'送件成功',
+                        'redirectURL'=>route($this->slug.'.index')
+                    ]);
+                }
+                else
+                {
+                    return view('alerts.success',[
+                        'msg'=>'資料更新成功',
+                        'redirectURL'=>route($this->slug.'.index')
+                    ]);
+                }
             }
 
             DB::rollBack();

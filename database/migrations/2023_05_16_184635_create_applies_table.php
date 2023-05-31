@@ -45,7 +45,7 @@ return new class extends Migration
             $table->string('company_seal', 120)->nullable()->comment('公司大章');
             $table->string('company_stamp', 120)->nullable()->comment('公司小章');
             $table->string('fail_response')->nullable()->comment('審核不過的理由');
-            $table->tinyInteger('status')->default(4)->nullable()->comment('狀態(值1:通過, 值2:不過通, 值3:待審核, 值4:未送件)');
+            $table->tinyInteger('status')->default(4)->nullable()->comment('狀態(值1:通過, 值2:不過通, 值3:待審核, 值4:未送件, 值5:已送件)');
             $table->timestamps();
         });
     }
