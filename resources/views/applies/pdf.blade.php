@@ -318,11 +318,11 @@ td {
     <td style="text-align: center; background-color: #DCDCDC">收件中心</td>
   </tr>
   <tr>
-    <td rowspan="5">
+    <td rowspan="6">
       <img src="{{$data->company_seal}}" width="60%">
       <img src="{{$data->company_stamp}}" width="30%">
     </td>
-    <td rowspan="5"></td>
+    <td rowspan="6"></td>
   </tr>
   <tr>
     <td style="text-align: center; background-color: #d1cbba">送件人</td>
