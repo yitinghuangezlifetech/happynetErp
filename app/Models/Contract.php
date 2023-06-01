@@ -190,6 +190,11 @@ class Contract extends AbstractModel
             ->get();
     }
 
+    public function productTypeLogs()
+    {
+        return $this->hasMany(ContractProductTypeLog::class, 'contract_id');
+    }
+
     public function products()
     {
         return $this->hasMany(ContractProductLog::class, 'contract_id');

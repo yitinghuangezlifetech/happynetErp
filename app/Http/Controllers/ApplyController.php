@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use DB;
+use PDF;
+use File;
+use Storage;
 use Illuminate\Http\Request;
 
 use App\Models\FuncType;
@@ -11,6 +14,7 @@ use App\Models\Contract;
 use App\Models\Product;
 use App\Models\ApplyTermLog;
 use App\Models\ApplyProductLog;
+use App\Models\ApplyFeeRateLog;
 
 use App\Http\Controllers\Traits\FileServiceTrait as fileService;
 
@@ -177,11 +181,10 @@ class ApplyController extends BasicController
         }
 
         $data = $this->model->find($id);
-        $logs = $this->getProductLog($data);
+        $applyLogs = $this->getProductLog($data);
         $obj = app(Product::class);
         $termTypes = app(FuncType::class)->getChildsByTypeCode('term_types');
         $types = app(FuncType::class)->getChildsByTypeCode('product_types');
-
 
         if (!$data)
         {
@@ -199,7 +202,7 @@ class ApplyController extends BasicController
         return view($this->editView, [
             'data'=>$data,
             'id'=>$id,
-            'logs'=>$logs,
+            'applyLogs'=>$applyLogs,
             'obj'=>$obj,
             'types'=>$types,
             'termTypes'=>$termTypes,
@@ -228,9 +231,8 @@ class ApplyController extends BasicController
         DB::beginTransaction();
 
         try {
-            $formData = $request->except('_token', '_method', 'products', 'regulations');
+            $formData = $request->except('_token', '_method', 'products');
             $products = $request->products;
-            $regulations = $request->regulations;
 
             if ($this->model->checkColumnExist('update_user_id'))
             {
@@ -267,7 +269,6 @@ class ApplyController extends BasicController
 
                 $data = $this->model->find($id);
                 $this->proccessProducts($data, $products);
-                $this->proccessRegulations($data, $regulations);
 
                 if ($formData['status'] == 5)
                 {
@@ -303,43 +304,68 @@ class ApplyController extends BasicController
         }
     }
 
+    public function print($id)
+    {
+        $data = $this->model->find($id);
+        $applyLogs = $this->getProductLog($data);
+        $obj = app(Product::class);
+
+        $path = storage_path('app/public').'/pdfs';
+        $filePath = 'pdfs/'.$data->apply_no.'_申請書.pdf';
+
+        File::makeDirectory($path, $mode = 0777, true, true);
+        PDF::setOptions(['defaultFont' => 'ARIALUNI', 'fontDir'=>storage_path('app/public/fonts')]);
+
+        $pdf = PDF::loadView('applies.pdf', [
+            'data'=>$data,
+            'id'=>$id,
+            'applyLogs'=>$applyLogs,
+            'obj'=>$obj,
+        ]);
+
+        $pdf->save(storage_path('app/public').'/'.$filePath, 'UTF-8');
+        return $pdf->download(date('YmdHis').'_'.$data->apply_no.'_申請書.pdf');
+    }
+
     private function proccessProducts($apply, $products=[])
     {
         if (!empty($products))
         {
             app(ApplyProductLog::class)->where('apply_id', $apply->id)->delete();
+            app(ApplyFeeRateLog::class)->where('apply_id', $apply->id)->delete();
 
             foreach ($products??[] as $info)
             {
-                foreach ($info['items'] as $productId)
+                if(isset($info['product_id']))
                 {
-                    $data['id'] = uniqid();
-                    $data['apply_id'] = $apply->id;
-                    $data['contract_id'] = $apply->contract_id;
-                    $data['product_type_id'] = $info['product_type_id'];
-                    $data['product_id'] = $productId;
+                    if (isset($info['feeRates']))
+                    {
+                        $info['id'] = uniqid();
+                        $info['apply_id'] = $apply->id;
+                        $feeRates = $info['feeRates'];
+                        unset($info['feeRates']);
 
-                    app(ApplyProductLog::class)->create($data);
+                        $log = app(ApplyProductLog::class)->create($info);
+
+                        foreach($feeRates??[] as $item)
+                        {
+                            $item['id'] = uniqid();
+                            $item['apply_id'] = $apply->id;
+                            $item['apply_product_log_id'] = $log->id;
+
+                            app(ApplyFeeRateLog::class)->create($item);
+                        }
+                    }
+                    else
+                    {
+                        if ($info['qty'] > 0)
+                        {
+                            $info['id'] = uniqid();
+                            $info['apply_id'] = $apply->id;
+                            app(ApplyProductLog::class)->create($info);
+                        }
+                    }
                 }
-            }
-        }
-    }
-
-    private function proccessRegulations($apply, $regulations=[])
-    {
-        if (!empty($regulations))
-        {
-            app(ApplyTermLog::class)->where('apply_id', $apply->id)->delete();
-
-            foreach ($regulations??[] as $regulation)
-            {
-                $data['id'] = uniqid();
-                $data['apply_id'] = $apply->id;
-                $data['contract_id'] = $apply->contract_id;
-                $data['term_id'] = $regulation['term_id'];
-                $data['sort'] = $regulation['sort'];
-
-                app(ApplyTermLog::class)->create($data);
             }
         }
     }
@@ -348,9 +374,26 @@ class ApplyController extends BasicController
     {
         $arr = [];
 
-        foreach ($apply->products??[] as $info)
+        foreach ($apply->productLogs??[] as $log)
         {
-            $arr[$info->product_type_id][$info->product_id] = 1;
+            if ($log->qty > 0) {
+                $arr[$log->product_type_id][$log->product_id]['qty'] = $log->qty;
+                $arr[$log->product_type_id][$log->product_id]['rent_month'] = $log->rent_month;
+                $arr[$log->product_type_id][$log->product_id]['discount'] = $log->discount;
+                $arr[$log->product_type_id][$log->product_id]['amount'] = $log->amount;
+                $arr[$log->product_type_id][$log->product_id]['security_deposit'] = $log->security_deposit;
+                $arr[$log->product_type_id][$log->product_id]['note'] = $log->note;
+            } else {
+                foreach($log->feeRateLogs??[] as $k=>$rate)
+                {
+                    $arr[$log->product_type_id][$log->product_id][$rate->call_target_id]['call_target_id'] = $rate->call_target_id;
+                    $arr[$log->product_type_id][$log->product_id][$rate->call_target_id]['call_rate'] = $rate->call_rate;
+                    $arr[$log->product_type_id][$log->product_id][$rate->call_target_id]['discount'] = $rate->discount	;
+                    $arr[$log->product_type_id][$log->product_id][$rate->call_target_id]['amount'] = $rate->amount;
+                    $arr[$log->product_type_id][$log->product_id][$rate->call_target_id]['charge_unit'] = $rate->charge_unit;
+                    $arr[$log->product_type_id][$log->product_id][$rate->call_target_id]['parameter'] = $rate->parameter;
+                }
+            }
         }
 
         return $arr;

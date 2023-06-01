@@ -28,4 +28,9 @@ class ApplyProductLog extends AbstractModel
     {
         return $this->belongsTo(FuncType::class, 'product_type_id', 'id');
     }
+    
+    public function feeRateLogs()
+    {
+        return $this->hasMany(ApplyFeeRateLog::class, 'apply_product_log_id');
+    }
 }

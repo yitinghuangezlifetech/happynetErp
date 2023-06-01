@@ -13,12 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('contract_product_logs', function (Blueprint $table) {
+        Schema::create('contract_product_type_logs', function (Blueprint $table) {
             $table->uuid('id')->unique()->primary();
             $table->string('contract_id', 36)->nullable()->comment('合約id');
-            $table->string('log_id', 36)->nullable()->comment('合約商品分類log id');
             $table->string('product_type_id', 36)->nullable()->comment('商品類別id');
-            $table->string('product_id', 36)->nullable()->comment('商品id');
             $table->timestamps();
         });
     }
@@ -30,6 +28,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('contract_product_logs');
+        Schema::dropIfExists('contract_product_type_logs');
     }
 };

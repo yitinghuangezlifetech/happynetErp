@@ -9,6 +9,7 @@ use App\Models\FuncType;
 use App\Models\Product;
 use App\Models\ContractTermLog;
 use App\Models\ContractProductLog;
+use App\Models\ContractProductTypeLog;
 
 class ContractController extends BasicController
 {
@@ -247,14 +248,22 @@ class ContractController extends BasicController
     {
         if (!empty($products))
         {
+            app(ContractProductTypeLog::class)->where('contract_id', $id)->delete();
             app(ContractProductLog::class)->where('contract_id', $id)->delete();
 
             foreach ($products??[] as $info)
             {
+                $log = app(ContractProductTypeLog::class)->create([
+                    'id' => uniqid(),
+                    'contract_id' => $id,
+                    'product_type_id' => $info['product_type_id']
+                ]);
+
                 foreach ($info['items'] as $productId)
                 {
                     $data['id'] = uniqid();
                     $data['contract_id'] = $id;
+                    $data['log_id'] = $log->id;
                     $data['product_type_id'] = $info['product_type_id'];
                     $data['product_id'] = $productId;
 

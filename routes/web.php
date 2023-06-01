@@ -25,6 +25,7 @@ use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ProjectRegulationController;
 use App\Http\Controllers\TableContrller;
 use App\Http\Controllers\ContractController;
+use App\Http\Controllers\ApplyController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -77,6 +78,10 @@ Route::middleware('auth:web')->group(function(){
 
     Route::prefix('speed_apply_sets')->group(function(){
         Route::post('preview', [SpeedApplySetController::class, 'preview'])->name('speed_apply_sets.preview');
+    });
+
+    Route::prefix('applies')->group(function(){
+        Route::get('{id}/print', [ApplyController::class, 'print'])->name('applies.print');
     });
 
     Route::prefix('project_regulations')->group(function(){

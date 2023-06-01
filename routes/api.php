@@ -39,6 +39,7 @@ Route::prefix('selects')->group(function(){
 });
 
 Route::prefix('public')->group(function(){
+    Route::post('getUserInfo', [PublicApi::class, 'getUserInfo'])->name('api.public.getUserInfo');
     Route::post('getOrganization', [PublicApi::class, 'getOrganization'])->name('api.public.getOrganization');
     Route::post('getOrganizationByIdentity', [PublicApi::class, 'getOrganizationByIdentity'])->name('api.public.getOrganizationByIdentity');
     Route::post('getOrganizationUsers', [PublicApi::class, 'getOrganizationUsers'])->name('api.public.getOrganizationUsers');

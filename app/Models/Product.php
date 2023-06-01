@@ -238,4 +238,9 @@ class Product extends AbstractModel
 
         return $results;
     }
+
+    public function feeRate()
+    {
+        return $this->belongsTo(FeeRate::class, 'fee_rate_id');
+    }
 }

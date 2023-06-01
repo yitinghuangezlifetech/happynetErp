@@ -14,6 +14,26 @@ use App\Models\Organization;
 
 class PublicApi extends Controller
 {
+    public function getUserInfo(Request $request)
+    {
+        $user = app(User::class)->find($request->user_id);
+
+        if ($user)
+        {
+            return response()->json([
+                'status' => false,
+                'message' => '取得資料成功',
+                'data' => $user
+            ], 200);
+        }
+
+        return response()->json([
+            'status' => false,
+            'message' => '該使用者不存在, 請洽工程師',
+            'data' => null
+        ], 404);
+    }
+
     public function getProjectProducts(Request $request)
     {
         $data = app(Project::class)->find($request->project_id);

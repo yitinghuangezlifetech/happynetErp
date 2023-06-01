@@ -572,7 +572,57 @@ class Apply extends AbstractModel
         ];
     }
 
-    public function products()
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function project()
+    {
+        return $this->belongsTo(Project::class, 'project_id');
+    }
+
+    public function applyType()
+    {
+        return $this->belongsTo(FuncType::class, 'apply_type_id');
+    }
+
+    public function closePeriod()
+    {
+        return $this->belongsTo(ClosePeriod::class, 'close_period_id');
+    }
+
+    public function organization()
+    {
+        return $this->belongsTo(Organization::class, 'organization_id');
+    }
+
+    public function sender()
+    {
+        return $this->belongsTo(User::class, 'sender_id');
+    }
+
+    public function recipient()
+    {
+        return $this->belongsTo(User::class, 'recipient_id');
+    }
+
+    public function technician()
+    {
+        return $this->belongsTo(User::class, 'technician_id');
+    }
+
+    public function audit()
+    {
+        return $this->belongsTo(User::class, 'auditor_id');
+    }
+
+    public function contract()
+    {
+        return $this->belongsTo(Contract::class, 'contract_id');
+    }
+
+    public function productLogs()
     {
         return $this->hasMany(ApplyProductLog::class, 'apply_id');
     }

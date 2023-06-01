@@ -254,6 +254,38 @@
     }
     init();
 
+    $('body').on('change', '.qty', function(){
+      const qty = parseInt($(this).val());
+      const productId = $(this).data('productid');
+      const discount = $(`#discount_${productId}`).val();
+      const rent = $(`#rent_month_${productId}`).val();
+      let price;
+
+      if (discount == '') {
+        price = rent * qty;
+        $(`#price_${productId}`).val(price);
+      } else {
+        price = Math.round( rent * (discount / 100)) * qty;
+        $(`#price_${productId}`).val(price);
+      }
+    })
+
+    $('body').on('change', '.discount', function(){
+      const discount = parseInt($(this).val());
+      const productId = $(this).data('productid');
+      const qty = parseInt($(`#qty_${productId}`).val());
+      const rent = $(`#rent_month_${productId}`).val();
+      let price;
+
+      if (discount == '') {
+        price = rent * qty;
+        $(`#price_${productId}`).val(rent);
+      } else {
+        price = Math.round( rent * (discount / 100)) * qty;
+        $(`#price_${productId}`).val(price);
+      }
+    })
+
     $('#contract_id').change(function(){
       const id = $(this).val();
       const selected = $(this).find('option:selected');

@@ -62,6 +62,9 @@
                   @endcan
                 @else
                   <button type="button" class="btn bg-gradient-secondary btn-sm" onclick="location.href='{{route($menu->slug.'.show', $data->id)}}'" title="檢視"><i class="fas fa-eye"></i></button>
+                  @if($data->status == 1)
+                  <button type="button" class="btn bg-gradient-secondary btn-sm" onclick="window.open('{{route($menu->slug.'.print', $data->id)}}', '_blank')" title="列印"><i class="fas fa-print"></i></button>
+                  @endif
                 @endif
               </td>
               @if($menu->menuBrowseDetails->count() > 0)
