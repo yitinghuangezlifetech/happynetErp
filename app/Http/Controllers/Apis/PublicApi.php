@@ -75,7 +75,7 @@ class PublicApi extends Controller
         {
             $arr = [];
 
-            foreach ($apply->productLogs??[] as $log)
+            foreach ($data->productLogs??[] as $log)
             {
                 if ($log->qty > 0) {
                     $arr[$log->product_type_id][$log->product_id]['qty'] = $log->qty;

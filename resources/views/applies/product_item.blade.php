@@ -1,4 +1,5 @@
-@foreach($data->contract->productTypeLogs??[] as $log)
+@php $i=0; @endphp
+@foreach($data->productTypeLogs??[] as $log)
 <div class="card card-secondary disabled" style="margin-top: 10px;">
     <div class="card-header">
     <h3 class="card-title main-title">{{$log->productType->type_name}}</h3>
