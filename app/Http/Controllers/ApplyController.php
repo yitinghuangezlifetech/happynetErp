@@ -76,7 +76,6 @@ class ApplyController extends BasicController
             $formData = $request->except('_token', 'products', 'regulations');
             $formData['id'] = uniqid();
             $products = $request->products;
-            $regulations = $request->regulations;
 
             if ($this->model->checkColumnExist('create_user_id'))
             {
@@ -111,7 +110,6 @@ class ApplyController extends BasicController
                 DB::commit();
 
                 $this->proccessProducts($data, $products);
-                $this->proccessRegulations($data, $regulations);
             
                 return view('alerts.success', [
                     'msg'=>'資料新增成功',

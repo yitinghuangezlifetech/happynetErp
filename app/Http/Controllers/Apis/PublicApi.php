@@ -73,19 +73,34 @@ class PublicApi extends Controller
 
         if ($data)
         {
-            $logs = [];
+            $arr = [];
 
-            foreach ($data->products??[] as $info)
+            foreach ($apply->productLogs??[] as $log)
             {
-                $logs[$info->product_type_id][$info->product_id] = 1;
+                if ($log->qty > 0) {
+                    $arr[$log->product_type_id][$log->product_id]['qty'] = $log->qty;
+                    $arr[$log->product_type_id][$log->product_id]['rent_month'] = $log->rent_month;
+                    $arr[$log->product_type_id][$log->product_id]['discount'] = $log->discount;
+                    $arr[$log->product_type_id][$log->product_id]['amount'] = $log->amount;
+                    $arr[$log->product_type_id][$log->product_id]['security_deposit'] = $log->security_deposit;
+                    $arr[$log->product_type_id][$log->product_id]['note'] = $log->note;
+                } else {
+                    foreach($log->feeRateLogs??[] as $k=>$rate)
+                    {
+                        $arr[$log->product_type_id][$log->product_id][$rate->call_target_id]['call_target_id'] = $rate->call_target_id;
+                        $arr[$log->product_type_id][$log->product_id][$rate->call_target_id]['call_rate'] = $rate->call_rate;
+                        $arr[$log->product_type_id][$log->product_id][$rate->call_target_id]['discount'] = $rate->discount	;
+                        $arr[$log->product_type_id][$log->product_id][$rate->call_target_id]['amount'] = $rate->amount;
+                        $arr[$log->product_type_id][$log->product_id][$rate->call_target_id]['charge_unit'] = $rate->charge_unit;
+                        $arr[$log->product_type_id][$log->product_id][$rate->call_target_id]['parameter'] = $rate->parameter;
+                    }
+                }
             }
 
-            $obj = app(Product::class);
-            $termTypes = app(FuncType::class)->getChildsByTypeCode('term_types');
-            $types = app(FuncType::class)->getChildsByTypeCode('product_types');
+            $applyLogs = $arr;
 
             $content = view('applies.product_item', compact(
-                'logs', 'obj', 'termTypes', 'types'
+                'applyLogs', 'data'
             ))->render();
 
             return response()->json([
