@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use App\Models\FuncType;
 use App\Models\Product;
 use App\Models\ProjectProduct;
+use App\Models\ProjectTermLog;
+use App\Models\ProjectProductTypeLog;
 
 class ProjectController extends BasicController
 {
@@ -21,6 +23,7 @@ class ProjectController extends BasicController
             ]);
         }
 
+        $termTypes = app(FuncType::class)->getChildsByTypeCode('term_types');
         $types = app(FuncType::class)->getChildsByTypeCode('product_types');
 
         if(view()->exists($this->slug.'.create'))
@@ -28,7 +31,7 @@ class ProjectController extends BasicController
             $this->createView = $this->slug.'.create';
         }
 
-        return view($this->createView, compact('types'));
+        return view($this->createView, compact('types', 'termTypes'));
     }
 
     public function store(Request $request)
@@ -54,9 +57,10 @@ class ProjectController extends BasicController
         DB::beginTransaction();
 
         try {
-            $formData = $request->except('_token', 'products');
+            $formData = $request->except('_token', 'products', 'regulations');
             $formData['id'] = uniqid();
             $products = $request->products;
+            $regulations = $request->regulations;
 
             if ($this->model->checkColumnExist('create_user_id'))
             {
@@ -83,6 +87,7 @@ class ProjectController extends BasicController
                 DB::commit();
 
                 $this->proccessProducts($id, $products);
+                $this->proccessRegulations($id, $regulations);
             
                 return view('alerts.success', [
                     'msg'=>'資料新增成功',
@@ -123,6 +128,7 @@ class ProjectController extends BasicController
         $types = app(FuncType::class)->getChildsByTypeCode('product_types');
         $logs = $this->getLogs($data);
         $obj = app(Product::class);
+        $termTypes = app(FuncType::class)->getChildsByTypeCode('term_types');
 
         if (!$data)
         {
@@ -142,7 +148,8 @@ class ProjectController extends BasicController
             'id'=>$id,
             'types'=>$types,
             'logs'=>$logs,
-            'obj'=>$obj
+            'obj'=>$obj,
+            'termTypes'=>$termTypes,
         ]);
     }
 
@@ -168,8 +175,9 @@ class ProjectController extends BasicController
         DB::beginTransaction();
 
         try {
-            $formData = $request->except('_token', '_method', 'products');
+            $formData = $request->except('_token', '_method', 'products', 'regulations');
             $products = $request->products;
+            $regulations = $request->regulations;
 
             if ($this->model->checkColumnExist('update_user_id'))
             {
@@ -197,6 +205,7 @@ class ProjectController extends BasicController
                 DB::commit();
 
                 $this->proccessProducts($id, $products);
+                $this->proccessRegulations($id, $regulations);
     
                 return view('alerts.success',[
                     'msg'=>'資料更新成功',
@@ -226,22 +235,48 @@ class ProjectController extends BasicController
     {
         if (!empty($products))
         {
+            app(ProjectProductTypeLog::class)->where('project_id', $id)->delete();
             app(ProjectProduct::class)->where('project_id', $id)->delete();
 
             foreach ($products??[] as $product)
             {
                 if (isset($product['items']) && count($product['items']) > 0)
                 {
+                    $log = app(ProjectProductTypeLog::class)->create([
+                        'id' => uniqid(),
+                        'project_id' => $id,
+                        'product_type_id' => $product['product_type_id']
+                    ]);
+
                     foreach ($product['items'] as $productId)
                     {
                         $data['id'] = uniqid();
                         $data['project_id'] = $id;
+                        $data['log_id'] = $log->id;
                         $data['product_type_id'] = $product['product_type_id'];
                         $data['product_id'] = $productId;
 
                         app(ProjectProduct::class)->create($data);
                     }
                 }
+            }
+        }
+    }
+
+    private function proccessRegulations($id, $regulations=[])
+    {
+        if (!empty($regulations))
+        {
+            app(ProjectTermLog::class)->where('project_id', $id)->delete();
+
+            foreach ($regulations??[] as $regulation)
+            {
+                $data['id'] = uniqid();
+                $data['project_id'] = $id;
+                $data['term_id'] = $regulation['term_id'];
+                $data['sort'] = $regulation['sort'];
+
+                app(ProjectTermLog::class)->create($data);
             }
         }
     }

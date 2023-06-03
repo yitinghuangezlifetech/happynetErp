@@ -541,9 +541,33 @@
 
     $('body').on('change', '.feeRateDiscount', function(){
       const logId = $(this).data('logid');
+      const productId = $(this).data('productid');
       const discount = parseInt($(this).val());
       const rate = $(`#call_rate_${logId}`).val();
       let amount = rate * (discount / 100);
+
+      if (!$(`#product_id_${productId}`).prop('checked')) {
+
+        Swal.fire({
+          icon: 'error',
+          title: '訊息提示',
+          text: '請先選擇服務名稱'
+        })
+
+        $(this).val('');
+        return false;
+      }
+
+      if (!$(`#call_target_id_${logId}`).prop('checked')) {
+        Swal.fire({
+          icon: 'error',
+          title: '訊息提示',
+          text: '請先選擇撥打對象'
+        })
+
+        $(this).val('');
+        return false;
+      }
 
       $(`#feeRateAmount_${logId}`).val(amount);
     })
@@ -683,6 +707,25 @@
             },
             success: function(rs) {
               $('#productsArea').append(rs.data);
+            },
+            error: function(rs) {
+              Swal.fire({
+                icon: 'error',
+                title: '訊息提示',
+                text: rs.responseJSON.message
+              })
+            }
+        })
+
+        $.ajax({
+            headers: { 'apikey': '{{env('HAPPYNET_APIKEY')}}'  },
+            method: 'post',
+            url: '{{ route('api.public.getProjectRegulations') }}',
+            data: {
+              project_id: id
+            },
+            success: function(rs) {
+              $('#regulationArea').append(rs.data);
             },
             error: function(rs) {
               Swal.fire({

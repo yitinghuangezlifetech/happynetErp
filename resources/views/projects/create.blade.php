@@ -163,6 +163,15 @@
     </div>
     <div class="card-body" id="productItemArea"></div>
   </div>
+  <div class="card card-secondary">
+    <div class="card-header">
+      <h3 class="card-title">合約條文綁定</h3>
+      <div style="float: right;">
+        <button type="button" class="btn btn-block btn-outline-secondary btn-sm addRegulation" style="color:white"><i class="fas fa-plus-circle"></i> 增加條文</button>
+      </div>
+    </div>
+    <div class="card-body" id="regulationArea"></div>
+  </div>
   <div class="card" id="footerArea">
     <div class="card-footer text-center">
       <button type="submit" class="btn bg-gradient-dark">儲存</button>
@@ -183,6 +192,7 @@
     <script src="/admins/js/assigns/{{$js}}"></script>
     @endforeach
   @endif
+  <script src="/admins/plugins/sortable/Sortable.js"></script>
   <script>
   let productTypeArr = [];
 
@@ -197,6 +207,24 @@
         @endforeach
     @endif
 
+    var items = document.getElementById('regulationArea');
+    new Sortable(regulationArea, {
+        animation: 150,
+        ghostClass: 'blue-background-class',
+        onEnd: function (/**Event*/evt) {
+          var sort = 0;
+          var number = 1;
+          $('#regulationArea .main-title').each(function(){
+            $(this).html(`<i class="fas fa-arrows-alt" style="cursor:pointer"></i>&nbsp;&nbsp;條文${number}`);
+            number++;
+          })
+          $('#regulationArea input[id^="sort_"]').each(function(){
+            $(this).val(sort);
+            sort++;
+          })
+        },
+    });
+
     $('#sales_type_id').change(function(){
       productTypeArr = [];
       $('#productItemArea').html('');
@@ -204,9 +232,12 @@
 
     $('body').on('click', '.addProducts', function(){
       const saleTypeId = $('#sales_type_id').val();
-      let row = parseInt($('#productItemArea .card').length);
-      let number = row + 1;
+      let row = 0;
       let str = '';
+
+      do {
+        row++;
+      }while($(`#card_${row}`).length > 0);
 
       if (saleTypeId == '') {
         Swal.fire({
@@ -216,13 +247,13 @@
         })
       } else {
         str += `
-        <div class="card card-secondary disabled" id="car_${row}" style="margin-top: 10px;">
+        <div class="card card-secondary" id="card_${row}" style="margin-top: 10px;">
           <div class="card-header">
-            <h3 class="card-title main-title">商品${number}</h3>
+            <h3 class="card-title main-title">商品</h3>
             <div style="float: right;">
               <table>
                 <tr>
-                  <td><button type="button" class="btn btn-block btn-outline-secondary btn-sm removeProduct" style="color:white;" data-row="0"><i class="fas fa-trash-alt"></i>&nbsp;刪除</button></td>
+                  <td><button type="button" class="btn btn-block btn-outline-secondary btn-sm removeProduct" style="color:white;" data-row="${row}"><i class="fas fa-trash-alt"></i>&nbsp;刪除</button></td>
                 </tr>
               </table>
             </div>
@@ -242,6 +273,12 @@
         `;
 
         $('#productItemArea').prepend(str);
+
+        let number = 1;
+        $('#productItemArea .main-title').each(function(){
+          $(this).html(`商品${number}`);
+          number++;
+        })
       }
     })
 
@@ -291,6 +328,138 @@
       const row = $(this).data('row');
 
       $(`#card_${row}`).remove();
+    })
+
+    $('body').on('click', '.addRegulation', function(){
+      const saleTypeId = $('#sales_type_id').val();
+      let row = 0;
+      let str = '';
+
+      do {
+        row++;
+      }while($(`#regulation_car_${row}`).length > 0);
+
+      if (saleTypeId == '') {
+        Swal.fire({
+          icon: 'error',
+          title: '訊息提示',
+          text: '請選擇銷售模式'
+        })
+      } else {
+        str += `
+        <div class="card card-secondary disabled" id="regulation_car_${row}" style="margin-top: 10px;">
+          <div class="card-header">
+            <h3 class="card-title main-title"><i class="fas fa-arrows-alt" style="cursor:pointer"></i>&nbsp;&nbsp;條文</h3>
+            <div style="float: right;">
+              <table>
+                <tr>
+                  <td><button type="button" class="btn btn-block btn-outline-secondary btn-sm removeRegulation" style="color:white;" data-row="${row}"><i class="fas fa-trash-alt"></i>&nbsp;刪除</button></td>
+                </tr>
+              </table>
+            </div>
+          </div>
+          <div class="card-body">
+            <input type="hidden" name="regulations[${row}][sort]" id="sort_${row}" value="${row}">
+            <div class="row">
+              <div class="col-sm-6">
+                <div class="form-group">
+                  <label for="term_type_id_${row}">條文類型</label>
+                  <select class="custom-select form-control-border termType" name="regulations[${row}][term_type_id]" id="term_type_id_${row}" data-row="${row}" required>
+                    <option value="">請選擇條文類型</option>
+                    @foreach($termTypes??[] as $type)
+                    <option value="{{$type->id}}">{{$type->type_name}}</option>
+                    @endforeach
+                  </select>
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <div class="form-group">
+                  <label for="regulation_product_type_id_${row}">適用商品類型</label>
+                  <select class="custom-select form-control-border regulationProductType" name="regulations[${row}][product_type_id]" id="regulation_product_type_id_${row}" data-row="${row}">
+                    <option value="">請選擇商品類別</option>
+                    @foreach($types??[] as $type)
+                    <option value="{{$type->id}}">{{$type->type_name}}</option>
+                    @endforeach
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-12">
+                <div class="form-group" id="regulationItem_${row}"></div>
+              </div>
+            </div>
+        </div>
+        `;
+
+        $('#regulationArea').prepend(str);
+
+        let number = 1;
+        $('#regulationArea .main-title').each(function(){
+          $(this).html(`<i class="fas fa-arrows-alt" style="cursor:pointer"></i>&nbsp;&nbsp;條文${number}`);
+          number++;
+        })
+      }
+    })
+
+    $('body').on('change', '.termType', function(){
+      const id = $(this).val();
+      const row = $(this).data('row');
+      const saleTypeId = $('#sales_type_id').val();
+      const productTypeId = $(`#regulation_product_type_id_${row}`).val();
+
+      $.ajax({
+          headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+          method: 'post',
+          url: '{{ route('tables.getTermsByFilters') }}',
+          data: {
+            sales_type_id: saleTypeId,
+            term_type_id: id,
+            product_type_id: productTypeId,
+            row: row
+          },
+          success: function(rs) {
+            $(`#regulationItem_${row}`).html(rs.data);
+
+            if (terms.length > 0) {
+              terms.forEach(function(term){
+                $(`#term_id_${term}`).remove();
+              })
+            }
+          }
+      })
+    })
+
+    $('body').on('click', '.term_id', function(){
+      terms = [];
+
+      $('.term_id').each(function(){
+        if ($(this).prop('checked')) {
+          terms.push($(this).val())
+        }
+      })
+    })
+
+    $('body').on('click', '.removeRegulation', function(){
+      const row = $(this).data('row');
+
+      $(`#regulationItem_${row} .term_id`).each(function(){
+        if ($(this).prop('checked')) {
+          let index = terms.indexOf($(this).val());
+
+          if (index !== -1) {
+            terms.splice(index, 1);
+          }
+        }
+      })
+
+      $(`#regulation_car_${row}`).remove();
+
+      let number = 1;
+      $('#regulationArea .main-title').each(function(){
+        $(this).html(`<i class="fas fa-arrows-alt" style="cursor:pointer"></i>&nbsp;&nbsp;條文${number}`);
+        number++;
+      })
     })
   })
   </script>

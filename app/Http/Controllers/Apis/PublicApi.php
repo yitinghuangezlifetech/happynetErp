@@ -40,17 +40,34 @@ class PublicApi extends Controller
 
         if ($data)
         {
-            $logs = [];
+            $arr = [];
 
-            foreach ($data->logs??[] as $k=>$log)
+            foreach ($data->productLogs??[] as $log)
             {
-                $logs[$log->product_type_id][$log->product_id] = 1;
+                if ($log->qty > 0) {
+                    $arr[$log->product_type_id][$log->product_id]['qty'] = $log->qty;
+                    $arr[$log->product_type_id][$log->product_id]['rent_month'] = $log->rent_month;
+                    $arr[$log->product_type_id][$log->product_id]['discount'] = $log->discount;
+                    $arr[$log->product_type_id][$log->product_id]['amount'] = $log->amount;
+                    $arr[$log->product_type_id][$log->product_id]['security_deposit'] = $log->security_deposit;
+                    $arr[$log->product_type_id][$log->product_id]['note'] = $log->note;
+                } else {
+                    foreach($log->feeRateLogs??[] as $k=>$rate)
+                    {
+                        $arr[$log->product_type_id][$log->product_id][$rate->call_target_id]['call_target_id'] = $rate->call_target_id;
+                        $arr[$log->product_type_id][$log->product_id][$rate->call_target_id]['call_rate'] = $rate->call_rate;
+                        $arr[$log->product_type_id][$log->product_id][$rate->call_target_id]['discount'] = $rate->discount	;
+                        $arr[$log->product_type_id][$log->product_id][$rate->call_target_id]['amount'] = $rate->amount;
+                        $arr[$log->product_type_id][$log->product_id][$rate->call_target_id]['charge_unit'] = $rate->charge_unit;
+                        $arr[$log->product_type_id][$log->product_id][$rate->call_target_id]['parameter'] = $rate->parameter;
+                    }
+                }
             }
 
-            $obj = app(Product::class);
+            $applyLogs = $arr;
 
             $content = view('applies.product_item', compact(
-                'logs', 'obj',
+                'applyLogs', 'data'
             ))->render();
 
             return response()->json([
@@ -62,7 +79,31 @@ class PublicApi extends Controller
 
         return response()->json([
             'status' => false,
-            'message' => '該專案不存在, 請洽工程師',
+            'message' => '該合約不存在, 請洽工程師',
+            'data' => null
+        ], 404);
+    }
+
+    public function getProjectRegulations(Request $request)
+    {
+        $data = app(Project::class)->find($request->project_id);
+
+        if ($data)
+        {
+            $content = view('applies.regulation_item', compact(
+                'data'
+            ))->render();
+
+            return response()->json([
+                'status' => false,
+                'message' => '取得資料成功',
+                'data' => $content
+            ], 200);
+        }
+
+        return response()->json([
+            'status' => false,
+            'message' => '該合約不存在, 請洽工程師',
             'data' => null
         ], 404);
     }

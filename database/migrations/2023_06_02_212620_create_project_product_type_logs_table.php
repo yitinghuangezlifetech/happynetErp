@@ -13,14 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('project_regulations', function (Blueprint $table) {
+        Schema::create('project_product_type_logs', function (Blueprint $table) {
             $table->uuid('id')->unique()->primary();
-            $table->string('sales_type_id', 36)->nullable()->comment('銷售模式id');
+            $table->string('project_id', 36)->nullable()->comment('專案id');
             $table->string('product_type_id', 36)->nullable()->comment('商品類別id');
-            $table->string('name')->nullable()->comment('條文名稱');
-            $table->text('content')->nullable()->comment('條文內容');
-            $table->tinyInteger('status')->nullable()->default(1)->comment('狀態(值1:啟用, 值2:停用)');
-            $table->dateTime('invalid_date')->nullable()->comment('停用日期');
             $table->timestamps();
         });
     }
@@ -32,6 +28,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('project_regulations');
+        Schema::dropIfExists('project_product_type_logs');
     }
 };

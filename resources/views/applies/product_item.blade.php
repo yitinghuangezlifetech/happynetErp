@@ -13,7 +13,7 @@
             <td class="text-center">服務名稱</td>
             <td class="text-center">撥打對象</td>
             <td class="text-center">通話費率</td>
-            <td class="text-center">折讓(%)</td>
+            <td class="text-center">折扣(%)</td>
             <td class="text-center">折後費率</td>
             <td class="text-center">計費單位</td>
             <td class="text-center">服務帳號</td>
@@ -23,7 +23,7 @@
             @foreach($log->productLogs??[] as $k=>$record)
             <tr>
                 <td class="text-center" style="vertical-align: middle" rowspan="{{$record->product->feeRate->logs->count()+1}}">
-                <input type="checkbox" name="products[{{$i}}][product_id]" value="{{$record->product_id}}" @if(isset($applyLogs[$log->product_type_id][$record->product_id])){{'checked'}}@endif>{{$record->product->name}}
+                <input type="checkbox" name="products[{{$i}}][product_id]" id="product_id_{{$record->product_id}}" value="{{$record->product_id}}" @if(isset($applyLogs[$log->product_type_id][$record->product_id])){{'checked'}}@endif>{{$record->product->name}}
                 <input type="hidden" name="products[{{$i}}][contract_id]" value="{{$data->id}}">
                 <input type="hidden" name="products[{{$i}}][product_type_id]" value="{{$log->product_type_id}}">
                 </td>
@@ -31,7 +31,7 @@
             @foreach($record->product->feeRate->logs??[] as $k1=>$feeRateLog)
             <tr>
                 <td class="text-center" style="vertical-align: middle">
-                <input type="checkbox" name="products[{{$i}}][feeRates][{{$k1}}][call_target_id]" value="{{$feeRateLog->call_target_id}}" @if(isset($applyLogs[$log->product_type_id][$record->product_id][$feeRateLog->call_target_id])){{'checked'}}@endif>{{$feeRateLog->target->type_name}}
+                <input type="checkbox" name="products[{{$i}}][feeRates][{{$k1}}][call_target_id]" id="call_target_id_{{$feeRateLog->id}}" value="{{$feeRateLog->call_target_id}}" @if(isset($applyLogs[$log->product_type_id][$record->product_id][$feeRateLog->call_target_id])){{'checked'}}@endif>{{$feeRateLog->target->type_name}}
                 </td>
                 <td class="text-center" style="vertical-align: middle">
                 {{$feeRateLog->call_rate}}
@@ -44,7 +44,7 @@
                     $value = $applyLogs[$log->product_type_id][$record->product_id][$feeRateLog->call_target_id]['discount'];
                     }
                 @endphp
-                <input type="number" class="form-control feeRateDiscount" name="products[{{$i}}][feeRates][{{$k1}}][discount]" data-logid="{{$feeRateLog->id}}" value="{{$value}}">
+                <input type="number" class="form-control feeRateDiscount" name="products[{{$i}}][feeRates][{{$k1}}][discount]" data-logid="{{$feeRateLog->id}}" data-productid="{{$record->product_id}}" value="{{$value}}">
                 </td>
                 <td class="text-center" style="vertical-align: middle">
                 @php

@@ -289,4 +289,28 @@ class Project extends AbstractModel
 
         return $result;
     }
+
+    public function getProductsByType($typeId)
+    {
+        return app(Product::class)
+            ->where('status', 1)
+            ->where('product_type_id', $typeId)
+            ->orderBy('created_at', 'DESC')
+            ->get();
+    }
+
+    public function productTypeLogs()
+    {
+        return $this->hasMany(ProjectProductTypeLog::class, 'project_id');
+    }
+
+    public function productLogs()
+    {
+        return $this->hasMany(ProjectProduct::class, 'project_id');
+    }
+
+    public function terms()
+    {
+        return $this->hasMany(ProjectTermLog::class, 'project_id')->orderBy('sort', 'ASC');
+    }
 }

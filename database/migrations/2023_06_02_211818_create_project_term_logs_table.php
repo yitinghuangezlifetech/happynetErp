@@ -13,10 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('project_regulation_logs', function (Blueprint $table) {
+        Schema::create('project_term_logs', function (Blueprint $table) {
             $table->uuid('id')->unique()->primary();
-            $table->string('project_id', 36)->nullable()->comment('所屬專案id');
-            $table->string('project_regulation_id', 36)->nullable()->comment('所屬專案條文id');
+            $table->string('project_id', 36)->nullable()->comment('專案id');
+            $table->string('term_id', 36)->nullable()->comment('條文id');
+            $table->integer('sort')->nullable()->default(0)->comment('排序(由小到大)');
             $table->timestamps();
         });
     }
@@ -28,6 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('project_regulation_logs');
+        Schema::dropIfExists('project_term_logs');
     }
 };
