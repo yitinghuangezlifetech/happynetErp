@@ -263,10 +263,10 @@
 
       if (discount == '') {
         price = rent * qty;
-        $(`#price_${productId}`).val(price);
+        $(`#amount_${productId}`).val(price);
       } else {
         price = Math.round( rent * (discount / 100)) * qty;
-        $(`#price_${productId}`).val(price);
+        $(`#amount_${productId}`).val(price);
       }
     })
 
@@ -279,10 +279,10 @@
 
       if (discount == '') {
         price = rent * qty;
-        $(`#price_${productId}`).val(rent);
+        $(`#amount_${productId}`).val(rent);
       } else {
         price = Math.round( rent * (discount / 100)) * qty;
-        $(`#price_${productId}`).val(price);
+        $(`#amount_${productId}`).val(price);
       }
     })
 
@@ -531,7 +531,9 @@
             rs.data.forEach(function(info){
               options += `<option value="${info.id}">${info.name}(帳號:${info.account})</option>`;
             })
-
+            
+            $('#system_no').attr('readonly', true);
+            $('#system_no').val(rs.data.system_no);
             $('#user_id').append(options);
           },
           error: function(rs) {
@@ -565,7 +567,33 @@
             })
           }
       })
+    })
 
+    $('#user_id').change(function(){
+      const id = $(this).val();
+
+      $.ajax({
+          headers: { 'apikey': '{{env('HAPPYNET_APIKEY')}}'  },
+          method: 'post',
+          url: '{{ route('api.public.getUserInfo') }}',
+          data: {
+            user_id: id
+          },
+          success: function(rs) {
+            $('#userAccount').text(rs.data.account);
+            $('#telecom_number').text(rs.data.telecom_number);
+          },
+          error: function(rs) {
+
+            $('#system_no').attr('readonly', false);
+
+            Swal.fire({
+              icon: 'error',
+              title: '訊息提示',
+              text: rs.responseJSON.message
+            })
+          }
+      })
     })
 
     $(".signBoard").jSignature({ 'width': '100%', 'height': 300});

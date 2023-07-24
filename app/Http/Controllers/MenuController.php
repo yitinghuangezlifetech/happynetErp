@@ -255,7 +255,7 @@ class MenuController extends BasicController
 
     public function createPermission($menu)
     {
-        $actions = ['browse', 'create', 'edit', 'update', 'delete'];
+        $actions = ['browse', 'create', 'edit', 'show', 'update', 'delete'];
 
         if (empty($menu->slug) && is_null($menu->parent_id))
         {
@@ -283,7 +283,7 @@ class MenuController extends BasicController
     {
         $permissions = app(Permission::class)->where('menu_id', $menu->id)->delete();
 
-        $actions = ['browse', 'create', 'edit', 'update', 'delete'];
+        $actions = ['browse', 'create', 'edit', 'show', 'update', 'delete'];
 
         foreach ($actions as $action)
         {

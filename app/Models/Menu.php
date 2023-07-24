@@ -140,6 +140,18 @@ class Menu extends AbstractModel
                 ])
             ],
             [
+                'field' => 'import_data',
+                'type' => 'radio',
+                'show_name' => '啟用資料匯入功能',
+                'create' => 1,
+                'edit' => 1,
+                'sort' => 8,
+                'options' => json_encode([
+                    ['text'=>'是', 'value'=>1, 'default'=>2],
+                    ['text'=>'否', 'value'=>2, 'default'=>1],
+                ])
+            ],
+            [
                 'field' => 'search_component',
                 'type' => 'radio',
                 'show_name' => '啟用搜尋功能',
@@ -179,6 +191,11 @@ class Menu extends AbstractModel
     public function menuBrowseDetails()
     {
         return $this->hasMany(MenuDetail::class, 'menu_id')->where('browse', 1)->orderBy('sort', 'ASC');
+    }
+
+    public function menuShowDetails()
+    {
+        return $this->hasMany(MenuDetail::class, 'menu_id')->where('show', 1)->orderBy('sort', 'ASC');
     }
 
     public function menuCreateDetails()

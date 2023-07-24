@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Auth;
+use Excel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
@@ -28,6 +29,7 @@ class BasicController extends Controller implements InterfaceController
     protected $indexView = 'templates.index';
     protected $createView = 'templates.create';
     protected $editView = 'templates.edit';
+    protected $showView = 'templates.show';
 
     public $breadcrumbs = [];
 
@@ -320,6 +322,37 @@ class BasicController extends Controller implements InterfaceController
         }
     }
 
+    public function show(Request $request, $id)
+    {
+        if ($request->user()->cannot('show_'.$this->slug,  $this->model))
+        {
+            return view('alerts.error', [
+                'msg' => '您的權限不足, 請洽管理人員開通權限',
+                'redirectURL' => route('dashboard')
+            ]);
+        }
+
+        $data = $this->model->find($id);
+
+        if (!$data)
+        {
+            return view('alerts.error',[
+                'msg'=>'資料不存在',
+                'redirectURL'=>route($this->slug.'.index')
+            ]); 
+        }
+
+        if(view()->exists($this->slug.'.show'))
+        {
+            $this->showView = $this->slug.'.show';
+        }
+
+        return view($this->showView, [
+            'data'=>$data,
+            'id'=>$id
+        ]);
+    }
+
     public function destroy(Request $request, $id)
     {
         if ($request->user()->cannot('delete_'.$this->slug,  $this->model))
@@ -400,7 +433,6 @@ class BasicController extends Controller implements InterfaceController
         }
         else
         {
-
             if (class_exists('App\Imports\\'.ucfirst($str[0]).'Import'))
             {
                 $import = app('App\Imports\\'.ucfirst($str[0]).'Import');
