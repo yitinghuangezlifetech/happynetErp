@@ -136,9 +136,20 @@
                         </div>
                         @endif
                       @else
+                        @if($slug != 'isr_ims')
+                          @php
+                            $arr = ['rate_type_id', 'category', 'ip'];
+                          @endphp
+                          @if(!in_array($detail->field, $arr))
+                          <div class="col-sm-6">
+                            @include('components.fields.'.$detail->type, ['type'=>'create', 'detail'=>$detail, 'value'=>''])
+                          </div>
+                          @endif
+                        @else
                         <div class="col-sm-6">
                           @include('components.fields.'.$detail->type, ['type'=>'create', 'detail'=>$detail, 'value'=>''])
                         </div>
+                        @endif
                       @endif
                     @endif
                   @endif  

@@ -36,7 +36,8 @@ class FuncTypeController extends BasicController
         return view($this->indexView, [
             'filters' => $filters,
             'parent_id' => $data->id??null,
-            'list' => $list
+            'list' => $list,
+            'slug' => $this->slug
         ]);
     }
 
@@ -52,7 +53,10 @@ class FuncTypeController extends BasicController
 
         $this->createView ='func_type.create';
 
-        return view($this->createView,['parent_id' => $request->parent_id]);
+        return view($this->createView,[
+            'parent_id' => $request->parent_id,
+            'slug' => $this->slug
+        ]);
     }
 
     private function proccessPermissions($roleId, $permissions)

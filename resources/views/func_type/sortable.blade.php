@@ -50,7 +50,16 @@
                           <th class="bg-gradient-secondary" style="text-align: center">{{$detail->show_name}}</th>
                           @endif
                       @else
+                        @if($slug != 'isr_ims')
+                          @php
+                            $arr = ['rate_type_id', 'category', 'ip'];
+                          @endphp
+                          @if(!in_array($detail->field, $arr))
+                          <th class="bg-gradient-secondary" style="text-align: center">{{$detail->show_name}}</th>
+                          @endif
+                        @else
                         <th class="bg-gradient-secondary" style="text-align: center">{{$detail->show_name}}</th>
+                        @endif
                       @endif
                     @endif
                   @endif
@@ -563,6 +572,170 @@
                         </td>
                         @endif
                       @else
+                        @if($slug != 'isr_ims')
+                          @php
+                            $arr = ['rate_type_id', 'category', 'ip'];
+                          @endphp
+                          @if(!in_array($detail->field, $arr))
+                          <td class="text-center" style="vertical-align: middle">
+                            @switch($detail->type)
+                              @case('text')
+                              @case('email')
+                              @case('text_area')
+                              @case('date_time')
+                              @case('number')
+                              @case('date')
+                              @case('time')
+                              @case('ckeditor')
+                                @php
+                                  $com = '';
+                                  $value = '';
+  
+                                  if ($detail->has_relationship == 1) {
+                                    $json = json_decode($detail->relationship, true);
+                                    if (is_array($json) && count($json) > 0) {
+                                      $options = app($json['model'])->where($json['references_field'], $data->{$detail->foreign_key})->get();
+                                      if ($options->count() > 0) {
+                                        foreach ($options as $option) {
+                                          $value .= $com.$option->{$json['show_field']};
+                                          $com = ',';
+                                        }
+                                      }
+                                    }
+                                  } else {
+                                    $value = $data->{$detail->field};
+                                  }
+                                @endphp
+                                {{ $value }}
+                                @break 
+                              @case('multiple_input')
+                                @php
+                                  $str = '';
+                                  $com = '';
+  
+                                  if ($detail->has_relationship == 1) {
+                                    $json = json_decode($detail->relationship, true);
+                                    if (is_array($json) && count($json) > 0) {
+                                      $options = app($json['model'])->where($json['references_field'], $data->{$detail->foreign_key})->get();
+  
+                                      if ($options->count() > 0) {
+                                        foreach ($options as $option) {
+                                          $str .= $com.$option->{$json['show_field']};
+                                          $com = ',';
+                                        }
+                                      }
+                                    }
+                                  }
+                                @endphp
+                                {!! $str !!}
+                                @break  
+                              @case('multiple_select')
+                                @php
+                                  $str = '';
+                                  $com = '';
+  
+                                  if ($detail->has_relationship == 1) {
+  
+                                    if ($data->{$detail->relationship_method}->count() > 0) {
+                                      $json = json_decode($detail->relationship, true);
+  
+                                      foreach ($data->{$detail->relationship_method} as $log) {
+                                        
+                                        if (is_array($json) && count($json) > 0) {
+                                          $option = app($json['model'])->where($json['references_field'], $log->{$detail->relationship_foreignkey})->first();
+                                          if ($option) {
+                                            $str .= $com.$option->{$json['show_field']};
+                                            $com = ',';
+                                          }
+                                        }
+                                      }
+                                    }      
+                                  }
+                                @endphp
+                                {!! $str !!}
+                                @break  
+                              @case('radio')
+                                @php
+                                  $value = '';
+                                  $on = '';
+                                  $off = '';
+                                  if (!empty($detail->options)) {
+                                    $options = json_decode($detail->options, true);
+  
+                                    if(is_array($options) && count($options) > 0) {
+                                      foreach ($options as $key => $option) {
+                                        if ($option['value'] == 1) {
+                                          $on = 'data-on='.$option['text'];
+                                        } else {
+                                          $off = 'data-off='.$option['text'];
+                                        }
+                                      }
+                                      foreach ($options as $key => $option) {
+                                        if ($data->{$detail->field} == $option['value']) {
+                                          if ($data->{$detail->field} == 1) {
+                                            $value = '
+                                              <input type="checkbox" class="switchBtn '.$detail->field.'" checkeddata-toggle="toggle" '.$on.' '.$off.' data-id="'.$data->id.'" data-field="'.$detail->field.'" data-model="'.$menu->model.'" checked>
+                                            ';
+                                          } else {
+                                            $value = '
+                                              <input type="checkbox" class="switchBtn '.$detail->field.'" checkeddata-toggle="toggle" '.$on.' '.$off.' data-id="'.$data->id.'" data-field="'.$detail->field.'" data-model="'.$menu->model.'">
+                                            ';
+                                          }
+                                        }
+                                      }
+                                    }
+                                  } else if ($detail->has_relationship == 1) {
+                                    if (!empty($detail->relationship)) {
+                                      $decodeData = json_decode($detail->relationship, true);
+                                      if (count($decodeData) > 0) {
+                                          $options = app($decodeData['model'])->get();
+  
+                                          foreach ($options as $option) {
+                                            if ($data->{$detail->field} == $option->id) {
+                                              $value = $option->{$decodeData['show_field']};
+                                            }
+                                          }
+                                      }
+                                    }
+                                  }
+                                @endphp
+                                {!! $value !!}
+                                @break
+                              @case('image')
+                                  @if(!empty($data->{$detail->field}))
+                                  <img src="{{ $data->{$detail->field} }}" {{app('BladeService')->imageResize($data->{$detail->field})}}>
+                                  @endif
+                                @break
+                              @case('select')
+                                @php
+                                  $name = '';
+                                  if($detail->has_relationship == 1) {
+                                    $decodeData = json_decode($detail->relationship, true);
+                                    if (count($decodeData) > 0) {
+                                      $relationData = app($decodeData['model'])->find($data->{$detail->field});
+                                      if ($relationData) {
+                                        $name = $relationData->{$decodeData['show_field']};
+                                      }
+                                    }
+                                  } else {
+                                    if (!empty($detail->options)) {
+                                      $decodeData = json_decode($detail->options, true);
+                                      if (count($decodeData) > 0) {
+                                        foreach ($decodeData as $option) {
+                                          if ($option['value'] == $data->{$detail->field}) {
+                                            $name = $option['text'];
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                @endphp
+                                {{ $name }}
+                              @break
+                            @endswitch
+                          </td>
+                          @endif
+                        @else
                         <td class="text-center" style="vertical-align: middle">
                           @switch($detail->type)
                             @case('text')
@@ -720,6 +893,7 @@
                             @break
                           @endswitch
                         </td>
+                        @endif
                       @endif
                     @endif
                   @endif
