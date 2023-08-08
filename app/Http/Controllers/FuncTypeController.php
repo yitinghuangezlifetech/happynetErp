@@ -23,6 +23,7 @@ class FuncTypeController extends BasicController
         $filters = $this->getFilters($request);
         $filters['type_code'] = ($request->type_code != $this->slug) ? $request->type_code : NULL;
 
+
         $list = (new Collection([]))->paginate($filters['rows']??20); 
         $data = $this->model->getDataByTypeCode($this->slug);
 

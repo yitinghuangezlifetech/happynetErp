@@ -16,7 +16,7 @@ class FuncType extends AbstractModel
                 'type' => 'select',
                 'show_name' => '費率類別',
                 'use_edit_link'=>2,
-                'join_search' => 1,
+                'join_search' => 2,
                 'required' => 2,
                 'browse' => 1,
                 'create' => 1,
@@ -43,7 +43,7 @@ class FuncType extends AbstractModel
                 'type' => 'select',
                 'show_name' => 'ISR/IMS',
                 'use_edit_link'=>2,
-                'join_search' => 1,
+                'join_search' => 2,
                 'required' => 2,
                 'browse' => 1,
                 'create' => 1,
@@ -186,30 +186,37 @@ class FuncType extends AbstractModel
 
     public function getChilds($filters=null)
     {
-        $query = $this->hasMany(FuncType::class, 'parent_id');
+        $query = $this->newModelQuery();
+        $query->where('parent_id', $this->id);
 
         if (!is_null($filters))
         {
-            if (isset($filters['type_code'])) 
+            if (isset($filters['type_code']) && !empty($filters['type_code'])) 
             {
-                $query->where('type_code', 'like', '"%'.$filters['type_code'].'%"');
+                $query->where('type_code', 'like', '%'.$filters['type_code'].'%');
             }
-            if (isset($filters['type_value'])) 
+            if (isset($filters['type_value']) && !empty($filters['type_value'])) 
             {
-                $query->where('type_value', 'like', '"%'.$filters['type_value'].'%"');
+                $query->where('type_value', 'like', '%'.$filters['type_value'].'%');
             }
-            if (isset($filters['type_name'])) 
+            if (isset($filters['type_name']) && !empty($filters['type_name'])) 
             {
-                $query->where('type_name', 'like', '"%'.$filters['type_name'].'%"');
+                $query->where('type_name', 'like', '%'.$filters['type_name'].'%');
             }
 
-            return $query->orderBy('created_at', 'DESC');
+            return $query->orderBy('sort', 'ASC');
         }
         else
         {
             return $this->hasMany(FuncType::class, 'parent_id')
                 ->orderBy('created_at', 'DESC');
         }
+    }
+
+    public function getChildsByStatus() {
+        return $this->hasMany(FuncType::class, 'parent_id')
+            ->where('status', 1)
+            ->where('dsp', 1);
     }
 
     public function getChildNoFilter()

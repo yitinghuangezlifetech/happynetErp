@@ -12,7 +12,7 @@ if($detail->has_relationship == 1) {
 
             if ($main)
             {
-                $options = $main->getChilds;
+                $options = $main->getChildsByStatus;
             }
         }
         else
