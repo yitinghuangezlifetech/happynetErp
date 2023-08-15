@@ -24,8 +24,7 @@ class ApplyController extends BasicController
 
     public function create(Request $request)
     {
-        if ($request->user()->cannot('create_'.$this->slug,  $this->model))
-        {
+        if ($request->user()->cannot('create_' . $this->slug,  $this->model)) {
             return view('alerts.error', [
                 'msg' => '您的權限不足, 請洽管理人員開通權限',
                 'redirectURL' => route('dashboard')
@@ -39,21 +38,22 @@ class ApplyController extends BasicController
         $contracts = app(Contract::class)->getActiveContracts();
         $projects = app(Project::class)->getActiveProjects();
 
-        if(view()->exists($this->slug.'.create'))
-        {
-            $this->createView = $this->slug.'.create';
+        if (view()->exists($this->slug . '.create')) {
+            $this->createView = $this->slug . '.create';
         }
 
         return view($this->createView, compact(
-            'types', 'planTypes', 'applyTypes',
-            'contracts', 'projects'
+            'types',
+            'planTypes',
+            'applyTypes',
+            'contracts',
+            'projects'
         ));
     }
 
     public function store(Request $request)
     {
-        if ($request->user()->cannot('create_'.$this->slug,  $this->model))
-        {
+        if ($request->user()->cannot('create_' . $this->slug,  $this->model)) {
             return view('alerts.error', [
                 'msg' => '您的權限不足, 請洽管理人員開通權限',
                 'redirectURL' => route('dashboard')
@@ -62,11 +62,10 @@ class ApplyController extends BasicController
 
         $validator = $this->createRule($request->all());
 
-        if (!is_array($validator) && $validator->fails())
-        {
-            return view('alerts.error',[
-                'msg'=>$validator->errors()->all()[0],
-                'redirectURL'=>route($this->slug.'.index')
+        if (!is_array($validator) && $validator->fails()) {
+            return view('alerts.error', [
+                'msg' => $validator->errors()->all()[0],
+                'redirectURL' => route($this->slug . '.index')
             ]);
         }
 
@@ -77,21 +76,15 @@ class ApplyController extends BasicController
             $formData['id'] = uniqid();
             $products = $request->products;
 
-            if ($this->model->checkColumnExist('create_user_id'))
-            {
+            if ($this->model->checkColumnExist('create_user_id')) {
                 $formData['create_user_id'] = Auth::user()->id;
             }
 
-            if ($this->menu->menuDetails->count() > 0)
-            {
-                foreach ($this->menu->menuDetails as $detail)
-                {
-                    if (isset($formData[$detail->field]))
-                    {
-                        if ($detail->type == 'image' || $detail->type == 'file')
-                        {
-                            if (is_object($formData[$detail->field]) && $formData[$detail->field]->getSize() > 0)
-                            {
+            if ($this->menu->menuDetails->count() > 0) {
+                foreach ($this->menu->menuDetails as $detail) {
+                    if (isset($formData[$detail->field])) {
+                        if ($detail->type == 'image' || $detail->type == 'file') {
+                            if (is_object($formData[$detail->field]) && $formData[$detail->field]->getSize() > 0) {
                                 $formData[$detail->field] = $this->storeFile($formData[$detail->field], $this->slug);
                             }
                         }
@@ -99,39 +92,36 @@ class ApplyController extends BasicController
                 }
 
                 if (isset($formData['sender_sign']) && !empty($formData['sender_sign'])) {
-                    $formData['sender_sign'] = $this->storeBase64($formData['sender_sign'], 'applies', date('Ymd').uniqid().'.jpg');
+                    $formData['sender_sign'] = $this->storeBase64($formData['sender_sign'], 'applies', date('Ymd') . uniqid() . '.jpg');
                 }
 
                 if (isset($formData['customer']) && !empty($formData['customer'])) {
-                    $formData['customer'] = $this->storeBase64($formData['customer'], 'applies', date('Ymd').uniqid().'.jpg');
+                    $formData['customer'] = $this->storeBase64($formData['customer'], 'applies', date('Ymd') . uniqid() . '.jpg');
                 }
 
                 $data = $this->model->create($formData);
                 DB::commit();
 
                 $this->proccessProducts($data, $products);
-            
+
                 return view('alerts.success', [
-                    'msg'=>'資料新增成功',
-                    'redirectURL'=>route($this->slug.'.index')
+                    'msg' => '資料新增成功',
+                    'redirectURL' => route($this->slug . '.index')
                 ]);
             }
 
             DB::rollBack();
 
             return view('alerts.error', [
-                'msg'=>'資料新增失敗, 無該功能項之細項設定',
-                'redirectURL'=>route($this->slug.'.index')
+                'msg' => '資料新增失敗, 無該功能項之細項設定',
+                'redirectURL' => route($this->slug . '.index')
             ]);
-
-        } 
-        catch (\Exception $e)
-        {
+        } catch (\Exception $e) {
             DB::rollBack();
 
-            return view('alerts.error',[
-                'msg'=>$e->getMessage(),
-                'redirectURL'=>route($this->slug.'.index')
+            return view('alerts.error', [
+                'msg' => $e->getMessage(),
+                'redirectURL' => route($this->slug . '.index')
             ]);
         }
     }
@@ -145,33 +135,30 @@ class ApplyController extends BasicController
         $types = app(FuncType::class)->getChildsByTypeCode('product_types');
 
 
-        if (!$data)
-        {
-            return view('alerts.error',[
-                'msg'=>'資料不存在',
-                'redirectURL'=>route($this->slug.'.index')
-            ]); 
+        if (!$data) {
+            return view('alerts.error', [
+                'msg' => '資料不存在',
+                'redirectURL' => route($this->slug . '.index')
+            ]);
         }
 
-        if(view()->exists($this->slug.'.show'))
-        {
-            $this->editView = $this->slug.'.show';
+        if (view()->exists($this->slug . '.show')) {
+            $this->editView = $this->slug . '.show';
         }
 
         return view($this->editView, [
-            'data'=>$data,
-            'id'=>$id,
-            'logs'=>$logs,
-            'obj'=>$obj,
-            'types'=>$types,
-            'termTypes'=>$termTypes,
+            'data' => $data,
+            'id' => $id,
+            'logs' => $logs,
+            'obj' => $obj,
+            'types' => $types,
+            'termTypes' => $termTypes,
         ]);
     }
 
     public function edit(Request $request, $id)
     {
-        if ($request->user()->cannot('edit_'.$this->slug,  $this->model))
-        {
+        if ($request->user()->cannot('edit_' . $this->slug,  $this->model)) {
             return view('alerts.error', [
                 'msg' => '您的權限不足, 請洽管理人員開通權限',
                 'redirectURL' => route('dashboard')
@@ -184,33 +171,30 @@ class ApplyController extends BasicController
         $termTypes = app(FuncType::class)->getChildsByTypeCode('term_types');
         $types = app(FuncType::class)->getChildsByTypeCode('product_types');
 
-        if (!$data)
-        {
-            return view('alerts.error',[
-                'msg'=>'資料不存在',
-                'redirectURL'=>route($this->slug.'.index')
-            ]); 
+        if (!$data) {
+            return view('alerts.error', [
+                'msg' => '資料不存在',
+                'redirectURL' => route($this->slug . '.index')
+            ]);
         }
 
-        if(view()->exists($this->slug.'.edit'))
-        {
-            $this->editView = $this->slug.'.edit';
+        if (view()->exists($this->slug . '.edit')) {
+            $this->editView = $this->slug . '.edit';
         }
 
         return view($this->editView, [
-            'data'=>$data,
-            'id'=>$id,
-            'applyLogs'=>$applyLogs,
-            'obj'=>$obj,
-            'types'=>$types,
-            'termTypes'=>$termTypes,
+            'data' => $data,
+            'id' => $id,
+            'applyLogs' => $applyLogs,
+            'obj' => $obj,
+            'types' => $types,
+            'termTypes' => $termTypes,
         ]);
     }
 
     public function update(Request $request, $id)
     {
-        if ($request->user()->cannot('update_'.$this->slug,  $this->model))
-        {
+        if ($request->user()->cannot('update_' . $this->slug,  $this->model)) {
             return view('alerts.error', [
                 'msg' => '您的權限不足, 請洽管理人員開通權限',
                 'redirectURL' => route('dashboard')
@@ -218,11 +202,10 @@ class ApplyController extends BasicController
         }
         $validator = $this->updateRule($request->all());
 
-        if (!is_array($validator) && $validator->fails())
-        {
-            return view('alerts.error',[
-                'msg'=>$validator->errors()->all()[0],
-                'redirectURL'=>route($this->slug.'.index')
+        if (!is_array($validator) && $validator->fails()) {
+            return view('alerts.error', [
+                'msg' => $validator->errors()->all()[0],
+                'redirectURL' => route($this->slug . '.index')
             ]);
         }
 
@@ -232,21 +215,15 @@ class ApplyController extends BasicController
             $formData = $request->except('_token', '_method', 'products');
             $products = $request->products;
 
-            if ($this->model->checkColumnExist('update_user_id'))
-            {
+            if ($this->model->checkColumnExist('update_user_id')) {
                 $formData['update_user_id'] = Auth::user()->id;
             }
 
-            if ($this->menu->menuDetails->count() > 0)
-            {
-                foreach ($this->menu->menuDetails as $detail)
-                {
-                    if (isset($formData[$detail->field]))
-                    {
-                        if ($detail->type == 'image' || $detail->type == 'file')
-                        {
-                            if (is_object($formData[$detail->field]) && $formData[$detail->field]->getSize() > 0)
-                            {
+            if ($this->menu->menuDetails->count() > 0) {
+                foreach ($this->menu->menuDetails as $detail) {
+                    if (isset($formData[$detail->field])) {
+                        if ($detail->type == 'image' || $detail->type == 'file') {
+                            if (is_object($formData[$detail->field]) && $formData[$detail->field]->getSize() > 0) {
                                 $formData[$detail->field] = $this->storeFile($formData[$detail->field], $this->slug);
                             }
                         }
@@ -254,11 +231,11 @@ class ApplyController extends BasicController
                 }
 
                 if (isset($formData['sender_sign']) && !empty($formData['sender_sign'])) {
-                    $formData['sender_sign'] = $this->storeBase64($formData['sender_sign'], 'applies', date('Ymd').uniqid().'.svg');
+                    $formData['sender_sign'] = $this->storeBase64($formData['sender_sign'], 'applies', date('Ymd') . uniqid() . '.svg');
                 }
 
                 if (isset($formData['customer']) && !empty($formData['customer'])) {
-                    $formData['customer'] = $this->storeBase64($formData['customer'], 'applies', date('Ymd').uniqid().'.svg');
+                    $formData['customer'] = $this->storeBase64($formData['customer'], 'applies', date('Ymd') . uniqid() . '.svg');
                 }
 
                 $this->model->updateData($id, $formData);
@@ -268,18 +245,15 @@ class ApplyController extends BasicController
                 $data = $this->model->find($id);
                 $this->proccessProducts($data, $products);
 
-                if ($formData['status'] == 5)
-                {
-                    return view('alerts.success',[
-                        'msg'=>'送件成功',
-                        'redirectURL'=>route($this->slug.'.index')
+                if ($formData['status'] == 5) {
+                    return view('alerts.success', [
+                        'msg' => '送件成功',
+                        'redirectURL' => route($this->slug . '.index')
                     ]);
-                }
-                else
-                {
-                    return view('alerts.success',[
-                        'msg'=>'資料更新成功',
-                        'redirectURL'=>route($this->slug.'.index')
+                } else {
+                    return view('alerts.success', [
+                        'msg' => '資料更新成功',
+                        'redirectURL' => route($this->slug . '.index')
                     ]);
                 }
             }
@@ -287,17 +261,15 @@ class ApplyController extends BasicController
             DB::rollBack();
 
             return view('alerts.error', [
-                'msg'=>'資料更新失敗, 無該功能項之細項設定',
-                'redirectURL'=>route($this->slug.'.index')
+                'msg' => '資料更新失敗, 無該功能項之細項設定',
+                'redirectURL' => route($this->slug . '.index')
             ]);
-        } 
-        catch (\Exception $e)
-        {
+        } catch (\Exception $e) {
             DB::rollBack();
 
-            return view('alerts.error',[
-                'msg'=>$e->getMessage(),
-                'redirectURL'=>route($this->slug.'.index')
+            return view('alerts.error', [
+                'msg' => $e->getMessage(),
+                'redirectURL' => route($this->slug . '.index')
             ]);
         }
     }
@@ -308,36 +280,32 @@ class ApplyController extends BasicController
         $applyLogs = $this->getProductLog($data);
         $obj = app(Product::class);
 
-        $path = storage_path('app/public').'/pdfs';
-        $filePath = 'pdfs/'.$data->apply_no.'_申請書.pdf';
+        $path = storage_path('app/public') . '/pdfs';
+        $filePath = 'pdfs/' . $data->apply_no . '_申請書.pdf';
 
         File::makeDirectory($path, $mode = 0777, true, true);
-        PDF::setOptions(['defaultFont' => 'ARIALUNI', 'fontDir'=>storage_path('app/public/fonts')]);
+        PDF::setOptions(['defaultFont' => 'ARIALUNI', 'fontDir' => storage_path('app/public/fonts')]);
 
         $pdf = PDF::loadView('applies.pdf', [
-            'data'=>$data,
-            'id'=>$id,
-            'applyLogs'=>$applyLogs,
-            'obj'=>$obj,
+            'data' => $data,
+            'id' => $id,
+            'applyLogs' => $applyLogs,
+            'obj' => $obj,
         ]);
 
-        $pdf->save(storage_path('app/public').'/'.$filePath, 'UTF-8');
-        return $pdf->download(date('YmdHis').'_'.$data->apply_no.'_申請書.pdf');
+        $pdf->save(storage_path('app/public') . '/' . $filePath, 'UTF-8');
+        return $pdf->download(date('YmdHis') . '_' . $data->apply_no . '_申請書.pdf');
     }
 
-    private function proccessProducts($apply, $products=[])
+    private function proccessProducts($apply, $products = [])
     {
-        if (!empty($products))
-        {
+        if (!empty($products)) {
             app(ApplyProductLog::class)->where('apply_id', $apply->id)->delete();
             app(ApplyFeeRateLog::class)->where('apply_id', $apply->id)->delete();
 
-            foreach ($products??[] as $info)
-            {
-                if(isset($info['product_id']))
-                {
-                    if (isset($info['feeRates']))
-                    {
+            foreach ($products ?? [] as $info) {
+                if (isset($info['product_id'])) {
+                    if (isset($info['feeRates'])) {
                         $info['id'] = uniqid();
                         $info['apply_id'] = $apply->id;
                         $feeRates = $info['feeRates'];
@@ -345,19 +313,15 @@ class ApplyController extends BasicController
 
                         $log = app(ApplyProductLog::class)->create($info);
 
-                        foreach($feeRates??[] as $item)
-                        {
+                        foreach ($feeRates ?? [] as $item) {
                             $item['id'] = uniqid();
                             $item['apply_id'] = $apply->id;
                             $item['apply_product_log_id'] = $log->id;
 
                             app(ApplyFeeRateLog::class)->create($item);
                         }
-                    }
-                    else
-                    {
-                        if ($info['qty'] > 0)
-                        {
+                    } else {
+                        if ($info['qty'] > 0) {
                             $info['id'] = uniqid();
                             $info['apply_id'] = $apply->id;
                             app(ApplyProductLog::class)->create($info);
@@ -372,8 +336,7 @@ class ApplyController extends BasicController
     {
         $arr = [];
 
-        foreach ($apply->productLogs??[] as $log)
-        {
+        foreach ($apply->productLogs ?? [] as $log) {
             if ($log->qty > 0) {
                 $arr[$log->product_type_id][$log->product_id]['qty'] = $log->qty;
                 $arr[$log->product_type_id][$log->product_id]['rent_month'] = $log->rent_month;
@@ -382,11 +345,10 @@ class ApplyController extends BasicController
                 $arr[$log->product_type_id][$log->product_id]['security_deposit'] = $log->security_deposit;
                 $arr[$log->product_type_id][$log->product_id]['note'] = $log->note;
             } else {
-                foreach($log->feeRateLogs??[] as $k=>$rate)
-                {
+                foreach ($log->feeRateLogs ?? [] as $k => $rate) {
                     $arr[$log->product_type_id][$log->product_id][$rate->call_target_id]['call_target_id'] = $rate->call_target_id;
                     $arr[$log->product_type_id][$log->product_id][$rate->call_target_id]['call_rate'] = $rate->call_rate;
-                    $arr[$log->product_type_id][$log->product_id][$rate->call_target_id]['discount'] = $rate->discount	;
+                    $arr[$log->product_type_id][$log->product_id][$rate->call_target_id]['discount'] = $rate->discount;
                     $arr[$log->product_type_id][$log->product_id][$rate->call_target_id]['amount'] = $rate->amount;
                     $arr[$log->product_type_id][$log->product_id][$rate->call_target_id]['charge_unit'] = $rate->charge_unit;
                     $arr[$log->product_type_id][$log->product_id][$rate->call_target_id]['parameter'] = $rate->parameter;
