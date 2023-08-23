@@ -11,6 +11,28 @@ class BounsGroup extends AbstractModel
     {
         return [
             [
+                'field' => 'organization_id',
+                'type' => 'select',
+                'show_name' => '所屬組織',
+                'join_search' => 2,
+                'required' => 1,
+                'browse' => 1,
+                'create' => 1,
+                'edit' => 1,
+                'super_admin_use' => 1,
+                'has_relationship' => 1,
+                'relationship' => json_encode([
+                    'model' => 'App\Models\Organization',
+                    'references_field' => 'id',
+                    'show_field' => 'name'
+                ])
+            ],
+            [
+                'field' => 'empty',
+                'create' => 1,
+                'edit' => 1,
+            ],
+            [
                 'field' => 'parent_id',
                 'type' => 'select',
                 'show_name' => '父層群組',
@@ -26,7 +48,7 @@ class BounsGroup extends AbstractModel
                     'references_field' => 'id',
                     'show_field' => 'name',
                     'parent_id' => ''
-                ])                
+                ])
             ],
             [
                 'field' => 'status',
@@ -37,15 +59,15 @@ class BounsGroup extends AbstractModel
                 'edit' => 1,
                 'sort' => 2,
                 'options' => json_encode([
-                    ['text'=>'啟用', 'value'=>1, 'default'=>1],
-                    ['text'=>'停用', 'value'=>2, 'default'=>0],
+                    ['text' => '啟用', 'value' => 1, 'default' => 1],
+                    ['text' => '停用', 'value' => 2, 'default' => 0],
                 ])
             ],
             [
                 'field' => 'group_no',
                 'type' => 'text',
                 'show_name' => '奬金群組編號',
-                'use_edit_link'=>1,
+                'use_edit_link' => 1,
                 'join_search' => 1,
                 'required' => 1,
                 'browse' => 1,
@@ -53,20 +75,20 @@ class BounsGroup extends AbstractModel
                 'edit' => 1,
                 'sort' => 3,
                 'create_rule' => json_encode([
-                    'group_no'=>'required'
+                    'group_no' => 'required'
                 ]),
                 'update_rule' => json_encode([
-                    'group_no'=>'required'
+                    'group_no' => 'required'
                 ]),
                 'error_msg' => json_encode([
-                    ['group_no.required'=>'奬金群組編號請勿空白']
+                    ['group_no.required' => '奬金群組編號請勿空白']
                 ]),
             ],
             [
                 'field' => 'name',
                 'type' => 'text',
                 'show_name' => '奬金群組名稱',
-                'use_edit_link'=>1,
+                'use_edit_link' => 1,
                 'join_search' => 1,
                 'required' => 1,
                 'browse' => 1,
@@ -74,13 +96,13 @@ class BounsGroup extends AbstractModel
                 'edit' => 1,
                 'sort' => 4,
                 'create_rule' => json_encode([
-                    'name'=>'required'
+                    'name' => 'required'
                 ]),
                 'update_rule' => json_encode([
-                    'name'=>'required'
+                    'name' => 'required'
                 ]),
                 'error_msg' => json_encode([
-                    ['name.required'=>'奬金群組名稱請勿空白']
+                    ['name.required' => '奬金群組名稱請勿空白']
                 ]),
             ],
             [
@@ -91,6 +113,11 @@ class BounsGroup extends AbstractModel
                 'sort' => 5
             ],
         ];
+    }
+
+    public function parent()
+    {
+        return $this->belongsTo(BounsGroup::class, 'parent_id');
     }
 
     public function getChilds()

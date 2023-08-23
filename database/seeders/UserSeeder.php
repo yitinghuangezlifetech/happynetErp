@@ -23,7 +23,7 @@ class UserSeeder extends Seeder
         DB::statement('SET FOREIGN_KEY_CHECKS=0;');
 
         app(User::class)->truncate();
-    
+
         foreach ($this->getData() as $data) {
             app(User::class)->create($data);
         }
@@ -37,12 +37,13 @@ class UserSeeder extends Seeder
 
         $group = app(Group::class)->where('name', '系統管理')->first();
 
-        foreach ($group->roles??[] as $role)
-        {
-            if ($role->name == '超級管理員')
-            {
+        foreach ($group->roles ?? [] as $role) {
+            if ($role->name == '超級管理員') {
+                $organization = app(Organization::class)->where('name', '樂得網路電信科技有限公司')->first();
+
                 array_push($arr, [
                     'id' => uniqid(),
+                    'organization_id' => $organization->id,
                     'group_id' => $role->group_id,
                     'role_id' => $role->id,
                     'account' => 'admin',
@@ -56,16 +57,12 @@ class UserSeeder extends Seeder
 
         $organizations = app(Organization::class)->get();
 
-        foreach ($organizations??[] as $organization)
-        {
+        foreach ($organizations ?? [] as $organization) {
             $group = $organization->group;
 
-            if ($group)
-            {
-                foreach ($group->roles??[] as $role)
-                {
-                    for($i=1; $i<=1; $i++)
-                    {
+            if ($group) {
+                foreach ($group->roles ?? [] as $role) {
+                    for ($i = 1; $i <= 1; $i++) {
                         $userType = app(UserType::class)->inRandomOrder()->first();
 
                         array_push($arr, [
@@ -86,7 +83,7 @@ class UserSeeder extends Seeder
                 }
             }
         }
-        
+
         return $arr;
     }
 }

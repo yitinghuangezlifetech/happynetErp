@@ -242,38 +242,13 @@
                         @endif
                     @else
                         <div class="col-sm-6">
-                            @if ($detail->field == 'parent_id')
-                                @if ($data->parent)
-                                    <div class="form-group">
-                                        <label>所屬奬金群組</label>
-                                        <input type="text" class="form-control" value="{{ $data->parent->name }}"
-                                            readonly>
-                                    </div>
-                                @else
-                                    @php
-                                        $parents = $obj->whereNull('parent_id')->get();
-                                    @endphp
-                                    <div class="form-group">
-                                        <label>所屬奬金群組</label>
-                                        <select class="form-control" name="parent_id">
-                                            @foreach ($parents ?? [] as $parent)
-                                                <option value="">請選擇</option>
-                                                <option value="{{ $parent->id }}"
-                                                    @if ($data->parent_id == $parent->id) {{ 'selected' }} @endif>
-                                                    {{ $parent->name }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                @endif
-                            @else
-                                @include('components.fields.' . $detail->type, [
-                                    'type' => 'edit',
-                                    'detail' => $detail,
-                                    'id' => $data->id,
-                                    'model' => $menu->model,
-                                    'value' => $data->{$detail->field},
-                                ])
-                            @endif
+                            @include('components.fields.' . $detail->type, [
+                                'type' => 'edit',
+                                'detail' => $detail,
+                                'id' => $data->id,
+                                'model' => $menu->model,
+                                'value' => $data->{$detail->field},
+                            ])
                         </div>
                     @endif
                 @endif
@@ -289,41 +264,79 @@
                 @endif
             </div>
         </div>
-        <div class="card card-secondary">
-            <div class="card-header">
-                <h3 class="card-title">奬金類別%數設定</h3>
-            </div>
-            <div class="card-body table-responsive p-0">
-                <table class="table">
-                    <tbody>
-                        @foreach ($funcTypes ?? [] as $type)
-                            @if (isset($bonus[$type->id]))
-                                @php $percent = $bonus[$type->id];@endphp
-                            @else
-                                @php $percent = '';@endphp
-                            @endif
-                            @if ($loop->iteration == 1)
-                                <tr>
-                            @endif
-                            @if ($loop->iteration % 4 == 0)
-                                </tr>
-                                <tr>
-                            @endif
-                            <td>{{ $type->type_name }}</td>
-                            <td>
-                                <input type="hidden" name="bonus[{{ $loop->iteration }}][func_type_id]"
-                                    value="{{ $type->id }}">
-                                <input type="text" class="form-control" name="bonus[{{ $loop->iteration }}][bonus]"
-                                    value="{{ $percent }}">
-                            </td>
-                            @if ($loop->last)
-                                </tr>
-                            @endif
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
         </div>
+        @if ($menu->slug == 'rate_types')
+            <div class="card card-secondary">
+                <div class="card-header">
+                    <h3 class="card-title">對應IP設定</h3>
+                </div>
+                <div class="card-body">
+                    @if ($data->ips->count() > 0)
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label for="page_title">IP-1</label>
+                                    <input type="text" class="form-control" name="ip[]"
+                                        value="{{ $data->ips[0]->ip }}">
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label for="page_title">IP-2</label>
+                                    <input type="text" class="form-control" name="ip[]"
+                                        value="{{ $data->ips[1]->ip }}">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label for="page_title">IP-3</label>
+                                    <input type="text" class="form-control" name="ip[]"
+                                        value="{{ $data->ips[2]->ip }}">
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label for="page_title">IP-4</label>
+                                    <input type="text" class="form-control" name="ip[]"
+                                        value="{{ $data->ips[3]->ip }}">
+                                </div>
+                            </div>
+                        </div>
+                    @else
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label for="page_title">IP-1</label>
+                                    <input type="text" class="form-control" name="ip[]"
+                                        value="{{ $data->ips[4]->ip }}">
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label for="page_title">IP-2</label>
+                                    <input type="text" class="form-control" name="ip[]" value="">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label for="page_title">IP-3</label>
+                                    <input type="text" class="form-control" name="ip[]" value="">
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label for="page_title">IP-4</label>
+                                    <input type="text" class="form-control" name="ip[]" value="">
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+                </div>
+        @endif
         @if ($menu->seo_enable == 1)
             @include('components.seo', [
                 'data' => $data->seo,

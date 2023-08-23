@@ -7,20 +7,20 @@ use App\Models\User;
 use App\Models\UserAuth;
 use App\Models\Organization;
 use Illuminate\Http\Request;
+use App\Support\Collection;
 
 
 class ProxyAccountController extends BasicController
 {
-    public function index(Request $request) 
+    public function index(Request $request)
     {
-        if ($request->user()->cannot('browse_'.$this->slug,  $this->model)) 
-        {
+        if ($request->user()->cannot('browse_' . $this->slug,  $this->model)) {
             return view('alerts.error', [
                 'msg' => '您的權限不足, 請洽管理人員開通權限',
                 'redirectURL' => route('dashboard')
             ]);
         }
-        
+
         $user = Auth::user();
 
         $filters = [
@@ -28,27 +28,18 @@ class ProxyAccountController extends BasicController
             'keyword' => $request->keyword
         ];
 
-        try
-        {
+        try {
             $list = $this->model->getListByFilters($this->menu->menuDetails, $filters);
-        }
-        catch (\Exception $e)
-        {
-            $list = (new Collection([]))->paginate(20); 
+        } catch (\Exception $e) {
+            $list = (new Collection([]))->paginate(20);
         }
 
-        if(view()->exists($this->slug.'.index')) 
-        {
-            $this->indexView = $this->slug.'.index';
-        } 
-        else 
-        {
-            if ($this->menu->sortable_enable == 1) 
-            {
+        if (view()->exists($this->slug . '.index')) {
+            $this->indexView = $this->slug . '.index';
+        } else {
+            if ($this->menu->sortable_enable == 1) {
                 $this->indexView = 'templates.sortable';
-            }
-            else
-            {
+            } else {
                 $this->indexView = 'templates.index';
             }
         }
@@ -61,8 +52,7 @@ class ProxyAccountController extends BasicController
 
     public function create(Request $request)
     {
-        if ($request->user()->cannot('create_'.$this->slug,  $this->model))
-        {
+        if ($request->user()->cannot('create_' . $this->slug,  $this->model)) {
             return view('alerts.error', [
                 'msg' => '您的權限不足, 請洽管理人員開通權限',
                 'redirectURL' => route('dashboard')
@@ -71,9 +61,8 @@ class ProxyAccountController extends BasicController
 
         $users = $this->getChildUsers();
 
-        if(view()->exists($this->slug.'.create'))
-        {
-            $this->createView = $this->slug.'.create';
+        if (view()->exists($this->slug . '.create')) {
+            $this->createView = $this->slug . '.create';
         }
 
         return view($this->createView, compact('users'));
@@ -92,18 +81,14 @@ class ProxyAccountController extends BasicController
     {
         $user = Auth::user();
 
-        if (!empty($user->organization_id))
-        {
+        if (!empty($user->organization_id)) {
             $organization = app(Organization::class)->find($user->organization_id);
 
-            if ($organization)
-            {
+            if ($organization) {
                 $arr = [];
 
-                foreach ($organization->childs??[] as $child)
-                {
-                    if (!in_array($child->id, $arr))
-                    {
+                foreach ($organization->childs ?? [] as $child) {
+                    if (!in_array($child->id, $arr)) {
                         array_push($arr, $child->id);
                     }
                 }
@@ -112,9 +97,7 @@ class ProxyAccountController extends BasicController
 
                 return $users;
             }
-        }
-        else
-        {
+        } else {
             $users = app(User::class)->orderBy('organization_id', 'ASC')->get();
 
             return $users;

@@ -14,7 +14,7 @@ class FeeRate extends AbstractModel
                 'field' => 'rate_type_id',
                 'type' => 'select',
                 'show_name' => '費率類別',
-                'use_edit_link'=>2,
+                'use_edit_link' => 2,
                 'join_search' => 1,
                 'required' => 1,
                 'browse' => 1,
@@ -29,20 +29,20 @@ class FeeRate extends AbstractModel
                     'show_field' => 'type_name'
                 ]),
                 'create_rule' => json_encode([
-                    'rate_type_id'=>'required'
+                    'rate_type_id' => 'required'
                 ]),
                 'update_rule' => json_encode([
-                    'rate_type_id'=>'required'
+                    'rate_type_id' => 'required'
                 ]),
                 'error_msg' => json_encode([
-                    ['rate_type_id.required'=>'請選擇費率類別']
+                    ['rate_type_id.required' => '請選擇費率類別']
                 ]),
             ],
             [
                 'field' => 'name',
                 'type' => 'text',
-                'show_name' => '費率模組名稱',
-                'use_edit_link'=>2,
+                'show_name' => '費率表名稱',
+                'use_edit_link' => 2,
                 'join_search' => 2,
                 'required' => 1,
                 'browse' => 1,
@@ -50,14 +50,26 @@ class FeeRate extends AbstractModel
                 'edit' => 1,
                 'sort' => 1,
                 'create_rule' => json_encode([
-                    'name'=>'required'
+                    'name' => 'required'
                 ]),
                 'update_rule' => json_encode([
-                    'name'=>'required'
+                    'name' => 'required'
                 ]),
                 'error_msg' => json_encode([
-                    ['name.required'=>'費率模組名稱請勿空白']
+                    ['name.required' => '費率模組名稱請勿空白']
                 ]),
+            ],
+            [
+                'field' => 'status',
+                'type' => 'radio',
+                'show_name' => '狀態',
+                'browse' => 1,
+                'create' => 2,
+                'edit' => 2,
+                'options' => json_encode([
+                    ['text' => '啟用', 'value' => 1, 'default' => 0],
+                    ['text' => '停用', 'value' => 2, 'default' => 1],
+                ])
             ],
             [
                 'field' => 'created_at',
