@@ -20,14 +20,14 @@ class Menu extends AbstractModel
                 'edit' => 1,
                 'sort' => 0,
                 'create_rule' => json_encode([
-                    'menu_name'=>'required | unique:menus'
+                    'menu_name' => 'required | unique:menus'
                 ]),
                 'update_rule' => json_encode([
-                    'menu_name'=>'required'
+                    'menu_name' => 'required'
                 ]),
                 'error_msg' => json_encode([
-                    ['menu_name.required'=>'目錄項目名稱請勿空白'],
-                    ['menu_name.unique'=>'目錄項目名稱重覆'],
+                    ['menu_name.required' => '目錄項目名稱請勿空白'],
+                    ['menu_name.unique' => '目錄項目名稱重覆'],
                 ]),
             ],
             [
@@ -40,13 +40,13 @@ class Menu extends AbstractModel
                 'edit' => 1,
                 'sort' => 1,
                 'create_rule' => json_encode([
-                    'name'=>'required'
+                    'name' => 'required'
                 ]),
                 'update_rule' => json_encode([
-                    'name'=>'required'
+                    'name' => 'required'
                 ]),
                 'error_msg' => json_encode([
-                    ['name.required'=>'簡化項目名稱請勿空白']
+                    ['name.required' => '簡化項目名稱請勿空白']
                 ]),
             ],
             [
@@ -57,14 +57,14 @@ class Menu extends AbstractModel
                 'edit' => 1,
                 'sort' => 2,
                 'create_rule' => json_encode([
-                    'slug'=>'required | unique:menus'
+                    'slug' => 'required | unique:menus'
                 ]),
                 'update_rule' => json_encode([
-                    'slug'=>'required'
+                    'slug' => 'required'
                 ]),
                 'error_msg' => json_encode([
-                    ['slug.required'=>'Slug請勿空白'],
-                    ['slug.unique'=>'Slug重覆'],
+                    ['slug.required' => 'Slug請勿空白'],
+                    ['slug.unique' => 'Slug重覆'],
                 ]),
             ],
             [
@@ -75,8 +75,8 @@ class Menu extends AbstractModel
                 'edit' => 1,
                 'sort' => 3,
                 'options' => json_encode([
-                    ['text'=>'在目前視窗中開啟', 'value'=>'_self'],
-                    ['text'=>'另外開啟視窗', 'value'=>'_blank'],
+                    ['text' => '在目前視窗中開啟', 'value' => '_self'],
+                    ['text' => '另外開啟視窗', 'value' => '_blank'],
                 ])
             ],
             [
@@ -111,8 +111,8 @@ class Menu extends AbstractModel
                 'edit' => 1,
                 'sort' => 7,
                 'options' => json_encode([
-                    ['text'=>'是', 'value'=>1, 'default'=>2],
-                    ['text'=>'否', 'value'=>2, 'default'=>1],
+                    ['text' => '是', 'value' => 1, 'default' => 2],
+                    ['text' => '否', 'value' => 2, 'default' => 1],
                 ])
             ],
             [
@@ -123,8 +123,8 @@ class Menu extends AbstractModel
                 'edit' => 1,
                 'sort' => 8,
                 'options' => json_encode([
-                    ['text'=>'是', 'value'=>1, 'default'=>2],
-                    ['text'=>'否', 'value'=>2, 'default'=>1],
+                    ['text' => '是', 'value' => 1, 'default' => 2],
+                    ['text' => '否', 'value' => 2, 'default' => 1],
                 ])
             ],
             [
@@ -135,8 +135,8 @@ class Menu extends AbstractModel
                 'edit' => 1,
                 'sort' => 8,
                 'options' => json_encode([
-                    ['text'=>'是', 'value'=>1, 'default'=>2],
-                    ['text'=>'否', 'value'=>2, 'default'=>1],
+                    ['text' => '是', 'value' => 1, 'default' => 2],
+                    ['text' => '否', 'value' => 2, 'default' => 1],
                 ])
             ],
             [
@@ -147,8 +147,19 @@ class Menu extends AbstractModel
                 'edit' => 1,
                 'sort' => 8,
                 'options' => json_encode([
-                    ['text'=>'是', 'value'=>1, 'default'=>2],
-                    ['text'=>'否', 'value'=>2, 'default'=>1],
+                    ['text' => '是', 'value' => 1, 'default' => 2],
+                    ['text' => '否', 'value' => 2, 'default' => 1],
+                ])
+            ],
+            [
+                'field' => 'sync_data',
+                'type' => 'radio',
+                'show_name' => '啟用資料同步功能',
+                'create' => 1,
+                'edit' => 1,
+                'options' => json_encode([
+                    ['text' => '是', 'value' => 1, 'default' => 2],
+                    ['text' => '否', 'value' => 2, 'default' => 1],
                 ])
             ],
             [
@@ -159,8 +170,8 @@ class Menu extends AbstractModel
                 'edit' => 1,
                 'sort' => 9,
                 'options' => json_encode([
-                    ['text'=>'是', 'value'=>1, 'default'=>2],
-                    ['text'=>'否', 'value'=>2, 'default'=>1],
+                    ['text' => '是', 'value' => 1, 'default' => 2],
+                    ['text' => '否', 'value' => 2, 'default' => 1],
                 ])
             ],
             [
@@ -171,19 +182,19 @@ class Menu extends AbstractModel
                 'edit' => 1,
                 'sort' => 10,
                 'options' => json_encode([
-                    ['text'=>'是', 'value'=>1, 'default'=>2],
-                    ['text'=>'否', 'value'=>2, 'default'=>1],
+                    ['text' => '是', 'value' => 1, 'default' => 2],
+                    ['text' => '否', 'value' => 2, 'default' => 1],
                 ])
             ]
         ];
     }
 
-    public function menuDetails() 
+    public function menuDetails()
     {
         return $this->hasMany(MenuDetail::class, 'menu_id');
     }
 
-    public function menuRequiredDetails() 
+    public function menuRequiredDetails()
     {
         return $this->hasMany(MenuDetail::class, 'menu_id')->where('required', 1);
     }
