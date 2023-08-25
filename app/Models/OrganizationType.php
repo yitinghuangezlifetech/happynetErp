@@ -14,7 +14,7 @@ class OrganizationType extends AbstractModel
                 'field' => 'name',
                 'type' => 'text',
                 'show_name' => '組織類型名稱',
-                'use_edit_link'=>1,
+                'use_edit_link' => 1,
                 'join_search' => 1,
                 'required' => 1,
                 'browse' => 1,
@@ -22,13 +22,13 @@ class OrganizationType extends AbstractModel
                 'edit' => 1,
                 'sort' => 0,
                 'create_rule' => json_encode([
-                    'name'=>'required'
+                    'name' => 'required'
                 ]),
                 'update_rule' => json_encode([
-                    'name'=>'required'
+                    'name' => 'required'
                 ]),
                 'error_msg' => json_encode([
-                    ['name.required'=>'組織類型名稱請勿空白']
+                    ['name.required' => '組織類型名稱請勿空白']
                 ]),
             ],
             [

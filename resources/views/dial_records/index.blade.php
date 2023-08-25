@@ -1,11 +1,9 @@
 @extends('layouts.main')
 @section('css')
-<link href="/admins/plugins/bootstrap-toggle/css/bootstrap-toggle.css" rel="stylesheet">
-<link rel="stylesheet" href="/admins/plugins/loadingModal/css/jquery.loadingModal.css"
-@endsection
-
-@section('content')
-@if($menu->search_component == 1)
+    <link href="/admins/plugins/bootstrap-toggle/css/bootstrap-toggle.css" rel="stylesheet">
+<link rel="stylesheet" href="/admins/plugins/loadingModal/css/jquery.loadingModal.css" @endsection
+    @section('content')
+@if ($menu->search_component == 1)
   @include('components.search', ['menu'=>$menu, 'filters'=>$filters])
 @endif
 <div class="row">
@@ -18,8 +16,8 @@
             <tr>
               <th class="bg-gradient-secondary" style="text-align: center"><input type="checkbox" class="checkAll"></th>
               <th class="bg-gradient-secondary" style="text-align: center">操作</th>
-              @if($menu->menuBrowseDetails->count() > 0)
-                @foreach($menu->menuBrowseDetails as $detail)
+              @if ($menu->menuBrowseDetails->count() > 0)
+                @foreach ($menu->menuBrowseDetails as $detail)
                   @php
                     $json = [];
 
@@ -27,22 +25,22 @@
                       $json = json_decode($detail->applicable_system, true);
                     }
                   @endphp
-                  @if($detail->super_admin_use == 1 && $user->role->super_admin == 1)
-                    @if(count($json) > 0)
+                  @if ($detail->super_admin_use == 1 && $user->role->super_admin == 1)
+                    @if (count($json) > 0)
                       @if (in_array($user->role->systemType->name, $json))
-                      <th class="bg-gradient-secondary" style="text-align: center">{{$detail->show_name}}</th>
+                      <th class="bg-gradient-secondary" style="text-align: center">{{ $detail->show_name }}</th>
                       @endif
                     @else
-                      <th class="bg-gradient-secondary" style="text-align: center">{{$detail->show_name}}</th>
+                      <th class="bg-gradient-secondary" style="text-align: center">{{ $detail->show_name }}</th>
                     @endif
                   @else
-                    @if($detail->show_hidden_field != 1)
-                      @if(count($json) > 0)
+                    @if ($detail->show_hidden_field != 1)
+                      @if (count($json) > 0)
                         @if (in_array($user->role->systemType->name, $json))
-                        <th class="bg-gradient-secondary" style="text-align: center">{{$detail->show_name}}</th>
+                        <th class="bg-gradient-secondary" style="text-align: center">{{ $detail->show_name }}</th>
                         @endif
                       @else
-                        <th class="bg-gradient-secondary" style="text-align: center">{{$detail->show_name}}</th>
+                        <th class="bg-gradient-secondary" style="text-align: center">{{ $detail->show_name }}</th>
                       @endif
                     @endif
                   @endif
@@ -51,16 +49,16 @@
             </tr>
           </thead>
           <tbody>
-            @foreach($list??[] as $data)
+            @foreach ($list ?? [] as $data)
             <tr>
               <td class="text-center" style="vertical-align: middle">
                 <input type="checkbox" class="rowItem" name="items[]" value="{{ $data->id }}">
               </td>
               <td style="text-align: center; vertical-align: middle">
-                  <i class="fas fa-eye" onclick="location.href='{{route($menu->slug.'.show', $data->id)}}'" style="cursor: pointer"></i>
+                  <i class="fas fa-eye" onclick="location.href='{{ route($menu->slug . '.show', $data->id) }}'" style="cursor: pointer"></i>
               </td>
-              @if($menu->menuBrowseDetails->count() > 0)
-                @foreach($menu->menuBrowseDetails as $detail)
+              @if ($menu->menuBrowseDetails->count() > 0)
+                @foreach ($menu->menuBrowseDetails as $detail)
                   @php
                     $json = [];
 
@@ -68,8 +66,8 @@
                       $json = json_decode($detail->applicable_system, true);
                     }
                   @endphp
-                  @if($detail->super_admin_use == 1 && $user->role->super_admin == 1)
-                    @if(count($json) > 0)
+                  @if ($detail->super_admin_use == 1 && $user->role->super_admin == 1)
+                    @if (count($json) > 0)
                       @if (in_array($user->role->systemType->name, $json))
                       <td class="text-center" style="vertical-align: middle">
                         @switch($detail->type)
@@ -195,7 +193,7 @@
                             {!! $value !!}
                             @break
                           @case('image')
-                              @if(!empty($data->{$detail->field}))
+                              @if (!empty($data->{$detail->field}))
                               <img src="{{ $data->{$detail->field} }}"  width="100px" height="100px">
                               @endif
                             @break
@@ -353,7 +351,7 @@
                             {!! $value !!}
                             @break
                           @case('image')
-                              @if(!empty($data->{$detail->field}))
+                              @if (!empty($data->{$detail->field}))
                               <img src="{{ $data->{$detail->field} }}"  width="100px" height="100px">
                               @endif
                             @break
@@ -387,8 +385,8 @@
                       </td>
                     @endif
                   @else
-                    @if($detail->show_hidden_field != 1)
-                      @if(count($json) > 0)
+                    @if ($detail->show_hidden_field != 1)
+                      @if (count($json) > 0)
                         @if (in_array($user->role->systemType->name, $json))
                         <td class="text-center" style="vertical-align: middle">
                           @switch($detail->type)
@@ -515,7 +513,7 @@
                               {!! $value !!}
                               @break
                             @case('image')
-                                @if(!empty($data->{$detail->field}))
+                                @if (!empty($data->{$detail->field}))
                                 <img src="{{ $data->{$detail->field} }}" width="100px" height="100px">
                                 @endif
                               @break
@@ -675,7 +673,7 @@
                               {!! $value !!}
                               @break
                             @case('image')
-                                @if(!empty($data->{$detail->field}))
+                                @if (!empty($data->{$detail->field}))
                                 <img src="{{ $data->{$detail->field} }}" width="100px" height="100px">
                                 @endif
                               @break
@@ -720,7 +718,7 @@
       </div>
       <!-- /.card-body -->
       <div class="card-footer clearfix">
-        {{$list->links('pagination.adminLTE')}}
+        {{ $list->links('pagination.adminLTE') }}
       </div>
     </div>
     <!-- /.card -->
@@ -729,102 +727,106 @@
 <form id="delete_form" method="POST" style="display: none;">
   
 </form>
-@if($menu->import_data == 1)
+@if ($menu->import_data == 1)
   @include('components.import_modal', ['menu'=>$menu])
 @endif
 <!-- /.row -->
 @endsection
+    @section('js') <script src="/admins/plugins/bootstrap-toggle/js/bootstrap-toggle.js"></script>
+    <script src="/admins/plugins/loadingModal/js/jquery.loadingModal.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('.switchBtn').bootstrapToggle({
+                onstyle: 'success',
+                offstyle: 'secondary'
+            }).on('change', function() {
+                let status = 2;
+                let model = $(this).data('model');
+                let field = $(this).data('field');
+                let id = $(this).data('id');
 
-@section('js')
-<script src="/admins/plugins/bootstrap-toggle/js/bootstrap-toggle.js"></script>
-<script src="/admins/plugins/loadingModal/js/jquery.loadingModal.js"></script>
-<script type="text/javascript">
-  $(document).ready(function(){
-      $('.switchBtn').bootstrapToggle({
-        onstyle: 'success',
-        offstyle: 'secondary'
-      }).on('change', function(){
-        let status = 2;
-        let model = $(this).data('model');
-        let field = $(this).data('field');
-        let id = $(this).data('id');
-
-        if ($(this).prop('checked')) {
-          status = 1;
-        }
-
-        $.ajax({
-              headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-              method: 'post',
-              url: '{{ route('status.changeStatus') }}',
-              data: {
-                id: id,
-                model: model,
-                status: status,
-                field: field,
-                slug: '{{$slug}}'
-              }
-        })
-      });
-    
-      $(".clearSearch").click(function(){
-        $("#searchForm input").val('');
-        $("#searchForm select").val('');
-        $("#searchForm textarea").val('');
-      })
-
-      $(".checkAll").on('click', function(){
-        if ( $(this).prop('checked') ) {
-          $(".rowItem").prop('checked', true);
-        } else {
-          $(".rowItem").prop('checked', false);
-        }
-      })
-
-      $(".deleteBtn").click(function(){
-        if ( $('.rowItem:checked').length > 0) {
-          $('#delete_form')[0].action = '{{ route($menu->slug.'.multipleDestroy') }}';
-          Swal.fire({
-              type: 'warning',
-              title: '訊息提示',
-              text: "是否要刪除資料？",
-              icon: 'warning',
-              showCancelButton: true,
-              confirmButtonColor: '#3085d6',
-              cancelButtonColor: '#d33',
-              confirmButtonText: '是的, 刪除資料!',
-              cancelButtonText: '取消',
-          }).then((result) => {
-              if (result.value) {
-                if ($('.rowItem').length > 0) {
-                  $('#delete_form').html('');
-                  $('#delete_form').append('@csrf');
-                  $('.rowItem:checked').each(function(){
-                    $('#delete_form').append(`<input type="hidden" name="ids[]" value="${$(this).val()}">`);
-                  });
-                  $('#delete_form').submit();
+                if ($(this).prop('checked')) {
+                    status = 1;
                 }
-              }
-          })
-        } else {
-          Swal.fire({
-            icon: 'error',
-            title: '訊息提示',
-            text: '請選擇要刪除的資料'
-          })
-        }
-      })
 
-      if ($('.importBtn').length > 0) {
-        $('.importBtn').click(function(){
-          $('#importForm').modal('show');
+                $.ajax({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    method: 'post',
+                    url: '{{ route('status.changeStatus') }}',
+                    data: {
+                        id: id,
+                        model: model,
+                        status: status,
+                        field: field,
+                        slug: '{{ $slug }}'
+                    }
+                })
+            });
+
+            $(".clearSearch").click(function() {
+                $("#searchForm input").val('');
+                $("#searchForm select").val('');
+                $("#searchForm textarea").val('');
+            })
+
+            $(".checkAll").on('click', function() {
+                if ($(this).prop('checked')) {
+                    $(".rowItem").prop('checked', true);
+                } else {
+                    $(".rowItem").prop('checked', false);
+                }
+            })
+
+            $(".deleteBtn").click(function() {
+                if ($('.rowItem:checked').length > 0) {
+                    $('#delete_form')[0].action = '{{ route($menu->slug . '.multipleDestroy') }}';
+                    Swal.fire({
+                        type: 'warning',
+                        title: '訊息提示',
+                        text: "是否要刪除資料？",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: '是的, 刪除資料!',
+                        cancelButtonText: '取消',
+                    }).then((result) => {
+                        if (result.value) {
+                            if ($('.rowItem').length > 0) {
+                                $('#delete_form').html('');
+                                $('#delete_form').append('@csrf');
+                                $('.rowItem:checked').each(function() {
+                                    $('#delete_form').append(
+                                        `<input type="hidden" name="ids[]" value="${$(this).val()}">`
+                                        );
+                                });
+                                $('#delete_form').submit();
+                            }
+                        }
+                    })
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: '訊息提示',
+                        text: '請選擇要刪除的資料'
+                    })
+                }
+            })
+
+            if ($('.importBtn').length > 0) {
+                $('.importBtn').click(function() {
+                    $('#importForm').modal('show');
+                });
+            }
+
+            $('body #importForm').submit(function() {
+                $('body').loadingModal({
+                    text: '檔案上傳處理中...'
+                });
+                $('body').loadingModal('animation', 'wave');
+            })
         });
-      }
-
-      $('body #importForm').submit(function(){
-        $('body').loadingModal({text: '檔案上傳處理中...'});
-        $('body').loadingModal('animation', 'wave');
-      })
-  });
-</script> 
+    </script>
 @endsection

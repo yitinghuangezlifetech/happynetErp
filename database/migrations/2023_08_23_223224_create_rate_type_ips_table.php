@@ -13,11 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('fee_rate_types', function (Blueprint $table) {
+        Schema::create('rate_type_ips', function (Blueprint $table) {
             $table->uuid('id')->unique()->primary();
-            $table->string('name', 120)->nullable()->comment('類別名稱');
-            $table->string('create_user_id', 36)->nullable()->comment('建立人員');
-            $table->string('update_user_id', 36)->nullable()->comment('修改人員');
+            $table->string('rate_type_id', 36)->nullable()->comment('費率類別');
+            $table->string('ip', 30)->nullable()->comment('ip');
             $table->timestamps();
         });
     }
@@ -29,6 +28,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('fee_rate_types');
+        Schema::dropIfExists('rate_type_ips');
     }
 };

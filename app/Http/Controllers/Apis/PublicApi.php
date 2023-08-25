@@ -6,10 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 use App\Models\User;
-use App\Models\Product;
 use App\Models\Project;
 use App\Models\Contract;
-use App\Models\FuncType;
 use App\Models\Organization;
 
 class PublicApi extends Controller
@@ -18,8 +16,7 @@ class PublicApi extends Controller
     {
         $user = app(User::class)->find($request->user_id);
 
-        if ($user)
-        {
+        if ($user) {
             return response()->json([
                 'status' => false,
                 'message' => '取得資料成功',
@@ -38,12 +35,10 @@ class PublicApi extends Controller
     {
         $data = app(Project::class)->find($request->project_id);
 
-        if ($data)
-        {
+        if ($data) {
             $arr = [];
 
-            foreach ($data->productLogs??[] as $log)
-            {
+            foreach ($data->productLogs ?? [] as $log) {
                 if ($log->qty > 0) {
                     $arr[$log->product_type_id][$log->product_id]['qty'] = $log->qty;
                     $arr[$log->product_type_id][$log->product_id]['rent_month'] = $log->rent_month;
@@ -52,11 +47,10 @@ class PublicApi extends Controller
                     $arr[$log->product_type_id][$log->product_id]['security_deposit'] = $log->security_deposit;
                     $arr[$log->product_type_id][$log->product_id]['note'] = $log->note;
                 } else {
-                    foreach($log->feeRateLogs??[] as $k=>$rate)
-                    {
+                    foreach ($log->feeRateLogs ?? [] as $k => $rate) {
                         $arr[$log->product_type_id][$log->product_id][$rate->call_target_id]['call_target_id'] = $rate->call_target_id;
                         $arr[$log->product_type_id][$log->product_id][$rate->call_target_id]['call_rate'] = $rate->call_rate;
-                        $arr[$log->product_type_id][$log->product_id][$rate->call_target_id]['discount'] = $rate->discount	;
+                        $arr[$log->product_type_id][$log->product_id][$rate->call_target_id]['discount'] = $rate->discount;
                         $arr[$log->product_type_id][$log->product_id][$rate->call_target_id]['amount'] = $rate->amount;
                         $arr[$log->product_type_id][$log->product_id][$rate->call_target_id]['charge_unit'] = $rate->charge_unit;
                         $arr[$log->product_type_id][$log->product_id][$rate->call_target_id]['parameter'] = $rate->parameter;
@@ -67,7 +61,8 @@ class PublicApi extends Controller
             $applyLogs = $arr;
 
             $content = view('applies.product_item', compact(
-                'applyLogs', 'data'
+                'applyLogs',
+                'data'
             ))->render();
 
             return response()->json([
@@ -88,8 +83,7 @@ class PublicApi extends Controller
     {
         $data = app(Project::class)->find($request->project_id);
 
-        if ($data)
-        {
+        if ($data) {
             $content = view('applies.regulation_item', compact(
                 'data'
             ))->render();
@@ -112,12 +106,10 @@ class PublicApi extends Controller
     {
         $data = app(Contract::class)->find($request->contract_id);
 
-        if ($data)
-        {
+        if ($data) {
             $arr = [];
 
-            foreach ($data->productLogs??[] as $log)
-            {
+            foreach ($data->productLogs ?? [] as $log) {
                 if ($log->qty > 0) {
                     $arr[$log->product_type_id][$log->product_id]['qty'] = $log->qty;
                     $arr[$log->product_type_id][$log->product_id]['rent_month'] = $log->rent_month;
@@ -126,11 +118,10 @@ class PublicApi extends Controller
                     $arr[$log->product_type_id][$log->product_id]['security_deposit'] = $log->security_deposit;
                     $arr[$log->product_type_id][$log->product_id]['note'] = $log->note;
                 } else {
-                    foreach($log->feeRateLogs??[] as $k=>$rate)
-                    {
+                    foreach ($log->feeRateLogs ?? [] as $k => $rate) {
                         $arr[$log->product_type_id][$log->product_id][$rate->call_target_id]['call_target_id'] = $rate->call_target_id;
                         $arr[$log->product_type_id][$log->product_id][$rate->call_target_id]['call_rate'] = $rate->call_rate;
-                        $arr[$log->product_type_id][$log->product_id][$rate->call_target_id]['discount'] = $rate->discount	;
+                        $arr[$log->product_type_id][$log->product_id][$rate->call_target_id]['discount'] = $rate->discount;
                         $arr[$log->product_type_id][$log->product_id][$rate->call_target_id]['amount'] = $rate->amount;
                         $arr[$log->product_type_id][$log->product_id][$rate->call_target_id]['charge_unit'] = $rate->charge_unit;
                         $arr[$log->product_type_id][$log->product_id][$rate->call_target_id]['parameter'] = $rate->parameter;
@@ -141,7 +132,8 @@ class PublicApi extends Controller
             $applyLogs = $arr;
 
             $content = view('applies.product_item', compact(
-                'applyLogs', 'data'
+                'applyLogs',
+                'data'
             ))->render();
 
             return response()->json([
@@ -162,8 +154,7 @@ class PublicApi extends Controller
     {
         $data = app(Contract::class)->find($request->contract_id);
 
-        if ($data)
-        {
+        if ($data) {
             $content = view('applies.regulation_item', compact(
                 'data'
             ))->render();
@@ -186,8 +177,7 @@ class PublicApi extends Controller
     {
         $organizations = app(Organization::class)->where('identity_id', $request->identity)->get();
 
-        if ($organizations->count() > 0)
-        {
+        if ($organizations->count() > 0) {
             return response()->json([
                 'status' => true,
                 'message' => '取得資料成功',
@@ -206,8 +196,7 @@ class PublicApi extends Controller
     {
         $organization = app(Organization::class)->find($request->id);
 
-        if ($organization)
-        {
+        if ($organization) {
             return response()->json([
                 'status' => true,
                 'message' => '取得資料成功',
@@ -228,9 +217,8 @@ class PublicApi extends Controller
             ->where('organization_id', $request->organization_id)
             ->where('status', 1)
             ->get();
-        
-        if ($users->count() > 0)
-        {
+
+        if ($users->count() > 0) {
             return response()->json([
                 'status' => true,
                 'message' => '取得資料成功',
@@ -244,5 +232,4 @@ class PublicApi extends Controller
             'data' => null
         ], 404);
     }
-    
 }

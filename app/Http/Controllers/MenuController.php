@@ -21,15 +21,14 @@ class MenuController extends BasicController
             ->get();
 
         return view('menus.index', [
-            'menu'=>$this->menu,
-            'list'=>$list
+            'menu' => $this->menu,
+            'list' => $list
         ]);
     }
 
     public function store(Request $request)
     {
-        if ($request->user()->cannot('create_'.$this->slug,  $this->model))
-        {
+        if ($request->user()->cannot('create_' . $this->slug,  $this->model)) {
             return view('alerts.error', [
                 'msg' => '您的權限不足, 請洽管理人員開通權限',
                 'redirectURL' => route('dashboard')
@@ -38,11 +37,10 @@ class MenuController extends BasicController
 
         $validator = $this->createRule($request->all());
 
-        if (!is_array($validator) && $validator->fails())
-        {
-            return view('alerts.error',[
-                'msg'=>$validator->errors()->all()[0],
-                'redirectURL'=>route('menus.index')
+        if (!is_array($validator) && $validator->fails()) {
+            return view('alerts.error', [
+                'msg' => $validator->errors()->all()[0],
+                'redirectURL' => route('menus.index')
             ]);
         }
 
@@ -52,16 +50,11 @@ class MenuController extends BasicController
             $formData = $request->except('_token');
             $formData['id'] = uniqid();
 
-            if ($this->menu->menuDetails->count() > 0)
-            {
-                foreach ($this->menu->menuDetails as $detail)
-                {
-                    if (isset($formData[$detail->field]))
-                    {
-                        if ($detail->type == 'image' || $detail->type == 'file')
-                        {
-                            if (is_object($formData[$detail->field]) && $formData[$detail->field]->getSize() > 0)
-                            {
+            if ($this->menu->menuDetails->count() > 0) {
+                foreach ($this->menu->menuDetails as $detail) {
+                    if (isset($formData[$detail->field])) {
+                        if ($detail->type == 'image' || $detail->type == 'file') {
+                            if (is_object($formData[$detail->field]) && $formData[$detail->field]->getSize() > 0) {
                                 $formData[$detail->field] = $this->storeFile($formData[$detail->field], $this->slug);
                             }
                         }
@@ -73,36 +66,32 @@ class MenuController extends BasicController
 
                 $this->createPermission($menu);
                 Artisan::call('db:seed --class=MenuDetailSeeder');
-            
+
                 return view('alerts.success', [
-                    'msg'=>'資料新增成功',
-                    'redirectURL'=>route('menus.index')
+                    'msg' => '資料新增成功',
+                    'redirectURL' => route('menus.index')
                 ]);
             }
 
             DB::rollBack();
 
             return view('alerts.error', [
-                'msg'=>'資料新增失敗, 無該功能項之細項設定',
-                'redirectURL'=>route('menus.index')
+                'msg' => '資料新增失敗, 無該功能項之細項設定',
+                'redirectURL' => route('menus.index')
             ]);
-
-        }
-        catch (\Exception $e)
-        {
+        } catch (\Exception $e) {
             DB::rollBack();
 
-            return view('alerts.error',[
-                'msg'=>$e->getMessage(),
-                'redirectURL'=>route('menus.index')
+            return view('alerts.error', [
+                'msg' => $e->getMessage(),
+                'redirectURL' => route('menus.index')
             ]);
         }
     }
 
     public function update(Request $request, $id)
     {
-        if ($request->user()->cannot('update_'.$this->slug,  $this->model))
-        {
+        if ($request->user()->cannot('update_' . $this->slug,  $this->model)) {
             return view('alerts.error', [
                 'msg' => '您的權限不足, 請洽管理人員開通權限',
                 'redirectURL' => route('dashboard')
@@ -110,11 +99,10 @@ class MenuController extends BasicController
         }
         $validator = $this->updateRule($request->all());
 
-        if (!is_array($validator) && $validator->fails())
-        {
-            return view('alerts.error',[
-                'msg'=>$validator->errors()->all()[0],
-                'redirectURL'=>route('menus.index')
+        if (!is_array($validator) && $validator->fails()) {
+            return view('alerts.error', [
+                'msg' => $validator->errors()->all()[0],
+                'redirectURL' => route('menus.index')
             ]);
         }
 
@@ -123,16 +111,11 @@ class MenuController extends BasicController
         try {
             $formData = $request->except('_token', '_method');
 
-            if ($this->menu->menuDetails->count() > 0)
-            {
-                foreach ($this->menu->menuDetails as $detail)
-                {
-                    if (isset($formData[$detail->field]))
-                    {
-                        if ($detail->type == 'image' || $detail->type == 'file')
-                        {
-                            if (is_object($formData[$detail->field]) && $formData[$detail->field]->getSize() > 0)
-                            {
+            if ($this->menu->menuDetails->count() > 0) {
+                foreach ($this->menu->menuDetails as $detail) {
+                    if (isset($formData[$detail->field])) {
+                        if ($detail->type == 'image' || $detail->type == 'file') {
+                            if (is_object($formData[$detail->field]) && $formData[$detail->field]->getSize() > 0) {
                                 $formData[$detail->field] = $this->storeFile($formData[$detail->field], $this->slug);
                             }
                         }
@@ -147,35 +130,32 @@ class MenuController extends BasicController
 
                 $this->createOrUpdatePermission($menu);
                 Artisan::call('db:seed --class=MenuDetailSeeder');
-                
-                return view('alerts.success',[
-                    'msg'=>'資料更新成功',
-                    'redirectURL'=>route('menus.index')
+
+                return view('alerts.success', [
+                    'msg' => '資料更新成功',
+                    'redirectURL' => route('menus.index')
                 ]);
             }
 
             DB::rollBack();
 
             return view('alerts.error', [
-                'msg'=>'資料更新失敗, 無該功能項之細項設定',
-                'redirectURL'=>route('menus.index')
+                'msg' => '資料更新失敗, 無該功能項之細項設定',
+                'redirectURL' => route('menus.index')
             ]);
-        }
-        catch (\Exception $e)
-        {
+        } catch (\Exception $e) {
             DB::rollBack();
 
-            return view('alerts.error',[
-                'msg'=>$e->getMessage(),
-                'redirectURL'=>route('menus.index')
+            return view('alerts.error', [
+                'msg' => $e->getMessage(),
+                'redirectURL' => route('menus.index')
             ]);
         }
     }
 
     public function destroy(Request $request, $id)
     {
-        if ($request->user()->cannot('delete_'.$this->slug,  $this->model))
-        {
+        if ($request->user()->cannot('delete_' . $this->slug,  $this->model)) {
             return view('alerts.error', [
                 'msg' => '您的權限不足, 請洽管理人員開通權限',
                 'redirectURL' => '/'
@@ -185,41 +165,34 @@ class MenuController extends BasicController
         try {
             $data = $this->model->getData($id);
 
-            if ($data->getChilds->count() > 0)
-            {
-                return view('alerts.error',[
-                    'msg'=>'該項目底下還有子項目, 請先移除子項目後再移除該項目',
-                    'redirectURL'=>route('menus.index')
+            if ($data->getChilds->count() > 0) {
+                return view('alerts.error', [
+                    'msg' => '該項目底下還有子項目, 請先移除子項目後再移除該項目',
+                    'redirectURL' => route('menus.index')
                 ]);
             }
 
             $this->model->deleteData($id);
 
-            return view('alerts.success',[
-                'msg'=>'資料刪除成功',
-                'redirectURL'=>route('menus.index')
+            return view('alerts.success', [
+                'msg' => '資料刪除成功',
+                'redirectURL' => route('menus.index')
             ]);
-
-        } 
-        catch (\Exception $e)
-        {
-            return view('alerts.error',[
-                'msg'=>$e->getMessage(),
-                'redirectURL'=>route('menus.index')
+        } catch (\Exception $e) {
+            return view('alerts.error', [
+                'msg' => $e->getMessage(),
+                'redirectURL' => route('menus.index')
             ]);
         }
     }
 
     public function sort(Request $request)
     {
-        if (count($request->data) > 0)
-        {
-            foreach ($request->data as $k1=>$data)
-            {
+        if (count($request->data) > 0) {
+            foreach ($request->data as $k1 => $data) {
                 $menu = app(Menu::class)->where('id', $data['id'])->first();
 
-                if ($menu)
-                {
+                if ($menu) {
                     $menu->parent_id = NULL;
                     $menu->sort = $k1;
                     $menu->save();
@@ -227,14 +200,11 @@ class MenuController extends BasicController
                     $this->destroyPermission($menu);
                 }
 
-                if (isset($data['children']) && count($data['children']) > 0)
-                {
-                    foreach ($data['children'] as $k2=>$child) 
-                    {
+                if (isset($data['children']) && count($data['children']) > 0) {
+                    foreach ($data['children'] as $k2 => $child) {
                         $childMenu = app(Menu::class)->where('id', $child['id'])->first();
 
-                        if ($childMenu)
-                        {
+                        if ($childMenu) {
                             $childMenu->parent_id = $data['id'];
                             $childMenu->sort = $k2;
                             $childMenu->save();
@@ -247,9 +217,9 @@ class MenuController extends BasicController
         }
 
         return response()->json([
-            'status'=>true,
-            'message'=>'更新資料成功',
-            'data'=>null
+            'status' => true,
+            'message' => '更新資料成功',
+            'data' => null
         ], 200);
     }
 
@@ -257,22 +227,17 @@ class MenuController extends BasicController
     {
         $actions = ['browse', 'create', 'edit', 'show', 'update', 'delete'];
 
-        if (empty($menu->slug) && is_null($menu->parent_id))
-        {
+        if (empty($menu->slug) && is_null($menu->parent_id)) {
             $this->destroyPermission($menu);
-        }
-        else
-        {
+        } else {
             $permissions = app(Permission::class)->where('menu_id', $menu->id)->get();
 
-            if ($permissions->count() == 0)
-            {
-                foreach ($actions as $action)
-                {
+            if ($permissions->count() == 0) {
+                foreach ($actions as $action) {
                     app(Permission::class)->create([
                         'id' => uniqid(),
                         'menu_id' => $menu->id,
-                        'code' => $action.'_'.$menu->slug
+                        'code' => $action . '_' . $menu->slug
                     ]);
                 }
             }
@@ -285,19 +250,17 @@ class MenuController extends BasicController
 
         $actions = ['browse', 'create', 'edit', 'show', 'update', 'delete'];
 
-        foreach ($actions as $action)
-        {
+        foreach ($actions as $action) {
             $log = app(Permission::class)
                 ->where('menu_id', $menu->id)
-                ->where('code', $action.'_'.$menu->slug)
+                ->where('code', $action . '_' . $menu->slug)
                 ->first();
-            
-            if (!$log)
-            {
+
+            if (!$log) {
                 app(Permission::class)->create([
                     'id' => uniqid(),
                     'menu_id' => $menu->id,
-                    'code' => $action.'_'.$menu->slug
+                    'code' => $action . '_' . $menu->slug
                 ]);
             }
         }
@@ -307,8 +270,7 @@ class MenuController extends BasicController
     {
         $logs = app(Permission::class)->where('menu_id', $menu->id)->get();
 
-        foreach ($logs??[] as $log)
-        {
+        foreach ($logs ?? [] as $log) {
             app(GroupPermission::class)->where('permission_id', $log->id)->delete();
             app(RolePermission::class)->where('permission_id', $log->id)->delete();
 

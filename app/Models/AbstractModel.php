@@ -18,115 +18,95 @@ abstract class AbstractModel extends Model implements InterfaceModel
 
     abstract function getFieldProperties();
 
-    public function getListByFilters($menuDetails, $filters=[], $orderBy='created_at', $sort='DESC')
+    public function getListByFilters($menuDetails, $filters = [], $orderBy = 'created_at', $sort = 'DESC')
     {
         $query = $this->newModelQuery();
 
-        if(Schema::hasColumn($this->table, 'deleted_at'))
-        {
+        if (Schema::hasColumn($this->table, 'deleted_at')) {
             $query->whereNull('deleted_at');
         }
 
-        if ( count($filters) > 0)
-        {
+        if (count($filters) > 0) {
             $pass = 2;
 
             foreach ($menuDetails as $detail) {
-                if ( isset($filters[$detail->field]) && !empty($filters[$detail->field]) || !empty($filters['start_day']) && !empty($filters['end_day']) )
-                {
-                    if ($detail->field == 'parent_id')
-                    {
-                        if ($pass == 2)
-                        {
-                            if (isset($filters['id']) && isset($filters['parent_id']))
-                            {
-                                $query->where(function($q)use($filters){
+                if (isset($filters[$detail->field]) && !empty($filters[$detail->field]) || !empty($filters['start_day']) && !empty($filters['end_day'])) {
+                    if ($detail->field == 'parent_id') {
+                        if ($pass == 2) {
+                            if (isset($filters['id']) && isset($filters['parent_id'])) {
+                                $query->where(function ($q) use ($filters) {
                                     $q->where('id', $filters['id'])
-                                    ->orWhere('parent_id', $filters['parent_id']);
+                                        ->orWhere('parent_id', $filters['parent_id']);
                                 });
-                            }
-                            else if (isset($filters['id']))
-                            {
+                            } else if (isset($filters['id'])) {
                                 $query->where('id', $filters['id']);
-                            }
-                            else if (isset($filters['parent_id']))
-                            {
+                            } else if (isset($filters['parent_id'])) {
                                 $query->where('parent_id', $filters['parent_id']);
                             }
-                            
+
                             $pass = 1;
                         }
-                    }
-                    else
-                    {
-                        if (isset($filters['id']) && isset($filters['parent_id']))
-                        {
-                            $query->where(function($q)use($filters){
+                    } else {
+                        if (isset($filters['id']) && isset($filters['parent_id'])) {
+                            $query->where(function ($q) use ($filters) {
                                 $q->where('id', $filters['id'])
-                                ->orWhere('parent_id', $filters['parent_id']);
+                                    ->orWhere('parent_id', $filters['parent_id']);
                             });
                         }
-                        switch ($detail->type)
-                        {
+                        switch ($detail->type) {
                             case 'text':
                             case 'text_area':
                             case 'number':
                             case 'email':
-                                $query->where($detail->field, 'like', '%'.$filters[$detail->field].'%');
+                                $query->where($detail->field, 'like', '%' . $filters[$detail->field] . '%');
                                 break;
                             case 'date':
                             case 'date_time':
                                 if (isset($filters['start_day']) && isset($filters['end_day'])) {
                                     $query->where($detail->field, '<=', $filters['start_day'])
                                         ->where($detail->field, '>=', $filters['end_day']);
-                                }    
+                                }
                                 break;
                             default:
                                 $query->where($detail->field, $filters[$detail->field]);
                                 break;
                         }
                     }
-
-                    
                 }
             }
         }
 
         $query->orderBy($orderBy, $sort);
-        $results = $query->paginate($filters['rows']??20);
+        $results = $query->paginate($filters['rows'] ?? 20);
         $results->appends($filters);
 
         return $results;
     }
 
-    public function getAllDataByFilters($menuDetails, $filters=[], $orderBy='created_at', $sort='DESC')
+    public function getAllDataByFilters($menuDetails, $filters = [], $orderBy = 'created_at', $sort = 'DESC')
     {
         $query = $this->newModelQuery();
 
-        if(Schema::hasColumn($this->table, 'deleted_at')) {
+        if (Schema::hasColumn($this->table, 'deleted_at')) {
             $query->whereNull('deleted_at');
         }
 
-        if ( count($filters) > 0)
-        {
-            foreach ($menuDetails as $detail)
-            {
-                if ( isset($filters[$detail->field]) && !empty($filters[$detail->field]) || !empty($filters['start_day']) && !empty($filters['end_day']) )
-                {
-                    switch ($detail->type)
-                    {
+        if (count($filters) > 0) {
+            foreach ($menuDetails as $detail) {
+                if (isset($filters[$detail->field]) && !empty($filters[$detail->field]) || !empty($filters['start_day']) && !empty($filters['end_day'])) {
+                    switch ($detail->type) {
                         case 'text':
                         case 'text_area':
                         case 'number':
                         case 'email':
-                            $query->where($detail->field, 'like', '%'.$filters[$detail->field].'%');
+                            $query->where($detail->field, 'like', '%' . $filters[$detail->field] . '%');
                             break;
-                        case 'date':    
+                        case 'date':
                         case 'date_time':
                             if (isset($filters['start_day']) && isset($filters['end_day'])) {
                                 $query->where($detail->field, '<=', $filters['start_day'])
-                                      ->where($detail->field, '>=', $filters['end_day']);
-                            }    
+                                    ->where($detail->field, '>=', $filters['end_day']);
+                            }
                             break;
                         default:
                             $query->where($detail->field, $filters[$detail->field]);
@@ -155,7 +135,7 @@ abstract class AbstractModel extends Model implements InterfaceModel
 
     public function getData($id)
     {
-       return $this->where('id', $id)->first();
+        return $this->where('id', $id)->first();
     }
 
     public function updateData($id, $formData)
@@ -181,7 +161,7 @@ abstract class AbstractModel extends Model implements InterfaceModel
      */
     public function getOriginalPath($key)
     {
-        if(($key!='' || !is_null($key)) && isset($this->attributes[$key])) {
+        if (($key != '' || !is_null($key)) && isset($this->attributes[$key])) {
             return $this->attributes[$key];
         }
     }
@@ -229,12 +209,9 @@ abstract class AbstractModel extends Model implements InterfaceModel
      */
     public function checkColumnExist($columnName)
     {
-        if (Schema::hasColumn($this->table, $columnName))
-        {
+        if (Schema::hasColumn($this->table, $columnName)) {
             return true;
-        }
-        else
-        {
+        } else {
             return false;
         }
     }

@@ -7,11 +7,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Organization extends AbstractModel
 {
     use HasFactory;
-    
+
     protected $table = 'organizations';
     protected $guarded = [];
 
-    public function getFieldProperties() 
+    public function getFieldProperties()
     {
         return [
             [
@@ -76,13 +76,13 @@ class Organization extends AbstractModel
                     'show_field' => 'name'
                 ]),
                 'create_rule' => json_encode([
-                    'identity_id'=>'required'
+                    'identity_id' => 'required'
                 ]),
                 'update_rule' => json_encode([
-                    'identity_id'=>'required'
+                    'identity_id' => 'required'
                 ]),
                 'error_msg' => json_encode([
-                    ['identity_id.required'=>'請選擇所屬身份']
+                    ['identity_id.required' => '請選擇所屬身份']
                 ]),
             ],
             [
@@ -102,13 +102,13 @@ class Organization extends AbstractModel
                     'show_field' => 'name'
                 ]),
                 'create_rule' => json_encode([
-                    'organization_type_id'=>'required'
+                    'organization_type_id' => 'required'
                 ]),
                 'update_rule' => json_encode([
-                    'organization_type_id'=>'required'
+                    'organization_type_id' => 'required'
                 ]),
                 'error_msg' => json_encode([
-                    ['organization_type_id.required'=>'請選擇所屬組織類型']
+                    ['organization_type_id.required' => '請選擇所屬組織類型']
                 ]),
             ],
             [
@@ -599,8 +599,8 @@ class Organization extends AbstractModel
                 'edit' => 1,
                 'sort' => 48,
                 'options' => json_encode([
-                    ['text'=>'啟用', 'value'=>1, 'default'=>0],
-                    ['text'=>'停用', 'value'=>2, 'default'=>1],
+                    ['text' => '啟用', 'value' => 1, 'default' => 0],
+                    ['text' => '停用', 'value' => 2, 'default' => 1],
                 ])
             ],
             [
@@ -639,7 +639,7 @@ class Organization extends AbstractModel
             ],
         ];
     }
-   
+
     public function parent()
     {
         return $this->belongsTo(Organization::class, 'parent_id');
@@ -653,21 +653,21 @@ class Organization extends AbstractModel
     public function systemRoles()
     {
         $identity = app(FuncType::class)->where('type_name', '系統商')->first();
-        
+
         return $this->hasMany(Organization::class, 'parent_id')->where('identity_id', $identity->id);
     }
 
     public function agentRoles()
     {
         $identity = app(FuncType::class)->where('type_name', '經銷商')->first();
-        
+
         return $this->hasMany(Organization::class, 'parent_id')->where('identity_id', $identity->id);
     }
 
     public function customerRoles()
     {
         $identity = app(FuncType::class)->where('type_name', '一般用戶')->first();
-        
+
         return $this->hasMany(Organization::class, 'parent_id')->where('identity_id', $identity->id);
     }
 
