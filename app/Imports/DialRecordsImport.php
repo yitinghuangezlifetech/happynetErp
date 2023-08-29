@@ -4,17 +4,21 @@ namespace App\Imports;
 
 use Carbon\Carbon;
 use App\Models\User;
+use App\Models\FuncType;
+use App\Models\FeeRateLog;
 use App\Models\DialRecord;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\ToCollection;
 
 class DialRecordsImport implements ToCollection
 {
+    protected $obj;
     protected $type;
     protected $rateType;
 
-    public function  __construct($type, $rateType)
+    public function  __construct($type, $rateType, $obj)
     {
+        $this->obj = $obj;
         $this->type = $type;
         $this->rateType = $rateType;
     }
@@ -30,47 +34,63 @@ class DialRecordsImport implements ToCollection
             case 'FET_E1_PRI-市話':
                 foreach ($rows as $k => $row) {
                     if ($k > 0) {
-                        $user = app(User::class)->where('account', $this->removeBlankSpace(str_replace("'", "", $row[0])))->first();
+                        try {
+                            $user = app(User::class)->where('account', $this->removeBlankSpace(str_replace("'", "", $row[0])))->first();
 
-                        $recordDay = explode('.', $this->removeBlankSpace($row[5]));
-                        $startTime = $this->removeBlankSpace(str_replace("'", "", $row[6]));
-                        $tmp = explode(':', $this->removeBlankSpace(str_replace("'", "", $row[7])));
-                        $addHours = $tmp[0];
-                        $addMinutes = $tmp[1];
-                        $addSeconds = $tmp[2];
+                            if ($user->organization) {
+                                if ($user->organization->feeRate) {
+                                    $feeRate = $user->organization->feeRate;
 
-                        $carbonObj = Carbon::createFromFormat('H:i:s', $startTime);
-                        $carbonObj->addHours($addHours);
-                        $carbonObj->addMinutes($addMinutes);
-                        $carbonObj->addSeconds($addSeconds);
+                                    $recordDay = explode('.', $this->removeBlankSpace($row[5]));
+                                    $startTime = $this->removeBlankSpace(str_replace("'", "", $row[6]));
+                                    $tmp = explode(':', $this->removeBlankSpace(str_replace("'", "", $row[7])));
+                                    $addHours = $tmp[0];
+                                    $addMinutes = $tmp[1];
+                                    $addSeconds = $tmp[2];
 
-                        $endTime = $carbonObj->format('H:i:s');
+                                    $carbonObj = Carbon::createFromFormat('H:i:s', $startTime);
+                                    $carbonObj->addHours($addHours);
+                                    $carbonObj->addMinutes($addMinutes);
+                                    $carbonObj->addSeconds($addSeconds);
 
-                        $carbonObj = Carbon::createFromFormat('H:i:s', $this->removeBlankSpace(str_replace("'", "", $row[7])));
-                        $seconds = $carbonObj->diffInSeconds(Carbon::createFromTime(0, 0, 0));
+                                    $endTime = $carbonObj->format('H:i:s');
 
-                        app(DialRecord::class)->create([
-                            'id' => uniqid(),
-                            'batch_no' => $batchNo,
-                            'rate_type_id' => $this->rateType,
-                            'organization_id' => ($user) ? $user->organization_id : NULL,
-                            'dail_record_type_id' => $this->type->id,
-                            'user_id' => $user->id ?? NULL,
-                            'telecom_account' => $this->removeBlankSpace(str_replace("'", "", $row[0])),
-                            'call_type' => $this->removeBlankSpace($row[1]),
-                            'dial_number' => $this->removeBlankSpace(str_replace("'", "", $row[2])),
-                            'accept_location' => $this->removeBlankSpace($row[3]),
-                            'accept_number' => $this->removeBlankSpace(str_replace("'", "", $row[4])),
-                            'record_day' => $this->removeBlankSpace($row[5]),
-                            'record_day_ad' => $this->convertToAD($recordDay[0]) . '-' . sprintf('%02d', $recordDay[1]) . '-' . sprintf('%02d', $recordDay[2]),
-                            'start_time' => $startTime,
-                            'end_time' => $endTime,
-                            'talking_time' => $this->removeBlankSpace(str_replace("'", "", $row[7])),
-                            'sec' => $seconds,
-                            'period' => $this->removeBlankSpace($row[8]),
-                            'fee' => $this->removeBlankSpace($row[9]),
-                            'note' => $this->removeBlankSpace($row[10]),
-                        ]);
+                                    $carbonObj = Carbon::createFromFormat('H:i:s', $this->removeBlankSpace(str_replace("'", "", $row[7])));
+                                    $seconds = $carbonObj->diffInSeconds(Carbon::createFromTime(0, 0, 0));
+
+                                    app(DialRecord::class)->create([
+                                        'id' => uniqid(),
+                                        'batch_no' => $batchNo,
+                                        'rate_type_id' => $this->rateType,
+                                        'organization_id' => ($user) ? $user->organization_id : NULL,
+                                        'dail_record_type_id' => $this->type->id,
+                                        'user_id' => $user->id ?? NULL,
+                                        'telecom_account' => $this->removeBlankSpace(str_replace("'", "", $row[0])),
+                                        'call_type' => $this->removeBlankSpace($row[1]),
+                                        'dial_number' => $this->removeBlankSpace(str_replace("'", "", $row[2])),
+                                        'accept_location' => $this->removeBlankSpace($row[3]),
+                                        'accept_number' => $this->removeBlankSpace(str_replace("'", "", $row[4])),
+                                        'record_day' => $this->removeBlankSpace($row[5]),
+                                        'record_day_ad' => $this->convertToAD($recordDay[0]) . '-' . sprintf('%02d', $recordDay[1]) . '-' . sprintf('%02d', $recordDay[2]),
+                                        'start_time' => $startTime,
+                                        'end_time' => $endTime,
+                                        'talking_time' => $this->removeBlankSpace(str_replace("'", "", $row[7])),
+                                        'sec' => $seconds,
+                                        'period' => $this->removeBlankSpace($row[8]),
+                                        'fee' => $this->removeBlankSpace($row[9]),
+                                        'note' => $this->removeBlankSpace($row[10]),
+                                    ]);
+                                } else {
+                                    $this->obj->showErrorMsg('該組織未指定費率表');
+                                    break;
+                                }
+                            } else {
+                                $this->obj->showErrorMsg('該電信帳戶並不屬任何組織');
+                                break;
+                            }
+                        } catch (\Exception $e) {
+                            $this->obj->showErrorMsg($e->getMessage());
+                        }
                     }
                 }
                 break;
@@ -126,47 +146,112 @@ class DialRecordsImport implements ToCollection
             case 'FET_IMS-市話':
                 foreach ($rows as $k => $row) {
                     if ($k > 0) {
-                        $user = app(User::class)->where('account', $this->removeBlankSpace(str_replace("'", "", $row[0])))->first();
+                        try {
+                            $user = app(User::class)->where('account', $this->removeBlankSpace(str_replace("'", "", $row[0])))->first();
 
-                        $recordDay = explode('.', $this->removeBlankSpace($row[5]));
-                        $startTime = $this->removeBlankSpace(str_replace("'", "", $row[6]));
-                        $tmp = explode(':', $this->removeBlankSpace(str_replace("'", "", $row[7])));
-                        $addHours = $tmp[0];
-                        $addMinutes = $tmp[1];
-                        $addSeconds = $tmp[2];
+                            if ($user->organization) {
+                                if ($user->organization->feeRate) {
 
-                        $carbonObj = Carbon::createFromFormat('H:i:s', $startTime);
-                        $carbonObj->addHours($addHours);
-                        $carbonObj->addMinutes($addMinutes);
-                        $carbonObj->addSeconds($addSeconds);
+                                    $feeRate = $user->organization->feeRate;
 
-                        $endTime = $carbonObj->format('H:i:s');
+                                    $target = app(FuncType::class)->where('type_code', 'local_call')->first();
+                                    $rate = app(FeeRateLog::class)
+                                        ->where('fee_rate_id', $feeRate->id)
+                                        ->where('call_target_id', $target->id)
+                                        ->first();
 
-                        $carbonObj = Carbon::createFromFormat('H:i:s', $this->removeBlankSpace(str_replace("'", "", $row[7])));
-                        $seconds = $carbonObj->diffInSeconds(Carbon::createFromTime(0, 0, 0));
+                                    if (!$rate) {
+                                        abort(400, '「' . $user->organization->name . '」該組織所指定的費率表並無包含國內市話費率');
+                                    }
 
-                        app(DialRecord::class)->create([
-                            'id' => uniqid(),
-                            'batch_no' => $batchNo,
-                            'rate_type_id' => $this->rateType,
-                            'organization_id' => ($user) ? $user->organization_id : NULL,
-                            'dail_record_type_id' => $this->type->id,
-                            'user_id' => $user->id ?? NULL,
-                            'telecom_account' => $this->removeBlankSpace(str_replace("'", "", $row[0])),
-                            'call_type' => $this->removeBlankSpace($row[1]),
-                            'dial_number' => $this->removeBlankSpace(str_replace("'", "", $row[2])),
-                            'accept_location' => $this->removeBlankSpace($row[3]),
-                            'accept_number' => $this->removeBlankSpace(str_replace("'", "", $row[4])),
-                            'record_day' => $this->removeBlankSpace($row[5]),
-                            'record_day_ad' => $this->convertToAD($recordDay[0]) . '-' . sprintf('%02d', $recordDay[1]) . '-' . sprintf('%02d', $recordDay[2]),
-                            'start_time' => $startTime,
-                            'end_time' => $endTime,
-                            'talking_time' => $this->removeBlankSpace(str_replace("'", "", $row[7])),
-                            'sec' => $seconds,
-                            'period' => $this->removeBlankSpace($row[8]),
-                            'fee' => $this->removeBlankSpace($row[9]),
-                            'note' => $this->removeBlankSpace($row[10]),
-                        ]);
+                                    $recordDay = explode('.', $this->removeBlankSpace($row[5]));
+                                    $startTime = $this->removeBlankSpace(str_replace("'", "", $row[6]));
+                                    $tmp = explode(':', $this->removeBlankSpace(str_replace("'", "", $row[7])));
+                                    $addHours = $tmp[0];
+                                    $addMinutes = $tmp[1];
+                                    $addSeconds = $tmp[2];
+
+                                    $carbonObj = Carbon::createFromFormat('H:i:s', $startTime);
+                                    $carbonObj->addHours($addHours);
+                                    $carbonObj->addMinutes($addMinutes);
+                                    $carbonObj->addSeconds($addSeconds);
+
+                                    $endTime = $carbonObj->format('H:i:s');
+
+                                    $carbonObj = Carbon::createFromFormat('H:i:s', $this->removeBlankSpace(str_replace("'", "", $row[7])));
+                                    $seconds = $carbonObj->diffInSeconds(Carbon::createFromTime(0, 0, 0));
+                                    $minutes = $carbonObj->diffInMinutes(Carbon::createFromTime(0, 0, 0));
+
+                                    //算式的彈性未來可擴充
+
+                                    if ($minutes > 0) {
+                                        if ($seconds > 60 && $seconds % 60 != 0) {
+                                            $minutes += 1;
+                                        }
+                                    }
+
+                                    switch ($rate->charge_unit) {
+                                        case 1: //秒鐘
+                                            $unit = ceil($seconds / $rate->parameter);
+
+                                            if (!empty($rate->discount)) {
+                                                $chargeFee = $rate->discount_after_rate * $unit;
+                                            } else {
+                                                $chargeFee = $rate->call_rate * $unit;
+                                            }
+                                            break;
+                                        case 2: //分鐘
+                                            $unit = ceil($minutes / $rate->parameter);
+
+                                            if (!empty($rate->discount)) {
+                                                $chargeFee = $rate->discount_after_rate * $unit;
+                                            } else {
+                                                $chargeFee = $rate->call_rate * $unit;
+                                            }
+                                            break;
+                                        default:
+                                            $chargeFee = 0;
+                                            break;
+                                    }
+
+                                    app(DialRecord::class)->create([
+                                        'id' => uniqid(),
+                                        'batch_no' => $batchNo,
+                                        'rate_type_id' => $this->rateType,
+                                        'organization_id' => ($user) ? $user->organization_id : NULL,
+                                        'dail_record_type_id' => $this->type->id,
+                                        'user_id' => $user->id ?? NULL,
+                                        'telecom_account' => $this->removeBlankSpace(str_replace("'", "", $row[0])),
+                                        'call_type' => $this->removeBlankSpace($row[1]),
+                                        'dial_number' => $this->removeBlankSpace(str_replace("'", "", $row[2])),
+                                        'accept_location' => $this->removeBlankSpace($row[3]),
+                                        'accept_number' => $this->removeBlankSpace(str_replace("'", "", $row[4])),
+                                        'record_day' => $this->removeBlankSpace($row[5]),
+                                        'record_day_ad' => $this->convertToAD($recordDay[0]) . '-' . sprintf('%02d', $recordDay[1]) . '-' . sprintf('%02d', $recordDay[2]),
+                                        'start_time' => $startTime,
+                                        'end_time' => $endTime,
+                                        'talking_time' => $this->removeBlankSpace(str_replace("'", "", $row[7])),
+                                        'sec' => $seconds,
+                                        'period' => $this->removeBlankSpace($row[8]),
+                                        'fee' => $this->removeBlankSpace($row[9]),
+                                        'charge_fee' => $chargeFee,
+                                        'note' => $this->removeBlankSpace($row[10]),
+                                    ]);
+                                } else {
+                                    app(DialRecord::class)->where('batch_no', $batchNo)->delete();
+
+                                    $this->obj->showErrorMsg('「' . $this->removeBlankSpace(str_replace("'", "", $row[0])) . '」該電信帳戶所屬的組織「' . $user->organization->name . '」並未指定費率表, 請解決問題後再重新匯入');
+                                    break;
+                                }
+                            } else {
+                                app(DialRecord::class)->where('batch_no', $batchNo)->delete();
+
+                                $this->obj->showErrorMsg('「' . $this->removeBlankSpace(str_replace("'", "", $row[0])) . '」該電信帳戶並不屬任何組織, 請解決問題後再重新匯入');
+                                break;
+                            }
+                        } catch (\Exception $e) {
+                            $this->obj->showErrorMsg($e->getMessage());
+                        }
                     }
                 }
                 break;

@@ -56,10 +56,18 @@ class DialRecordController extends BasicController
         $rateType = $request->reate_type;
         $type = app(FuncType::class)->find($request->dail_record_type_id);
 
-        Excel::import(new DialRecordsImport($type, $rateType), $request->file->store($this->slug));
+        Excel::import(new DialRecordsImport($type, $rateType, $this), $request->file->store($this->slug));
 
         return view('alerts.success', [
             'msg' => '資料匯入成功',
+            'redirectURL' => route($this->slug . '.index')
+        ]);
+    }
+
+    private function showErrowMsg($msg)
+    {
+        return view('alerts.error', [
+            'msg' => $msg,
             'redirectURL' => route($this->slug . '.index')
         ]);
     }

@@ -44,7 +44,6 @@ class BasicController extends Controller implements InterfaceController
                 $this->slug = $this->route[0];
             }
 
-
             if (isset($this->route[0]) || isset($this->route[1])) {
                 $slug = $this->slug;
 

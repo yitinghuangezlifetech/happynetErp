@@ -90,6 +90,11 @@ Route::middleware('auth:web')->group(function () {
         Route::post('getTermsByFilters', [TableContrller::class, 'getTermsByFilters'])->name('tables.getTermsByFilters');
     });
 
+    Route::prefix('report')->group(function () {
+        Route::get('bonus_summary', 'ReportController@index')->name('report.bonus_summary');
+    });
+
+
     if (Schema::hasTable('menus')) {
         $menuItems = app(Menu::class)
             ->whereNotNull('slug')

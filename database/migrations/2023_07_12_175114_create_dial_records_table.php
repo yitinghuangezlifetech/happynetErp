@@ -16,6 +16,8 @@ return new class extends Migration
         Schema::create('dial_records', function (Blueprint $table) {
             $table->uuid('id')->unique()->primary();
             $table->string('batch_no', 20)->nullable()->comment('匯入批號');
+            $table->string('rate_type_id', 36)->nullable()->comment('所屬費率類別');
+            $table->string('organization_id', 36)->nullable()->comment('所屬組織');
             $table->string('company_code', 20)->nullable()->comment('系統商代碼');
             $table->string('dail_record_type_id', 36)->nullable()->comment('所屬通聯資料類型');
             $table->string('user_id', 36)->nullable()->comment('所屬用戶');
@@ -38,6 +40,7 @@ return new class extends Migration
             $table->string('frontent_code', 15)->nullable()->comment('前置碼');
             $table->string('period', 20)->nullable()->comment('時段');
             $table->string('fee', 30)->nullable()->comment('通話費');
+            $table->string('charge_fee', 30)->nullable()->comment('應收費用');
             $table->text('note')->nullable()->comment('備註');
             $table->timestamps();
         });

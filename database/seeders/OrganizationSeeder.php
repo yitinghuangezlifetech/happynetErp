@@ -71,7 +71,7 @@ class OrganizationSeeder extends Seeder
                         'status' => 1,
                     ]);
 
-                    app(Organization::class)->factory()->count(30)->create()->each(function ($data, $i) use ($organization) {
+                    app(Organization::class)->factory()->count(1)->create()->each(function ($data, $i) use ($organization) {
 
                         $rows = $i + 1;
 
