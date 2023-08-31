@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Composers;
 
 use Auth;
@@ -7,22 +8,22 @@ use App\Models\RolePermission;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\Route;
 
-class MenuComposer {
-    public function compose(View $view) {
+class MenuComposer
+{
+    public function compose(View $view)
+    {
 
         $route = Route::getCurrentRoute();
         $prefix = trim($route->getPrefix());
 
-        if (strpos($prefix, '/') >= 0)
-        {
+        if (strpos($prefix, '/') >= 0) {
             $prefix = explode('/', $prefix)[0];
         }
 
-        if ($prefix != 'proxy')
-        {
+        if ($prefix != 'proxy') {
             $prefix = 'web';
         }
-       
+
         if (Auth::guard($prefix)->check()) {
             $user = Auth::guard($prefix)->user();
 
@@ -77,9 +78,11 @@ class MenuComposer {
             } else {
                 $view->with('menus', []);
             }
+
             $view->with('prefix', $prefix);
         } else {
             $view->with('menus', []);
+            $view->with('prefix', $prefix);
         }
     }
 }

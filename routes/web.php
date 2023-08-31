@@ -19,6 +19,7 @@ use App\Http\Controllers\ProjectRegulationController;
 use App\Http\Controllers\TableContrller;
 use App\Http\Controllers\ContractController;
 use App\Http\Controllers\ApplyController;
+use App\Http\Controllers\ReportController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -90,11 +91,6 @@ Route::middleware('auth:web')->group(function () {
         Route::post('getTermsByFilters', [TableContrller::class, 'getTermsByFilters'])->name('tables.getTermsByFilters');
     });
 
-    Route::prefix('report')->group(function () {
-        Route::get('bonus_summary', 'ReportController@index')->name('report.bonus_summary');
-    });
-
-
     if (Schema::hasTable('menus')) {
         $menuItems = app(Menu::class)
             ->whereNotNull('slug')
@@ -103,20 +99,34 @@ Route::middleware('auth:web')->group(function () {
 
         if ($menuItems->count() > 0) {
             foreach ($menuItems as $item) {
+                $itemSlug = null;
                 $controller = $item->controller ?? BasicController::class;
 
                 if (preg_match('/\?/', $item->slug)) {
                     $slug = explode('?', $item->slug);
+                    $itemSlug = $slug[0];
+
                     Route::resource($slug[0], $controller);
                 } else {
-                    Route::resource($item->slug, $controller);
+                    if (!preg_match('/reports/', $item->slug)) {
+                        $itemSlug = $item->slug;
+
+                        Route::resource($item->slug, $controller);
+                    }
                 }
 
-                Route::prefix($item->slug)->group(function () use ($item, $controller) {
-                    Route::post('multipleDestroy', $controller . '@multipleDestroy')->name($item->slug . '.multipleDestroy');
-                    Route::post('importData', $controller . '@importData')->name($item->slug . '.importData');
-                });
+                if (!empty($itemSlug)) {
+                    Route::prefix($itemSlug)->group(function () use ($item, $controller) {
+                        Route::post('multipleDestroy', $controller . '@multipleDestroy')->name($item->slug . '.multipleDestroy');
+                        Route::post('importData', $controller . '@importData')->name($item->slug . '.importData');
+                    });
+                }
             }
         }
     }
+
+    Route::prefix('reports')->group(function () {
+        Route::get('{reportName}', [ReportController::class, 'reportIndex'])->name('reports.reportIndex');
+        Route::get('{reportName}/download', [ReportController::class, 'download'])->name('reports.download');
+    });
 });

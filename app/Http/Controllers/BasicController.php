@@ -36,18 +36,22 @@ class BasicController extends Controller implements InterfaceController
     public function __construct(Request $request)
     {
         if (!empty(Route::currentRouteName())) {
+
             $this->route = explode('.', Route::currentRouteName());
 
-            if (count($this->route) > 2) {
-                $this->slug = $this->route[1];
+            if (count($this->route) >= 2) {
+                if ($this->route[0] == 'reports') {
+                    $this->slug = $this->route[0] . '/' . $request->reportName;
+                } else {
+                    $this->slug = $this->route[0];
+                }
             } else {
                 $this->slug = $this->route[0];
             }
 
             if (isset($this->route[0]) || isset($this->route[1])) {
-                $slug = $this->slug;
 
-                $this->menu = app(Menu::class)->getMenuBySlug($slug);
+                $this->menu = app(Menu::class)->getMenuBySlug($this->slug);
 
                 if (!$this->menu) {
                     return view('alerts.error', [
@@ -57,7 +61,6 @@ class BasicController extends Controller implements InterfaceController
                 }
 
                 $this->model = app($this->menu->model);
-
                 $this->setBreadcrumb();
 
                 view()->share([
@@ -484,16 +487,29 @@ class BasicController extends Controller implements InterfaceController
             $parentName = $this->menu->getParent->menu_name;
 
             try {
-                $this->breadcrumbs = [
-                    'mainMenu' => $parentName,
-                    'routeName' => $this->slug,
-                    'breadcrumb' => [
-                        ['name' => $parentName, 'active' => true, 'breadUrl' => false],
-                        ['name' => $this->menu->menu_name, 'active' => false, 'breadUrl' => route($this->slug . '.index')],
-                        ['name' => $this->route[2] ?? '', 'active' => true, 'breadUrl' => false],
-                    ]
-                ];
+                if ($this->route[0] == 'reports') {
+                    $this->breadcrumbs = [
+                        'mainMenu' => $parentName,
+                        'routeName' => $this->slug,
+                        'breadcrumb' => [
+                            ['name' => $parentName, 'active' => true, 'breadUrl' => false],
+                            ['name' => $this->menu->menu_name, 'active' => false, 'breadUrl' => route('reports.reportIndex', $this->route[1])],
+                            ['name' => $this->route[1] ?? '', 'active' => true, 'breadUrl' => false],
+                        ]
+                    ];
+                } else {
+                    $this->breadcrumbs = [
+                        'mainMenu' => $parentName,
+                        'routeName' => $this->slug,
+                        'breadcrumb' => [
+                            ['name' => $parentName, 'active' => true, 'breadUrl' => false],
+                            ['name' => $this->menu->menu_name, 'active' => false, 'breadUrl' => route($this->slug . '.index')],
+                            ['name' => $this->route[1] ?? '', 'active' => true, 'breadUrl' => false],
+                        ]
+                    ];
+                }
             } catch (\Exception $e) {
+                dd($e->getMessage());
             }
         } else {
             $parentName = $this->menu->menu_name;

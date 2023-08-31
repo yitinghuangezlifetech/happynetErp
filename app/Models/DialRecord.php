@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
+
 class DialRecord extends AbstractModel
 {
     protected $table = 'dial_records';
@@ -365,5 +368,75 @@ class DialRecord extends AbstractModel
                 'show' => 1,
             ],
         ];
+    }
+
+    public function getSearchResult($filters = [], $orderBy = 'created_at', $sort = 'DESC')
+    {
+        $query = $this->newModelQuery();
+
+        if (Schema::hasColumn($this->table, 'deleted_at')) {
+            $query->whereNull('deleted_at');
+        }
+
+        if (count($filters) > 0) {
+            if (!empty($filters['start']) && !empty($filters['end'])) {
+                $query->whereBetween('record_day_ad', [$filters['start'], $filters['end']]);
+            }
+        }
+
+        $query->orderBy($orderBy, $sort);
+        $results = $query->paginate($filters['rows'] ?? 20);
+        $results->appends($filters);
+
+        return $results;
+    }
+
+    public function getBonusSummaryLogs($filters = [])
+    {
+        $query = $this->newModelQuery();
+        $query->select(DB::raw('organizations.name, SUM(dial_records.fee) as fee, SUM(dial_records.charge_fee) as charge_fee'))
+            ->leftJoin('organizations', 'organizations.id', '=', 'dial_records.organization_id');
+
+        if (count($filters) > 0) {
+            if (!empty($filters['start']) && !empty($filters['end'])) {
+                $query->whereBetween('dial_records.record_day_ad', [$filters['start'], $filters['end']]);
+            }
+            if (!empty($filters['organization_id'])) {
+                $query->where('organizations.id', $filters['organization_id']);
+            }
+            if (isset($filters['organizations'])) {
+                $query->whereIn('organizations.id', $filters['organizations']);
+            }
+        }
+
+        $query->groupBy('dial_records.organization_id');
+        $results = $query->paginate($filters['rows'] ?? 20);
+        $results->appends($filters);
+
+        return $results;
+    }
+
+    public function getBonusSummaryAllLogs($filters = [])
+    {
+        $query = $this->newModelQuery();
+        $query->select(DB::raw('organizations.name, SUM(dial_records.fee) as fee, SUM(dial_records.charge_fee) as charge_fee'))
+            ->leftJoin('organizations', 'organizations.id', '=', 'dial_records.organization_id');
+
+        if (count($filters) > 0) {
+            if (!empty($filters['start']) && !empty($filters['end'])) {
+                $query->whereBetween('dial_records.record_day_ad', [$filters['start'], $filters['end']]);
+            }
+            if (!empty($filters['organization_id'])) {
+                $query->where('organizations.id', $filters['organization_id']);
+            }
+            if (isset($filters['organizations'])) {
+                $query->whereIn('organizations.id', $filters['organizations']);
+            }
+        }
+
+        $query->groupBy('dial_records.organization_id');
+        $results = $query->get();
+
+        return $results;
     }
 }

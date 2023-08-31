@@ -35,4 +35,5 @@
         <button type="button" class="btn bg-gradient-secondary btn-sm syncDataBtn"
             style="float: left; margin-left: 5px;"><i class="fas fa-file-import"></i>&nbsp;資料同步</button>
     @endif
+    {{ $list->links('pagination.adminLTE') }}
 </div>

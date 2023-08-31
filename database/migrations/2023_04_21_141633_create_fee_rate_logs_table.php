@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('discount', 10)->nullable()->comment('折讓');
             $table->string('discount_after_rate', 10)->nullable()->comment('折後費率');
             $table->tinyInteger('charge_unit')->nullable()->default(1)->comment('計費單位(值1:秒鐘, 值2:分鐘)');
+            $table->tinyInteger('include_tax')->nullable()->default(2)->comment('含稅(值1:是, 值2:否)');
             $table->string('parameter', 10)->nullable()->comment('參數');
             $table->timestamps();
         });

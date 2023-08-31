@@ -1,6 +1,22 @@
 @extends('layouts.main')
 @section('css')
     <link href="/admins/plugins/bootstrap-toggle/css/bootstrap-toggle.css" rel="stylesheet">
+    <style>
+        /* 整個表格容器 */
+        .table-container {
+            max-height: 600px;
+            /* 設定最大高度，使表格有滾動條 */
+            overflow-y: scroll;
+            /* 垂直滾動 */
+        }
+
+        /* 表頭 */
+        thead th {
+            position: sticky;
+            top: 0;
+            /* 距離父容器頂部的距離 */
+        }
+    </style>
 @endsection
 
 @section('content')
@@ -11,8 +27,8 @@
         <div class="col-md-12">
             <div class="card">
                 @include('components.top_banner_bar', ['menu' => $menu])
-                <div class="card-body table-responsive p-0">
-                    <table class="table table-bordered table-bordered text-nowrap">
+                <div class="card-body table-responsive p-0 table-container">
+                    <table class="table table-bordered table-bordered text-nowrap" id="table">
                         <thead>
                             <tr>
                                 <th class="bg-gradient-secondary" style="text-align: center"><input type="checkbox"
@@ -886,10 +902,6 @@
                         </tbody>
                     </table>
                 </div>
-                <!-- /.card-body -->
-                <div class="card-footer clearfix">
-                    {{ $list->links('pagination.adminLTE') }}
-                </div>
             </div>
             <!-- /.card -->
         </div>
@@ -928,6 +940,9 @@
             },
         });
         $(document).ready(function() {
+            
+            $('html, body').scrollTop($('#table').offset().top);
+
             $('.switchBtn').bootstrapToggle({
                 on: '上架',
                 off: '下架',
@@ -993,7 +1008,7 @@
                                 $('.rowItem:checked').each(function() {
                                     $('#delete_form').append(
                                         `<input type="hidden" name="ids[]" value="${$(this).val()}">`
-                                        );
+                                    );
                                 });
                                 $('#delete_form').submit();
                             }
