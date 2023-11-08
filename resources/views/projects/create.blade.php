@@ -370,6 +370,9 @@
 
             $('body').on('click', '.removeProduct', function() {
                 const row = $(this).data('row');
+                const typeId = $(`#card_${row} #product_type_id_${row}`).val();
+
+                productTypeArr = productTypeArr.filter(id => id !== typeId);
 
                 $(`#card_${row}`).remove();
             })
