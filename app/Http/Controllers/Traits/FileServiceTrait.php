@@ -14,7 +14,7 @@ trait FileServiceTrait
      * @param $disk: filesystems 之預設設定
      * @return string
      */
-    public function storeFile($file, $directory, $disk='public')
+    public function storeFile($file, $directory, $disk = 'public')
     {
 
         if ($file === null || $file === '') {
@@ -33,7 +33,7 @@ trait FileServiceTrait
      * @param $disk: filesystems 之預設設定
      * @return string
      */
-    public function storeAsFile($file, $directory, $fileName, $disk='public')
+    public function storeAsFile($file, $directory, $fileName, $disk = 'public')
     {
 
         if ($file === null || $file === '') {
@@ -51,7 +51,8 @@ trait FileServiceTrait
      * @param $fileName: 存放檔名
      * @return string
      */
-    public function storeBase64($file, $directory, $fileName) {
+    public function storeBase64($file, $directory, $fileName)
+    {
         if ($file === null || $file === '') {
             return null;
         }
@@ -66,7 +67,7 @@ trait FileServiceTrait
 
     /**
      * 刪除檔案
-     * @author Wayne <wayne@howdesign.com.tw>
+     * @author Wayne <wayne@howdesign.com.tw>h
      * @param $filePath: 檔案存在位置
      * @return void
      */
@@ -77,7 +78,7 @@ trait FileServiceTrait
         }
 
         $filePath = str_replace(config('app.url') . '/storage/', '', $filePath);
-        
+
         if (Storage::disk('public')->exists($filePath)) {
             Storage::disk('public')->delete($filePath);
         }

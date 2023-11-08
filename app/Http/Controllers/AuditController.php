@@ -17,43 +17,35 @@ class AuditController extends BasicController
 {
     use fileService;
 
-    public function index(Request $request) 
+    public function index(Request $request)
     {
         $user = Auth::user();
 
-        if ($request->user()->cannot('browse_'.$this->slug,  $this->model) || $user->position->type_name != '收件人') 
-        {
-            return view('alerts.error', [
-                'msg' => '您的權限不足, 請洽管理人員開通權限',
-                'redirectURL' => route('dashboard')
-            ]);
+        if ($user->position) {
+            if ($request->user()->cannot('browse_' . $this->slug,  $this->model) || $user->position->type_name != '收件人') {
+                return view('alerts.error', [
+                    'msg' => '您的權限不足, 請洽管理人員開通權限',
+                    'redirectURL' => route('dashboard')
+                ]);
+            }
         }
-        
+
         $filters = [
             'status' => 3
         ];
 
-        try
-        {
+        try {
             $list = $this->model->getListByFilters($this->menu->menuDetails, $filters);
-        }
-        catch (\Exception $e)
-        {
-            $list = (new Collection([]))->paginate(20); 
+        } catch (\Exception $e) {
+            $list = (new Collection([]))->paginate(20);
         }
 
-        if(view()->exists($this->slug.'.index')) 
-        {
-            $this->indexView = $this->slug.'.index';
-        } 
-        else 
-        {
-            if ($this->menu->sortable_enable == 1) 
-            {
+        if (view()->exists($this->slug . '.index')) {
+            $this->indexView = $this->slug . '.index';
+        } else {
+            if ($this->menu->sortable_enable == 1) {
                 $this->indexView = 'templates.sortable';
-            }
-            else
-            {
+            } else {
                 $this->indexView = 'templates.index';
             }
         }
@@ -66,8 +58,7 @@ class AuditController extends BasicController
 
     public function edit(Request $request, $id)
     {
-        if ($request->user()->cannot('edit_'.$this->slug,  $this->model))
-        {
+        if ($request->user()->cannot('edit_' . $this->slug,  $this->model)) {
             return view('alerts.error', [
                 'msg' => '您的權限不足, 請洽管理人員開通權限',
                 'redirectURL' => route('dashboard')
@@ -77,32 +68,29 @@ class AuditController extends BasicController
         $data = $this->model->find($id);
         $applyLogs = $this->getProductLog($data);
         $obj = app(Product::class);
-        
-        if (!$data)
-        {
-            return view('alerts.error',[
-                'msg'=>'資料不存在',
-                'redirectURL'=>route($this->slug.'.index')
-            ]); 
+
+        if (!$data) {
+            return view('alerts.error', [
+                'msg' => '資料不存在',
+                'redirectURL' => route($this->slug . '.index')
+            ]);
         }
 
-        if(view()->exists($this->slug.'.edit'))
-        {
-            $this->editView = $this->slug.'.edit';
+        if (view()->exists($this->slug . '.edit')) {
+            $this->editView = $this->slug . '.edit';
         }
 
         return view($this->editView, [
-            'data'=>$data,
-            'id'=>$id,
-            'applyLogs'=>$applyLogs,
-            'obj'=>$obj,
+            'data' => $data,
+            'id' => $id,
+            'applyLogs' => $applyLogs,
+            'obj' => $obj,
         ]);
     }
 
     public function update(Request $request, $id)
     {
-        if ($request->user()->cannot('update_'.$this->slug,  $this->model))
-        {
+        if ($request->user()->cannot('update_' . $this->slug,  $this->model)) {
             return view('alerts.error', [
                 'msg' => '您的權限不足, 請洽管理人員開通權限',
                 'redirectURL' => route('dashboard')
@@ -114,21 +102,15 @@ class AuditController extends BasicController
         try {
             $formData = $request->except('_token', '_method');
 
-            if ($this->model->checkColumnExist('update_user_id'))
-            {
+            if ($this->model->checkColumnExist('update_user_id')) {
                 $formData['update_user_id'] = Auth::user()->id;
             }
 
-            if ($this->menu->menuDetails->count() > 0)
-            {
-                foreach ($this->menu->menuDetails as $detail)
-                {
-                    if (isset($formData[$detail->field]))
-                    {
-                        if ($detail->type == 'image' || $detail->type == 'file')
-                        {
-                            if (is_object($formData[$detail->field]) && $formData[$detail->field]->getSize() > 0)
-                            {
+            if ($this->menu->menuDetails->count() > 0) {
+                foreach ($this->menu->menuDetails as $detail) {
+                    if (isset($formData[$detail->field])) {
+                        if ($detail->type == 'image' || $detail->type == 'file') {
+                            if (is_object($formData[$detail->field]) && $formData[$detail->field]->getSize() > 0) {
                                 $formData[$detail->field] = $this->storeFile($formData[$detail->field], $this->slug);
                             }
                         }
@@ -136,33 +118,31 @@ class AuditController extends BasicController
                 }
 
                 if (isset($formData['auditor_sign']) && !empty($formData['auditor_sign'])) {
-                    $formData['auditor_sign'] = $this->storeBase64($formData['auditor_sign'], 'applies', date('Ymd').uniqid().'.svg');
+                    $formData['auditor_sign'] = $this->storeBase64($formData['auditor_sign'], 'applies', date('Ymd') . uniqid() . '.svg');
                 }
 
                 $this->model->updateData($id, $formData);
 
                 DB::commit();
-    
-                return view('alerts.success',[
-                    'msg'=>'審核成功',
-                    'redirectURL'=>route($this->slug.'.index')
+
+                return view('alerts.success', [
+                    'msg' => '審核成功',
+                    'redirectURL' => route($this->slug . '.index')
                 ]);
             }
 
             DB::rollBack();
 
             return view('alerts.error', [
-                'msg'=>'資料更新失敗, 無該功能項之細項設定',
-                'redirectURL'=>route($this->slug.'.index')
+                'msg' => '資料更新失敗, 無該功能項之細項設定',
+                'redirectURL' => route($this->slug . '.index')
             ]);
-        } 
-        catch (\Exception $e)
-        {
+        } catch (\Exception $e) {
             DB::rollBack();
 
-            return view('alerts.error',[
-                'msg'=>$e->getMessage(),
-                'redirectURL'=>route($this->slug.'.index')
+            return view('alerts.error', [
+                'msg' => $e->getMessage(),
+                'redirectURL' => route($this->slug . '.index')
             ]);
         }
     }
@@ -171,8 +151,7 @@ class AuditController extends BasicController
     {
         $arr = [];
 
-        foreach ($apply->productLogs??[] as $log)
-        {
+        foreach ($apply->productLogs ?? [] as $log) {
             if ($log->qty > 0) {
                 $arr[$log->product_type_id][$log->product_id]['qty'] = $log->qty;
                 $arr[$log->product_type_id][$log->product_id]['rent_month'] = $log->rent_month;
@@ -181,11 +160,10 @@ class AuditController extends BasicController
                 $arr[$log->product_type_id][$log->product_id]['security_deposit'] = $log->security_deposit;
                 $arr[$log->product_type_id][$log->product_id]['note'] = $log->note;
             } else {
-                foreach($log->feeRateLogs??[] as $k=>$rate)
-                {
+                foreach ($log->feeRateLogs ?? [] as $k => $rate) {
                     $arr[$log->product_type_id][$log->product_id][$rate->call_target_id]['call_target_id'] = $rate->call_target_id;
                     $arr[$log->product_type_id][$log->product_id][$rate->call_target_id]['call_rate'] = $rate->call_rate;
-                    $arr[$log->product_type_id][$log->product_id][$rate->call_target_id]['discount'] = $rate->discount	;
+                    $arr[$log->product_type_id][$log->product_id][$rate->call_target_id]['discount'] = $rate->discount;
                     $arr[$log->product_type_id][$log->product_id][$rate->call_target_id]['amount'] = $rate->amount;
                     $arr[$log->product_type_id][$log->product_id][$rate->call_target_id]['charge_unit'] = $rate->charge_unit;
                     $arr[$log->product_type_id][$log->product_id][$rate->call_target_id]['parameter'] = $rate->parameter;

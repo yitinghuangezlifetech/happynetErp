@@ -15,6 +15,7 @@ use App\Models\Product;
 use App\Models\ApplyTermLog;
 use App\Models\ApplyProductLog;
 use App\Models\ApplyFeeRateLog;
+use App\Support\Collection;
 
 use App\Http\Controllers\Traits\FileServiceTrait as fileService;
 
@@ -92,15 +93,23 @@ class ApplyController extends BasicController
                 }
 
                 if (isset($formData['sender_sign']) && !empty($formData['sender_sign'])) {
-                    $formData['sender_sign'] = $this->storeBase64($formData['sender_sign'], 'applies', date('Ymd') . uniqid() . '.jpg');
+                    $formData['sender_sign'] = $this->storeBase64($formData['sender_sign'], 'applies', 'sender_sign_' . date('Ymd') . uniqid() . '.svg');
                 }
 
                 if (isset($formData['customer']) && !empty($formData['customer'])) {
-                    $formData['customer'] = $this->storeBase64($formData['customer'], 'applies', date('Ymd') . uniqid() . '.jpg');
+                    $formData['customer'] = $this->storeBase64($formData['customer'], 'applies', 'customer_' . date('Ymd') . uniqid() . '.svg');
                 }
 
                 $data = $this->model->create($formData);
                 DB::commit();
+
+                if (!empty($request->contract_id)) {
+                    $obj = app(Contract::class)->find($request->contract_id);
+                    $this->proccessTerms('contract', $data, $obj);
+                } else if (!empty($request->project_id)) {
+                    $obj = app(Project::class)->find($request->project_id);
+                    $this->proccessTerms('project', $data, $obj);
+                }
 
                 $this->proccessProducts($data, $products);
 
@@ -297,6 +306,63 @@ class ApplyController extends BasicController
         return $pdf->download(date('YmdHis') . '_' . $data->apply_no . '_申請書.pdf');
     }
 
+    public function getProductLog($apply)
+    {
+        $arr = [];
+
+        foreach ($apply->productLogs ?? [] as $log) {
+            if ($log->qty > 0) {
+                $arr[$log->product_type_id][$log->product_id]['qty'] = $log->qty;
+                $arr[$log->product_type_id][$log->product_id]['rent_month'] = $log->rent_month;
+                $arr[$log->product_type_id][$log->product_id]['discount'] = $log->discount;
+                $arr[$log->product_type_id][$log->product_id]['amount'] = $log->amount;
+                $arr[$log->product_type_id][$log->product_id]['security_deposit'] = $log->security_deposit;
+                $arr[$log->product_type_id][$log->product_id]['note'] = $log->note;
+            } else {
+                foreach ($log->feeRateLogs ?? [] as $k => $rate) {
+                    $arr[$log->product_type_id][$log->product_id][$rate->call_target_id]['call_target_id'] = $rate->call_target_id;
+                    $arr[$log->product_type_id][$log->product_id][$rate->call_target_id]['call_rate'] = $rate->call_rate;
+                    $arr[$log->product_type_id][$log->product_id][$rate->call_target_id]['discount'] = $rate->discount;
+                    $arr[$log->product_type_id][$log->product_id][$rate->call_target_id]['amount'] = $rate->amount;
+                    $arr[$log->product_type_id][$log->product_id][$rate->call_target_id]['charge_unit'] = $rate->charge_unit;
+                    $arr[$log->product_type_id][$log->product_id][$rate->call_target_id]['parameter'] = $rate->parameter;
+                }
+            }
+        }
+
+        return $arr;
+    }
+
+    public function multipleDestroy(Request $request)
+    {
+        if ($request->user()->cannot('delete_' . $this->slug,  $this->model)) {
+            return view('alerts.error', [
+                'msg' => '您的權限不足, 請洽管理人員開通權限',
+                'redirectURL' => route('dashboard')
+            ]);
+        }
+
+        if (isset($request->ids) && count($request->ids) > 0) {
+            foreach ($request->ids as $id) {
+                app(ApplyProductLog::class)->where('apply_id', $id)->delete();
+                app(ApplyTermLog::class)->where('apply_id', $id)->delete();
+                app(ApplyFeeRateLog::class)->where('apply_id', $id)->delete();
+            }
+
+            $this->model->deleteMultipleData($request->ids);
+
+            return view('alerts.success', [
+                'msg' => '資料刪除成功',
+                'redirectURL' => route($this->slug . '.index')
+            ]);
+        }
+
+        return view('alerts.error', [
+            'msg' => '無指定參數',
+            'redirectURL' => route($this->slug . '.index')
+        ]);
+    }
+
     private function proccessProducts($apply, $products = [])
     {
         if (!empty($products)) {
@@ -332,30 +398,35 @@ class ApplyController extends BasicController
         }
     }
 
-    public function getProductLog($apply)
+    private function proccessTerms($type, $apply, $obj)
     {
-        $arr = [];
+        if (is_object($obj)) {
+            app(ApplyTermLog::class)->where('apply_id', $apply->id)->delete();
 
-        foreach ($apply->productLogs ?? [] as $log) {
-            if ($log->qty > 0) {
-                $arr[$log->product_type_id][$log->product_id]['qty'] = $log->qty;
-                $arr[$log->product_type_id][$log->product_id]['rent_month'] = $log->rent_month;
-                $arr[$log->product_type_id][$log->product_id]['discount'] = $log->discount;
-                $arr[$log->product_type_id][$log->product_id]['amount'] = $log->amount;
-                $arr[$log->product_type_id][$log->product_id]['security_deposit'] = $log->security_deposit;
-                $arr[$log->product_type_id][$log->product_id]['note'] = $log->note;
-            } else {
-                foreach ($log->feeRateLogs ?? [] as $k => $rate) {
-                    $arr[$log->product_type_id][$log->product_id][$rate->call_target_id]['call_target_id'] = $rate->call_target_id;
-                    $arr[$log->product_type_id][$log->product_id][$rate->call_target_id]['call_rate'] = $rate->call_rate;
-                    $arr[$log->product_type_id][$log->product_id][$rate->call_target_id]['discount'] = $rate->discount;
-                    $arr[$log->product_type_id][$log->product_id][$rate->call_target_id]['amount'] = $rate->amount;
-                    $arr[$log->product_type_id][$log->product_id][$rate->call_target_id]['charge_unit'] = $rate->charge_unit;
-                    $arr[$log->product_type_id][$log->product_id][$rate->call_target_id]['parameter'] = $rate->parameter;
-                }
+            switch ($type) {
+                case 'contract':
+                    foreach ($obj->terms ?? [] as $term) {
+                        app(ApplyTermLog::class)->create([
+                            'id' => uniqid(),
+                            'apply_id' => $apply->id,
+                            'contract_id' => $term->contract_id,
+                            'term_id' => $term->term_id,
+                            'sort' => $term->sort
+                        ]);
+                    }
+                    break;
+                case 'project':
+                    foreach ($obj->terms ?? [] as $term) {
+                        app(ApplyTermLog::class)->create([
+                            'id' => uniqid(),
+                            'apply_id' => $apply->id,
+                            'project_id' => $term->project_id,
+                            'term_id' => $term->term_id,
+                            'sort' => $term->sort
+                        ]);
+                    }
+                    break;
             }
         }
-
-        return $arr;
     }
 }
