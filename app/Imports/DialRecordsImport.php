@@ -188,26 +188,59 @@ class DialRecordsImport implements ToCollection
                                         if ($seconds > 60 && $seconds % 60 != 0) {
                                             $minutes += 1;
                                         }
+                                    } else {
+                                        $minutes = 1;
                                     }
 
                                     switch ($rate->charge_unit) {
                                         case 1: //秒鐘
                                             $unit = ceil($seconds / $rate->parameter);
 
-                                            if (!empty($rate->discount)) {
-                                                $chargeFee = $rate->discount_after_rate * $unit;
+
+                                            if ($rate->include_tax == 1) {
+                                                //含稅
+                                                if (!empty($rate->discount)) {
+                                                    $chargeHaveTax = $rate->discount_after_rate * $unit;
+                                                } else {
+                                                    $chargeHaveTax = $rate->call_rate * $unit;
+                                                }
+
+                                                $chargeNoTax = $chargeHaveTax / 1.05;
                                             } else {
-                                                $chargeFee = $rate->call_rate * $unit;
+                                                //未稅
+                                                if (!empty($rate->discount)) {
+                                                    $chargeNoTax = $rate->discount_after_rate * $unit;
+                                                } else {
+                                                    $chargeNoTax = $rate->call_rate * $unit;
+                                                }
+
+                                                $chargeHaveTax = $chargeNoTax * 1.05;
                                             }
+
                                             break;
                                         case 2: //分鐘
                                             $unit = ceil($minutes / $rate->parameter);
 
-                                            if (!empty($rate->discount)) {
-                                                $chargeFee = $rate->discount_after_rate * $unit;
+                                            if ($rate->include_tax == 1) {
+                                                //含稅
+                                                if (!empty($rate->discount)) {
+                                                    $chargeHaveTax = $rate->discount_after_rate * $unit;
+                                                } else {
+                                                    $chargeHaveTax = $rate->call_rate * $unit;
+                                                }
+
+                                                $chargeNoTax = $chargeHaveTax / 1.05;
                                             } else {
-                                                $chargeFee = $rate->call_rate * $unit;
+                                                //未稅
+                                                if (!empty($rate->discount)) {
+                                                    $chargeNoTax = $rate->discount_after_rate * $unit;
+                                                } else {
+                                                    $chargeNoTax = $rate->call_rate * $unit;
+                                                }
+
+                                                $chargeHaveTax = $chargeNoTax * 1.05;
                                             }
+
                                             break;
                                         default:
                                             $chargeFee = 0;

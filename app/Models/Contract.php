@@ -17,47 +17,47 @@ class Contract extends AbstractModel
                 'field' => 'version_no',
                 'type' => 'text',
                 'show_name' => '版本號',
-                'use_edit_link'=>2,
+                'use_edit_link' => 2,
                 'join_search' => 1,
                 'required' => 1,
                 'browse' => 2,
                 'create' => 1,
                 'edit' => 1,
                 'create_rule' => json_encode([
-                    'version_no'=>'required'
+                    'version_no' => 'required'
                 ]),
                 'update_rule' => json_encode([
-                    'version_no'=>'required'
+                    'version_no' => 'required'
                 ]),
                 'error_msg' => json_encode([
-                    ['version_no.required'=>'版本號請勿空白']
+                    ['version_no.required' => '版本號請勿空白']
                 ]),
             ],
             [
                 'field' => 'name',
                 'type' => 'text',
                 'show_name' => '合約名稱',
-                'use_edit_link'=>1,
+                'use_edit_link' => 1,
                 'join_search' => 1,
                 'required' => 1,
                 'browse' => 1,
                 'create' => 1,
                 'edit' => 1,
                 'create_rule' => json_encode([
-                    'name'=>'required'
+                    'name' => 'required'
                 ]),
                 'update_rule' => json_encode([
-                    'name'=>'required'
+                    'name' => 'required'
                 ]),
                 'error_msg' => json_encode([
-                    ['name.required'=>'合約名稱請勿空白']
+                    ['name.required' => '合約名稱請勿空白']
                 ]),
             ],
             [
                 'field' => 'plan_type_id',
                 'type' => 'select',
                 'show_name' => '方案類別',
-                'use_edit_link'=>2,
+                'use_edit_link' => 2,
                 'join_search' => 1,
                 'required' => 1,
                 'browse' => 1,
@@ -71,20 +71,20 @@ class Contract extends AbstractModel
                     'show_field' => 'type_name'
                 ]),
                 'create_rule' => json_encode([
-                    'plan_type_id'=>'required'
+                    'plan_type_id' => 'required'
                 ]),
                 'update_rule' => json_encode([
-                    'plan_type_id'=>'required'
+                    'plan_type_id' => 'required'
                 ]),
                 'error_msg' => json_encode([
-                    ['plan_type_id.required'=>'請選擇方案類別']
+                    ['plan_type_id.required' => '請選擇方案類別']
                 ]),
             ],
             [
                 'field' => 'apply_type_id',
                 'type' => 'select',
                 'show_name' => '申請類別',
-                'use_edit_link'=>2,
+                'use_edit_link' => 2,
                 'join_search' => 1,
                 'required' => 1,
                 'browse' => 1,
@@ -98,20 +98,20 @@ class Contract extends AbstractModel
                     'show_field' => 'type_name'
                 ]),
                 'create_rule' => json_encode([
-                    'apply_type_id'=>'required'
+                    'apply_type_id' => 'required'
                 ]),
                 'update_rule' => json_encode([
-                    'apply_type_id'=>'required'
+                    'apply_type_id' => 'required'
                 ]),
                 'error_msg' => json_encode([
-                    ['apply_type_id.required'=>'請選擇申請類別']
+                    ['apply_type_id.required' => '請選擇申請類別']
                 ]),
             ],
             [
                 'field' => 'identity_id',
                 'type' => 'select',
                 'show_name' => '對象',
-                'use_edit_link'=>2,
+                'use_edit_link' => 2,
                 'join_search' => 1,
                 'required' => 1,
                 'browse' => 1,
@@ -125,13 +125,13 @@ class Contract extends AbstractModel
                     'show_field' => 'type_name'
                 ]),
                 'create_rule' => json_encode([
-                    'identity_id'=>'required'
+                    'identity_id' => 'required'
                 ]),
                 'update_rule' => json_encode([
-                    'identity_id'=>'required'
+                    'identity_id' => 'required'
                 ]),
                 'error_msg' => json_encode([
-                    ['identity_id.required'=>'請選擇適用對象']
+                    ['identity_id.required' => '請選擇適用對象']
                 ]),
             ],
             [
@@ -151,13 +151,13 @@ class Contract extends AbstractModel
                     'show_field' => 'type_name'
                 ]),
                 'create_rule' => json_encode([
-                    'sales_type_id'=>'required'
+                    'sales_type_id' => 'required'
                 ]),
                 'update_rule' => json_encode([
-                    'sales_type_id'=>'required'
+                    'sales_type_id' => 'required'
                 ]),
                 'error_msg' => json_encode([
-                    ['sales_type_id.required'=>'請選擇銷售模式']
+                    ['sales_type_id.required' => '請選擇銷售模式']
                 ]),
             ],
             [
@@ -168,8 +168,8 @@ class Contract extends AbstractModel
                 'create' => 2,
                 'edit' => 2,
                 'options' => json_encode([
-                    ['text'=>'啟用', 'value'=>1, 'default'=>0],
-                    ['text'=>'停用', 'value'=>2, 'default'=>1],
+                    ['text' => '啟用', 'value' => 1, 'default' => 0],
+                    ['text' => '停用', 'value' => 2, 'default' => 1],
                 ])
             ],
             [
@@ -209,13 +209,12 @@ class Contract extends AbstractModel
     {
         $query = $this->newModelQuery();
 
-        if(Schema::hasColumn($this->table, 'deleted_at'))
-        {
+        if (Schema::hasColumn($this->table, 'deleted_at')) {
             $query->whereNull('deleted_at');
         }
 
         $query->where('status', 1)
-              ->orderBy('created_at', 'DESC');
+            ->orderBy('created_at', 'DESC');
         $result = $query->get();
 
         return $result;

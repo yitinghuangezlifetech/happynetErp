@@ -40,7 +40,9 @@ return new class extends Migration
             $table->string('frontent_code', 15)->nullable()->comment('前置碼');
             $table->string('period', 20)->nullable()->comment('時段');
             $table->string('fee', 30)->nullable()->comment('通話費');
-            $table->string('charge_fee', 30)->nullable()->comment('應收費用');
+            $table->string('charge_fee', 30)->nullable()->comment('應收費用-未稅');
+            $table->string('tax', 30)->nullable()->comment('稅金');
+            $table->string('charge_fee_tax', 30)->nullable()->comment('應收費用-含稅');
             $table->text('note')->nullable()->comment('備註');
             $table->timestamps();
         });

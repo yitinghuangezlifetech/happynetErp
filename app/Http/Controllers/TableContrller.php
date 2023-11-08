@@ -21,13 +21,14 @@ class TableContrller extends Controller
         $products = app(Product::class)->getDataByFilters($filters);
 
         $content = view('tables.product', compact(
-            'products', 'row'
+            'products',
+            'row'
         ))->render();
 
         return response()->json([
-            'status'=>true,
-            'message'=>'取得資料成功',
-            'data'=>$content
+            'status' => true,
+            'message' => '取得資料成功',
+            'data' => $content
         ], 200);
     }
 
@@ -35,8 +36,7 @@ class TableContrller extends Controller
     {
         $termType = app(FuncType::class)->find($request->term_type_id);
 
-        switch ($termType->type_name)
-        {
+        switch ($termType->type_name) {
             case '共用型條文':
                 $filters = [
                     'term_type_id' => $request->term_type_id,
@@ -44,7 +44,7 @@ class TableContrller extends Controller
                 break;
             default:
                 $filters = [
-                    'sales_type_id' => $request->sales_type_id,
+                    'term_type_id' => $request->term_type_id,
                     'product_type_id' => $request->product_type_id,
                 ];
                 break;
@@ -53,13 +53,14 @@ class TableContrller extends Controller
         $row = $request->row;
         $terms = app(Term::class)->getTermsByFilters($filters);
         $content = view('tables.regulation', compact(
-            'terms', 'row'
+            'terms',
+            'row'
         ))->render();
 
         return response()->json([
-            'status'=>true,
-            'message'=>'取得資料成功',
-            'data'=>$content
+            'status' => true,
+            'message' => '取得資料成功',
+            'data' => $content
         ], 200);
     }
 }

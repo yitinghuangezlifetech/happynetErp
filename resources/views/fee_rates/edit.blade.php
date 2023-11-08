@@ -288,7 +288,25 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-sm-6"></div>
+                            <div class="col-sm-6">
+                                <label><span style="color:red">*</span>含稅</label>
+                                <div class="form-group clearfix">
+                                    <div class="icheck-primary d-inline">
+                                        <input type="radio" id="radioPrimary1"
+                                            name="rates[{{ $k }}][include_tax]" value="1"
+                                            @if ($log->include_tax == 1) {{ 'checked' }} @endif>
+                                        <label for="radioPrimary1">是
+                                        </label>
+                                    </div>
+                                    <div class="icheck-primary d-inline">
+                                        <input type="radio" id="radioPrimary2"
+                                            name="rates[{{ $k }}][include_tax]" value="2"
+                                            @if ($log->include_tax == 2) {{ 'checked' }} @endif>
+                                        <label for="radioPrimary2">否
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <div class="row">
                             <div class="col-sm-6">
@@ -402,7 +420,22 @@
 						</select>
 					</div>
 					</div>
-					<div class="col-sm-6"></div>
+					<div class="col-sm-6">
+                        <label><span style="color:red">*</span>含稅</label>
+                        <div class="form-group clearfix">
+                            <div class="icheck-primary d-inline">
+                                <input type="radio" id="radioPrimary1" name="rates[${rows}][include_tax]" value="1">
+                                <label for="radioPrimary1">是
+                                </label>
+                            </div>
+                            <div class="icheck-primary d-inline">
+                                <input type="radio" id="radioPrimary2" name="rates[${rows}][include_tax]" value="2"
+                                    checked>
+                                <label for="radioPrimary2">否
+                                </label>
+                            </div>
+                        </div>
+                    </div>
 				</div>
 				<div class="row">
 					<div class="col-sm-6">

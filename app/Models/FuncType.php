@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\Collection;
 use Illuminate\Support\Facades\Schema;
 
 class FuncType extends AbstractModel
@@ -255,6 +256,6 @@ class FuncType extends AbstractModel
                 ->get();
         }
 
-        return (new Collection([]))->get();
+        return null;
     }
 }

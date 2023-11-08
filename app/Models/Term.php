@@ -13,8 +13,8 @@ class Term extends AbstractModel
             [
                 'field' => 'term_type_id',
                 'type' => 'select',
-                'show_name' => '條文類型',
-                'use_edit_link'=>2,
+                'show_name' => '條文類別',
+                'use_edit_link' => 2,
                 'join_search' => 1,
                 'required' => 1,
                 'browse' => 1,
@@ -28,13 +28,13 @@ class Term extends AbstractModel
                     'show_field' => 'type_name'
                 ]),
                 'create_rule' => json_encode([
-                    'term_type_id'=>'required'
+                    'term_type_id' => 'required'
                 ]),
                 'update_rule' => json_encode([
-                    'term_type_id'=>'required'
+                    'term_type_id' => 'required'
                 ]),
                 'error_msg' => json_encode([
-                    ['term_type_id.required'=>'請選擇條文類型']
+                    ['term_type_id.required' => '請選擇條文類型']
                 ]),
             ],
             [
@@ -54,13 +54,13 @@ class Term extends AbstractModel
                     'show_field' => 'type_name'
                 ]),
                 'create_rule' => json_encode([
-                    'sales_type_id'=>'required'
+                    'sales_type_id' => 'required'
                 ]),
                 'update_rule' => json_encode([
-                    'sales_type_id'=>'required'
+                    'sales_type_id' => 'required'
                 ]),
                 'error_msg' => json_encode([
-                    ['sales_type_id.required'=>'請選擇適用銷售模式']
+                    ['sales_type_id.required' => '請選擇適用銷售模式']
                 ]),
             ],
             [
@@ -80,40 +80,40 @@ class Term extends AbstractModel
                     'show_field' => 'type_name'
                 ]),
                 'create_rule' => json_encode([
-                    'product_type_id'=>'required'
+                    'product_type_id' => 'required'
                 ]),
                 'update_rule' => json_encode([
-                    'product_type_id'=>'required'
+                    'product_type_id' => 'required'
                 ]),
                 'error_msg' => json_encode([
-                    ['product_type_id.required'=>'請選擇適用商品類型']
+                    ['product_type_id.required' => '請選擇適用商品類型']
                 ]),
             ],
             [
                 'field' => 'title',
                 'type' => 'text',
                 'show_name' => '條文標題',
-                'use_edit_link'=>1,
+                'use_edit_link' => 1,
                 'join_search' => 1,
                 'required' => 1,
                 'browse' => 1,
                 'create' => 1,
                 'edit' => 1,
                 'create_rule' => json_encode([
-                    'title'=>'required'
+                    'title' => 'required'
                 ]),
                 'update_rule' => json_encode([
-                    'title'=>'required'
+                    'title' => 'required'
                 ]),
                 'error_msg' => json_encode([
-                    ['title.required'=>'條文標題請勿空白']
+                    ['title.required' => '條文標題請勿空白']
                 ]),
             ],
             [
                 'field' => 'describe',
                 'type' => 'text',
                 'show_name' => '標題說明',
-                'use_edit_link'=>1,
+                'use_edit_link' => 1,
                 'join_search' => 2,
                 'required' => 2,
                 'browse' => 2,
@@ -138,22 +138,18 @@ class Term extends AbstractModel
         ];
     }
 
-    public function getTermsByFilters($filters=[])
+    public function getTermsByFilters($filters = [])
     {
         $query = $this->newModelQuery();
-        
-        if (!empty($filters))
-        {
-            if (!empty($filters['term_type_id']))
-            {
+
+        if (!empty($filters)) {
+            if (!empty($filters['term_type_id'])) {
                 $query->where('term_type_id', $filters['term_type_id']);
             }
-            if (!empty($filters['sales_type_id']))
-            {
+            if (!empty($filters['sales_type_id'])) {
                 $query->where('sales_type_id', $filters['sales_type_id']);
             }
-            if (!empty($filters['product_type_id']))
-            {
+            if (!empty($filters['product_type_id'])) {
                 $query->where('product_type_id', $filters['product_type_id']);
             }
         }

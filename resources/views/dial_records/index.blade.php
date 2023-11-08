@@ -36,7 +36,7 @@
                                     @foreach ($menu->menuBrowseDetails as $detail)
                                         @php
                                             $json = [];
-                                            
+
                                             if (!empty($detail->applicable_system)) {
                                                 $json = json_decode($detail->applicable_system, true);
                                             }
@@ -80,7 +80,7 @@
                                         @foreach ($menu->menuBrowseDetails as $detail)
                                             @php
                                                 $json = [];
-                                                
+
                                                 if (!empty($detail->applicable_system)) {
                                                     $json = json_decode($detail->applicable_system, true);
                                                 }
@@ -103,7 +103,7 @@
                                                                     @php
                                                                         $com = '';
                                                                         $value = '';
-                                                                        
+
                                                                         if ($detail->has_relationship == 1) {
                                                                             $jsonArr = json_decode($detail->relationship, true);
                                                                             if (is_array($jsonArr) && count($jsonArr) > 0) {
@@ -128,14 +128,14 @@
                                                                     @php
                                                                         $str = '';
                                                                         $com = '';
-                                                                        
+
                                                                         if ($detail->has_relationship == 1) {
                                                                             $json = json_decode($detail->relationship, true);
                                                                             if (is_array($json) && count($json) > 0) {
                                                                                 $options = app($json['model'])
                                                                                     ->where($json['references_field'], $data->{$detail->foreign_key})
                                                                                     ->get();
-                                                                        
+
                                                                                 if ($options->count() > 0) {
                                                                                     foreach ($options as $option) {
                                                                                         $str .= $com . $option->{$json['show_field']};
@@ -152,11 +152,11 @@
                                                                     @php
                                                                         $str = '';
                                                                         $com = '';
-                                                                        
+
                                                                         if ($detail->has_relationship == 1) {
                                                                             if ($data->{$detail->relationship_method}->count() > 0) {
                                                                                 $json = json_decode($detail->relationship, true);
-                                                                        
+
                                                                                 foreach ($data->{$detail->relationship_method} as $log) {
                                                                                     if (is_array($json) && count($json) > 0) {
                                                                                         $option = app($json['model'])
@@ -181,7 +181,7 @@
                                                                         $off = '';
                                                                         if (!empty($detail->options)) {
                                                                             $options = json_decode($detail->options, true);
-                                                                        
+
                                                                             if (is_array($options) && count($options) > 0) {
                                                                                 foreach ($options as $key => $option) {
                                                                                     if ($option['value'] == 1) {
@@ -235,7 +235,7 @@
                                                                                 $decodeData = json_decode($detail->relationship, true);
                                                                                 if (count($decodeData) > 0) {
                                                                                     $options = app($decodeData['model'])->get();
-                                                                        
+
                                                                                     foreach ($options as $option) {
                                                                                         if ($data->{$detail->field} == $option->id) {
                                                                                             $value = $option->{$decodeData['show_field']};
@@ -300,7 +300,7 @@
                                                                 @php
                                                                     $com = '';
                                                                     $value = '';
-                                                                    
+
                                                                     if ($detail->has_relationship == 1) {
                                                                         $jsonArr = json_decode($detail->relationship, true);
                                                                         if (is_array($jsonArr) && count($jsonArr) > 0) {
@@ -325,14 +325,14 @@
                                                                 @php
                                                                     $str = '';
                                                                     $com = '';
-                                                                    
+
                                                                     if ($detail->has_relationship == 1) {
                                                                         $json = json_decode($detail->relationship, true);
                                                                         if (is_array($json) && count($json) > 0) {
                                                                             $options = app($json['model'])
                                                                                 ->where($json['references_field'], $data->{$detail->foreign_key})
                                                                                 ->get();
-                                                                    
+
                                                                             if ($options->count() > 0) {
                                                                                 foreach ($options as $option) {
                                                                                     $str .= $com . $option->{$json['show_field']};
@@ -349,11 +349,11 @@
                                                                 @php
                                                                     $str = '';
                                                                     $com = '';
-                                                                    
+
                                                                     if ($detail->has_relationship == 1) {
                                                                         if ($data->{$detail->relationship_method}->count() > 0) {
                                                                             $json = json_decode($detail->relationship, true);
-                                                                    
+
                                                                             foreach ($data->{$detail->relationship_method} as $log) {
                                                                                 if (is_array($json) && count($json) > 0) {
                                                                                     $option = app($json['model'])
@@ -378,7 +378,7 @@
                                                                     $off = '';
                                                                     if (!empty($detail->options)) {
                                                                         $options = json_decode($detail->options, true);
-                                                                    
+
                                                                         if (is_array($options) && count($options) > 0) {
                                                                             foreach ($options as $key => $option) {
                                                                                 if ($option['value'] == 1) {
@@ -432,7 +432,7 @@
                                                                             $decodeData = json_decode($detail->relationship, true);
                                                                             if (count($decodeData) > 0) {
                                                                                 $options = app($decodeData['model'])->get();
-                                                                    
+
                                                                                 foreach ($options as $option) {
                                                                                     if ($data->{$detail->field} == $option->id) {
                                                                                         $value = $option->{$decodeData['show_field']};
@@ -501,7 +501,7 @@
                                                                         @php
                                                                             $com = '';
                                                                             $value = '';
-                                                                            
+
                                                                             if ($detail->has_relationship == 1) {
                                                                                 $json = json_decode($detail->relationship, true);
                                                                                 if (is_array($json) && count($json) > 0) {
@@ -526,14 +526,14 @@
                                                                         @php
                                                                             $str = '';
                                                                             $com = '';
-                                                                            
+
                                                                             if ($detail->has_relationship == 1) {
                                                                                 $json = json_decode($detail->relationship, true);
                                                                                 if (is_array($json) && count($json) > 0) {
                                                                                     $options = app($json['model'])
                                                                                         ->where($json['references_field'], $data->{$detail->foreign_key})
                                                                                         ->get();
-                                                                            
+
                                                                                     if ($options->count() > 0) {
                                                                                         foreach ($options as $option) {
                                                                                             $str .= $com . $option->{$json['show_field']};
@@ -550,11 +550,11 @@
                                                                         @php
                                                                             $str = '';
                                                                             $com = '';
-                                                                            
+
                                                                             if ($detail->has_relationship == 1) {
                                                                                 if ($data->{$detail->relationship_method}->count() > 0) {
                                                                                     $json = json_decode($detail->relationship, true);
-                                                                            
+
                                                                                     foreach ($data->{$detail->relationship_method} as $log) {
                                                                                         if (is_array($json) && count($json) > 0) {
                                                                                             $option = app($json['model'])
@@ -579,7 +579,7 @@
                                                                             $off = '';
                                                                             if (!empty($detail->options)) {
                                                                                 $options = json_decode($detail->options, true);
-                                                                            
+
                                                                                 if (is_array($options) && count($options) > 0) {
                                                                                     foreach ($options as $key => $option) {
                                                                                         if ($option['value'] == 1) {
@@ -633,7 +633,7 @@
                                                                                     $decodeData = json_decode($detail->relationship, true);
                                                                                     if (count($decodeData) > 0) {
                                                                                         $options = app($decodeData['model'])->get();
-                                                                            
+
                                                                                         foreach ($options as $option) {
                                                                                             if ($data->{$detail->field} == $option->id) {
                                                                                                 $value = $option->{$decodeData['show_field']};
@@ -658,7 +658,7 @@
                                                                             $name = '';
                                                                             if ($detail->has_relationship == 1) {
                                                                                 $decodeData = json_decode($detail->relationship, true);
-                                                                            
+
                                                                                 if (count($decodeData) > 0) {
                                                                                     $relationData = app($decodeData['model'])->find($data->{$detail->field});
                                                                                     if ($relationData) {
@@ -700,7 +700,7 @@
                                                                     @php
                                                                         $com = '';
                                                                         $value = '';
-                                                                        
+
                                                                         if ($detail->has_relationship == 1) {
                                                                             $json = json_decode($detail->relationship, true);
                                                                             if (is_array($json) && count($json) > 0) {
@@ -725,14 +725,14 @@
                                                                     @php
                                                                         $str = '';
                                                                         $com = '';
-                                                                        
+
                                                                         if ($detail->has_relationship == 1) {
                                                                             $json = json_decode($detail->relationship, true);
                                                                             if (is_array($json) && count($json) > 0) {
                                                                                 $options = app($json['model'])
                                                                                     ->where($json['references_field'], $data->{$detail->foreign_key})
                                                                                     ->get();
-                                                                        
+
                                                                                 if ($options->count() > 0) {
                                                                                     foreach ($options as $option) {
                                                                                         $str .= $com . $option->{$json['show_field']};
@@ -749,11 +749,11 @@
                                                                     @php
                                                                         $str = '';
                                                                         $com = '';
-                                                                        
+
                                                                         if ($detail->has_relationship == 1) {
                                                                             if ($data->{$detail->relationship_method}->count() > 0) {
                                                                                 $json = json_decode($detail->relationship, true);
-                                                                        
+
                                                                                 foreach ($data->{$detail->relationship_method} as $log) {
                                                                                     if (is_array($json) && count($json) > 0) {
                                                                                         $option = app($json['model'])
@@ -778,7 +778,7 @@
                                                                         $off = '';
                                                                         if (!empty($detail->options)) {
                                                                             $options = json_decode($detail->options, true);
-                                                                        
+
                                                                             if (is_array($options) && count($options) > 0) {
                                                                                 foreach ($options as $key => $option) {
                                                                                     if ($option['value'] == 1) {
@@ -832,7 +832,7 @@
                                                                                 $decodeData = json_decode($detail->relationship, true);
                                                                                 if (count($decodeData) > 0) {
                                                                                     $options = app($decodeData['model'])->get();
-                                                                        
+
                                                                                     foreach ($options as $option) {
                                                                                         if ($data->{$detail->field} == $option->id) {
                                                                                             $value = $option->{$decodeData['show_field']};
@@ -857,7 +857,7 @@
                                                                         $name = '';
                                                                         if ($detail->has_relationship == 1) {
                                                                             $decodeData = json_decode($detail->relationship, true);
-                                                                        
+
                                                                             if (count($decodeData) > 0) {
                                                                                 $relationData = app($decodeData['model'])->find($data->{$detail->field});
                                                                                 if ($relationData) {
