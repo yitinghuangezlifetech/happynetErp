@@ -21,52 +21,35 @@ class MenuSeeder extends Seeder
 
         app(Menu::class)->truncate();
 
-        if (Storage::disk('public')->exists('tableData/menus.sql'))
-        {
+        if (Storage::disk('public')->exists('tableData/menus.sql')) {
             DB::unprepared(Storage::disk('public')->get('tableData/menus.sql'));
-        }
-        else
-        {
+        } else {
             $id = '';
             $uuid = '';
 
-            foreach ($this->getData() as $data)
-            {
+            foreach ($this->getData() as $data) {
                 $menu = app(Menu::class)->where('menu_name', $data['menu_name'])->first();
 
-                if ($menu)
-                {
-                    if (!isset($data['parent_id']))
-                    {
+                if ($menu) {
+                    if (!isset($data['parent_id'])) {
                         $id = $data['id'];
                         $parentId = $menu->id;
-                    }
-                    else
-                    {
+                    } else {
                         $parentId = null;
                     }
                     unset($data['id']);
                     app(Menu::class)->where('id', $menu->id)->update($data);
-                } 
-                else 
-                {
-                    if (isset($parentId)) 
-                    {
-                        if($data['parent_id'] == $id)
-                        {
+                } else {
+                    if (isset($parentId)) {
+                        if ($data['parent_id'] == $id) {
                             $data['parent_id'] = $parentId;
                         }
-                    }
-                    else
-                    {
-                        if (!isset($data['parent_id']))
-                        {
+                    } else {
+                        if (!isset($data['parent_id'])) {
                             $id = $data['id'];
                             $uuid = uniqid();
                             $data['id'] = $uuid;
-                        }
-                        else if($data['parent_id'] == $id)
-                        {
+                        } else if ($data['parent_id'] == $id) {
                             $data['parent_id'] = $uuid;
                         }
                     }
@@ -97,7 +80,7 @@ class MenuSeeder extends Seeder
                 'target' => '_self',
                 'icon_class' => 'far fa-circle nav-icon',
                 'model' => 'App\Models\Menu',
-                'controller'=>'App\Http\Controllers\MenuController',
+                'controller' => 'App\Http\Controllers\MenuController',
                 'parent_id' => 1,
                 'sort' => 0
             ],
@@ -116,7 +99,7 @@ class MenuSeeder extends Seeder
                 'target' => '_self',
                 'icon_class' => 'far fa-circle nav-icon',
                 'model' => 'App\Models\Group',
-                'controller'=>'App\Http\Controllers\GroupController',
+                'controller' => 'App\Http\Controllers\GroupController',
                 'search_component' => 1,
                 'parent_id' => 2,
                 'sort' => 0
@@ -129,7 +112,7 @@ class MenuSeeder extends Seeder
                 'target' => '_self',
                 'icon_class' => 'far fa-circle nav-icon',
                 'model' => 'App\Models\Role',
-                'controller'=>'App\Http\Controllers\RoleController',
+                'controller' => 'App\Http\Controllers\RoleController',
                 'search_component' => 1,
                 'parent_id' => 2,
                 'sort' => 1
@@ -184,7 +167,7 @@ class MenuSeeder extends Seeder
                 'target' => '_self',
                 'icon_class' => 'far fa-circle nav-icon',
                 'model' => 'App\Models\UserType',
-                'controller'=>NULL,
+                'controller' => NULL,
                 'search_component' => 2,
                 'parent_id' => 3,
                 'sort' => 3
@@ -197,7 +180,7 @@ class MenuSeeder extends Seeder
                 'target' => '_self',
                 'icon_class' => 'far fa-circle nav-icon',
                 'model' => 'App\Models\User',
-                'controller'=>'App\Http\Controllers\UserController',
+                'controller' => 'App\Http\Controllers\UserController',
                 'search_component' => 1,
                 'parent_id' => 3,
                 'sort' => 4
@@ -210,7 +193,7 @@ class MenuSeeder extends Seeder
                 'target' => '_self',
                 'icon_class' => 'far fa-circle nav-icon',
                 'model' => 'App\Models\proxyAccount',
-                'controller'=>'App\Http\Controllers\proxyAccountController',
+                'controller' => 'App\Http\Controllers\proxyAccountController',
                 'search_component' => 1,
                 'parent_id' => 3,
                 'sort' => 5

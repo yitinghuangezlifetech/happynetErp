@@ -441,13 +441,15 @@ class DialRecordsImport implements ToCollection
 
                 foreach ($rows as $k => $row) {
                     if ($k > 0) {
-                        $user = app(User::class)->where('telecom_number', $this->removeBlankSpace(str_replace("'", "", $row[1])))->first();
+                        $user = app(User::class)
+                            ->where('telecom_number', $this->removeBlankSpace(str_replace("'", "", $this->convertCode($row[1]))))
+                            ->first();
 
-                        $start = explode(' ', $row[6]);
-                        $end = explode(' ', $row[7]);
+                        $start = explode(' ', $this->convertCode($row[6]));
+                        $end = explode(' ', $this->convertCode($row[7]));
 
-                        $start_1 = Carbon::createFromFormat('H:i:s', $start[1]);
-                        $end_1 = Carbon::createFromFormat('H:i:s', $end[1]);
+                        $start_1 = Carbon::createFromFormat('H:i:s', $this->convertCode($start[1]));
+                        $end_1 = Carbon::createFromFormat('H:i:s', $this->convertCode($end[1]));
 
                         $durationInSeconds = $end_1->diffInSeconds($start_1);
                         $formattedDuration = gmdate('H:i:s', $durationInSeconds);
@@ -458,21 +460,21 @@ class DialRecordsImport implements ToCollection
                             'id' => uniqid(),
                             'batch_no' => $batchNo,
                             'dail_record_type_id' => $this->type->id,
-                            'company_code' => $this->removeBlankSpace($row[0]),
+                            'company_code' => $this->removeBlankSpace($this->convertCode($row[0])),
                             'user_id' => $user->id ?? NULL,
-                            'telecom_account' => $this->removeBlankSpace(str_replace("'", "", $row[1])),
-                            'tel_number' => $this->removeBlankSpace(str_replace("'", "", $row[2])),
+                            'telecom_account' => $this->removeBlankSpace(str_replace("'", "", $this->convertCode($row[1]))),
+                            'tel_number' => $this->removeBlankSpace(str_replace("'", "", $this->convertCode($row[2]))),
                             'record_day' => $recordDay,
-                            'source_ip' => $this->removeBlankSpace($row[3]),
-                            'accept_number' => $this->removeBlankSpace(str_replace("'", "", $row[4])),
-                            'accept_IP' => $this->removeBlankSpace(str_replace("'", "", $row[5])),
+                            'source_ip' => $this->removeBlankSpace($this->convertCode($row[3])),
+                            'accept_number' => $this->removeBlankSpace(str_replace("'", "", $this->convertCode($row[4]))),
+                            'accept_IP' => $this->removeBlankSpace(str_replace("'", "", $this->convertCode($row[5]))),
                             'record_day_ad' => $recordDay,
                             'start_time' => $start[1],
                             'end_time' => $end[1],
                             'talking_time' => $formattedDuration,
                             'sec' => $durationInSeconds,
-                            'frontent_code' => $this->removeBlankSpace($row[8]),
-                            'fee' => $this->removeBlankSpace($row[10]),
+                            'frontent_code' => $this->removeBlankSpace($this->convertCode($row[8])),
+                            'fee' => $this->removeBlankSpace($this->convertCode($row[10])),
                         ]);
                     }
                 }
@@ -490,5 +492,12 @@ class DialRecordsImport implements ToCollection
     {
         $year += 1911; // 将民国年加上1911年即为西元年
         return $year;
+    }
+
+    private function convertCode($str)
+    {
+        $encoding = mb_detect_encoding($str, mb_detect_order(), true);
+
+        return mb_convert_encoding($str, "UTF-8", $encoding);
     }
 }

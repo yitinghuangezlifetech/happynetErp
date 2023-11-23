@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('func_type', function (Blueprint $table) {
+        Schema::create('func_types', function (Blueprint $table) {
             $table->uuid('id')->unique()->primary();
             $table->string('parent_id', 36)->nullable()->comment('父層ID');
             $table->string('type_code', 50)->nullable()->comment('類別代碼');
