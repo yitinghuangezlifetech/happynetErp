@@ -22,7 +22,7 @@
                         @endphp
                         @if ($detail->field == 'parent_id')
                             <div class="form-group">
-                                <label for="parent_id">所屬群組></label>
+                                <label for="parent_id">所屬群組</label>
                                 <select class="custom-select rounded-0" name="parent_id" id="parent_id">
                                     <option value="">請選擇</option>
                                     @foreach ($groups ?? [] as $group)

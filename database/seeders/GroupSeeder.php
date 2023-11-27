@@ -6,7 +6,8 @@ use DB;
 use App\Models\Group;
 use Illuminate\Database\Seeder;
 
-class GroupSeeder extends Seeder {
+class GroupSeeder extends Seeder
+{
     /**
      * Run the database seeds.
      *
@@ -18,22 +19,19 @@ class GroupSeeder extends Seeder {
 
         app(Group::class)->truncate();
 
-        foreach ($this->getData() as $data)
-        {
-            if ($data['id'] == 1)
-            {
+        foreach ($this->getData() as $data) {
+            if ($data['id'] == 1) {
                 $id = uniqid();
                 $parent = null;
-            }
-            else if($data['id'] > 1)
-            {
+            } else if ($data['id'] > 1) {
                 $parent = $id;
                 $id = uniqid();
             }
 
             $data['id'] = $id;
             $data['parent_id'] = $parent;
-            $group = app(Group::class)->create($data);
+
+            app(Group::class)->create($data);
 
             // $group->factory()->count(11)->create()->each(function($data, $i)use($group){
 
