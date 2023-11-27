@@ -24,6 +24,11 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+Route::prefix('sync')->group(function () {
+    Route::post('agent', [AgentSyncApi::class, 'syncAgent'])->name('api.sync.agent');
+    Route::post('member', [MemberSyncApi::class, 'syncMember'])->name('api.sync.member');
+});
+
 Route::prefix('image')->group(function () {
     Route::post('upload', [ImageApi::class, 'upload'])->name('api.image.upload');
     Route::post('remove', [ImageApi::class, 'remove'])->name('api.image.remove');

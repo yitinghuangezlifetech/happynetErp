@@ -9,8 +9,12 @@ use App\Models\Organization;
 use App\Models\OrganizationType;
 use Illuminate\Http\Request;
 
+use App\Http\Controllers\Traits\ApiAuthServiceTrait as apiAuth;
+
 class AgentSyncApi extends Controller
 {
+    use apiAuth;
+
     public function syncAgent(Request $request)
     {
         if (!$request->header('apikey')) {
