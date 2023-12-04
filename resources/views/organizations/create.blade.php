@@ -113,6 +113,20 @@
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
+                            <label for="data_source_id"><span style="color:red">*</span>資料來源</label>
+                            <select class="form-control" name="data_source_id" id="data_source_id">
+                                <option value="">請選擇</option>
+                                @foreach ($dataSource->getChilds ?? [] as $source)
+                                    <option value="{{ $source->id }}">{{ $source->type_name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6"></div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
                             <label for="system_no"><span style="color:red">*</span>系統編號</label>
                             <input type="text" class="form-control" name="system_no" value="" id="system_no"
                                 placeholder="請輸入系統編號" required>

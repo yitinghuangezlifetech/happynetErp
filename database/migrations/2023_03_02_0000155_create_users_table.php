@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->uuid('id')->unique()->primary();
+            $table->string('data_source_id', 36)->nullable()->comment('資料來源');
             $table->foreignUuid('group_id')
                 ->references('id')
                 ->on('groups')
@@ -41,7 +42,7 @@ return new class extends Migration
             $table->timestamps();
         });
     }
-    
+
 
     /**
      * Reverse the migrations.

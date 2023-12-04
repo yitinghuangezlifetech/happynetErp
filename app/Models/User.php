@@ -19,13 +19,39 @@ class User extends AbstractModel
      * @var array<int, string>
      */
     protected $hidden = [
-        'password',
         'remember_token',
     ];
 
     public function getFieldProperties()
     {
         return [
+            [
+                'field' => 'data_resource_id',
+                'type' => 'select',
+                'show_name' => '資料來源',
+                'join_search' => 2,
+                'required' => 2,
+                'browse' => 1,
+                'create' => 1,
+                'edit' => 1,
+                'super_admin_use' => 1,
+                'has_relationship' => 1,
+                'relationship' => json_encode([
+                    'model' => 'App\Models\FuncType',
+                    'references_field' => 'id',
+                    'type_code' => 'data_source',
+                    'show_field' => 'type_name'
+                ]),
+                'create_rule' => json_encode([
+                    'data_resource_id' => 'required'
+                ]),
+                'update_rule' => json_encode([
+                    'data_resource_id' => 'required'
+                ]),
+                'error_msg' => json_encode([
+                    ['data_resource_id.required' => '請選擇資料來源']
+                ]),
+            ],
             [
                 'field' => 'organization_id',
                 'type' => 'select',

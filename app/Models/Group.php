@@ -20,7 +20,7 @@ class Group extends AbstractModel
                 'show_name' => '群組類別',
                 'use_edit_link' => 2,
                 'join_search' => 1,
-                'required' => 1,
+                'required' => 2,
                 'browse' => 1,
                 'create' => 1,
                 'edit' => 1,
@@ -30,15 +30,6 @@ class Group extends AbstractModel
                     'references_field' => 'id',
                     'type_code' => 'group_types',
                     'show_field' => 'type_name'
-                ]),
-                'create_rule' => json_encode([
-                    'group_type_id' => 'required'
-                ]),
-                'update_rule' => json_encode([
-                    'group_type_id' => 'required'
-                ]),
-                'error_msg' => json_encode([
-                    ['group_type_id.required' => '請選擇群組類別']
                 ]),
             ],
             [

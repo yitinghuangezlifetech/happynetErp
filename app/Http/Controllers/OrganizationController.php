@@ -68,13 +68,15 @@ class OrganizationController extends BasicController
         $feeRates = app(FeeRate::class)->where('status', 1)->get();
         $organizationTypes = app(FuncType::class)->where('type_code', 'org_type')->first();
         $organizations = $this->getChildOrganizations();
+        $dataSource = app(FuncType::class)->where('type_code', 'data_source')->first();
 
         return view($this->createView, compact(
             'identities',
             'groups',
             'feeRates',
             'organizations',
-            'organizationTypes'
+            'organizationTypes',
+            'dataSource',
         ));
     }
 

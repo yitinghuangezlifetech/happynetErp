@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use DB;
 use Storage;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -19,17 +20,8 @@ class FuncTypeSeeder extends Seeder
     {
         app(FuncType::class)->truncate();
 
-        if (Storage::disk('public')->exists('tableData/func_type.txt'))
-        {
-            $content = json_decode(Storage::disk('public')->get('tableData/func_type.txt'), true);
-
-            if (is_array($content))
-            {
-                foreach ($content as $data)
-                {
-                    app(FuncType::class)->create($data);
-                }
-            }
+        if (Storage::disk('public')->exists('tableData/func_type.sql')) {
+            DB::unprepared(Storage::disk('public')->get('tableData/func_type.sql'));
         }
     }
 }

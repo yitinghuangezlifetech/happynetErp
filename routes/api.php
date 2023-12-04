@@ -8,6 +8,8 @@ use App\Http\Controllers\Apis\ImageApi;
 use App\Http\Controllers\Apis\SelectApi;
 use App\Http\Controllers\Apis\PublicApi;
 use App\Http\Controllers\Apis\SystemTypeApi;
+use App\Http\Controllers\Apis\AgentApi;
+use App\Http\Controllers\Apis\MemberApi;
 use App\Http\Controllers\Apis\UserControllerApi;
 /*
 |--------------------------------------------------------------------------
@@ -24,9 +26,13 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::prefix('sync')->group(function () {
-    Route::post('agent', [AgentSyncApi::class, 'syncAgent'])->name('api.sync.agent');
-    Route::post('member', [MemberSyncApi::class, 'syncMember'])->name('api.sync.member');
+Route::prefix('agent')->group(function () {
+    Route::post('syncAgent', [AgentApi::class, 'syncAgent'])->name('api.agent.syncAgent');
+});
+
+Route::prefix('member')->group(function () {
+    Route::post('syncMember', [MemberApi::class, 'syncMember'])->name('api.member.syncMember');
+    Route::post('checkAccountExist', [MemberApi::class, 'checkAccountExist'])->name('api.member.checkAccountExist');
 });
 
 Route::prefix('image')->group(function () {
