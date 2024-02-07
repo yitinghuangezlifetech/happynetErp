@@ -64,7 +64,6 @@ class RecipientController extends BasicController
         }
 
         $data = app(Apply::class)->find($id);
-        dd($data->terms);
         $applyLogs = $this->getProductLog($data);
 
         $obj = app(Product::class);
