@@ -535,7 +535,6 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="col-sm-12">
-                                {{ dd($data->terms) }}
                                 @foreach ($data->terms ?? [] as $log)
                                     <div class="form-group">
                                         {{ $log->term->title }}：{{ $log->term->describe }}<br>
