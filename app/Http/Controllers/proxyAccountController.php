@@ -8,7 +8,6 @@ use App\Models\UserAuth;
 use App\Models\Organization;
 use Illuminate\Http\Request;
 
-
 class ProxyAccountController extends BasicController
 {
     public function index(Request $request)
