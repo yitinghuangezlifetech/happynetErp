@@ -98,6 +98,6 @@ class ProxyAccountController extends BasicController
             return $users;
         }
 
-        return collect([]);
+        return [];
     }
 }
