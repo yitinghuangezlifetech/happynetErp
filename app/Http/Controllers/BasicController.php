@@ -82,11 +82,7 @@ class BasicController extends Controller implements InterfaceController
 
         $filters = $this->getFilters($request);
 
-        try {
-            $list = $this->model->getListByFilters($this->menu->menuDetails, $filters);
-        } catch (\Exception $e) {
-            $list = (new Collection([]))->paginate(20);
-        }
+        $list = $this->model->getListByFilters($this->menu->menuDetails, $filters);
 
         if (view()->exists($this->slug . '.index')) {
             $this->indexView = $this->slug . '.index';
