@@ -27,11 +27,7 @@ class ProxyAccountController extends BasicController
             'keyword' => $request->keyword
         ];
 
-        try {
-            $list = $this->model->getListByFilters($this->menu->menuDetails, $filters);
-        } catch (\Exception $e) {
-            $list = [];
-        }
+        $list = $this->model->getListByFilters($this->menu->menuDetails, $filters);
 
         if (view()->exists($this->slug . '.index')) {
             $this->indexView = $this->slug . '.index';
