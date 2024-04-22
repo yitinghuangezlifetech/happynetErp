@@ -31,7 +31,7 @@ class ProxyAccountController extends BasicController
         try {
             $list = $this->model->getListByFilters($this->menu->menuDetails, $filters);
         } catch (\Exception $e) {
-            $list = (new Collection([]))->paginate(20);
+            $list = [];
         }
 
         if (view()->exists($this->slug . '.index')) {
