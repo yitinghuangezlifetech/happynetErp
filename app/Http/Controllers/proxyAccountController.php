@@ -7,7 +7,6 @@ use App\Models\User;
 use App\Models\UserAuth;
 use App\Models\Organization;
 use Illuminate\Http\Request;
-use App\Support\Collection;
 
 
 class ProxyAccountController extends BasicController
