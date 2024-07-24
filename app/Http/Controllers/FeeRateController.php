@@ -2,10 +2,15 @@
 
 namespace App\Http\Controllers;
 
+
 use DB;
 use Auth;
+use Excel;
+use App\Imports\RateImport;
+use App\Models\FeeRate;
 use App\Models\FuncType;
 use App\Models\FeeRateLog;
+use App\Models\FeeRateTable;
 use Illuminate\Http\Request;
 
 class FeeRateController extends BasicController
@@ -53,40 +58,25 @@ class FeeRateController extends BasicController
         DB::beginTransaction();
 
         try {
-            $formData = $request->except('_token', 'rates');
+            $formData = $request->except('_token', 'fee_rate_file');
             $formData['id'] = uniqid();
-            $rates = $request->rates;
+
+            $inputFile = storage_path('app/public') . '/' . $request->fee_rate_file->store('csv');
+            $outputFile = storage_path('app/public') . '/csv/' . $request->fee_rate_file->getClientOriginalName();
+
+            $this->convertBig5ToUtf8($inputFile, $outputFile);
 
             if ($this->model->checkColumnExist('create_user_id')) {
                 $formData['create_user_id'] = Auth::user()->id;
             }
 
-            if ($this->menu->menuDetails->count() > 0) {
-                foreach ($this->menu->menuDetails as $detail) {
-                    if (isset($formData[$detail->field])) {
-                        if ($detail->type == 'image' || $detail->type == 'file') {
-                            if (is_object($formData[$detail->field]) && $formData[$detail->field]->getSize() > 0) {
-                                $formData[$detail->field] = $this->storeFile($formData[$detail->field], $this->slug);
-                            }
-                        }
-                    }
-                }
+            $data = $this->model->create($formData);
+            DB::commit();
 
-                $data = $this->model->create($formData);
-                DB::commit();
+            Excel::import(new RateImport($data), $inputFile);
 
-                $this->proccessFeeRateLogs($data->id, $rates);
-
-                return view('alerts.success', [
-                    'msg' => '資料新增成功',
-                    'redirectURL' => route($this->slug . '.index')
-                ]);
-            }
-
-            DB::rollBack();
-
-            return view('alerts.error', [
-                'msg' => '資料新增失敗, 無該功能項之細項設定',
+            return view('alerts.success', [
+                'msg' => '費率表新增成功',
                 'redirectURL' => route($this->slug . '.index')
             ]);
         } catch (\Exception $e) {
@@ -151,40 +141,27 @@ class FeeRateController extends BasicController
         DB::beginTransaction();
 
         try {
-            $formData = $request->except('_token', '_method', 'rates');
-            $rates = $request->rates;
+            $formData = $request->except('_token', '_method');
 
             if ($this->model->checkColumnExist('update_user_id')) {
                 $formData['update_user_id'] = Auth::user()->id;
             }
 
-            if ($this->menu->menuDetails->count() > 0) {
-                foreach ($this->menu->menuDetails as $detail) {
-                    if (isset($formData[$detail->field])) {
-                        if ($detail->type == 'image' || $detail->type == 'file') {
-                            if (is_object($formData[$detail->field]) && $formData[$detail->field]->getSize() > 0) {
-                                $formData[$detail->field] = $this->storeFile($formData[$detail->field], $this->slug);
-                            }
-                        }
-                    }
-                }
+            $this->model->updateData($id, $formData);
+            DB::commit();
 
-                $this->model->updateData($id, $formData);
+            $data = app(FeeRate::class)->find($id);
 
-                DB::commit();
+            if ($request->fee_rate_file->getSize() > 0) {
+                $inputFile = storage_path('app/public') . '/' . $request->fee_rate_file->store('csv');
+                $outputFile = storage_path('app/public') . '/csv/' . $request->fee_rate_file->getClientOriginalName();
+                $this->convertBig5ToUtf8($inputFile, $outputFile);
 
-                $this->proccessFeeRateLogs($id, $rates);
-
-                return view('alerts.success', [
-                    'msg' => '資料更新成功',
-                    'redirectURL' => route($this->slug . '.edit', $id)
-                ]);
+                Excel::import(new RateImport($data), $inputFile);
             }
 
-            DB::rollBack();
-
-            return view('alerts.error', [
-                'msg' => '資料更新失敗, 無該功能項之細項設定',
+            return view('alerts.success', [
+                'msg' => '費率表編輯成功',
                 'redirectURL' => route($this->slug . '.index')
             ]);
         } catch (\Exception $e) {
@@ -197,14 +174,73 @@ class FeeRateController extends BasicController
         }
     }
 
-    private function proccessFeeRateLogs($mainId, $rates = [])
+    public function destroy(Request $request, $id)
     {
-        app(FeeRateLog::class)->where('fee_rate_id', $mainId)->delete();
+        app(FeeRateTable::class)->where('fee_rate_id', $id)->delete();
+        app(FeeRate::class)->where('id', $id)->delete();
 
-        foreach ($rates ?? [] as $rate) {
-            $rate['id'] = uniqid();
-            $rate['fee_rate_id'] = $mainId;
-            app(FeeRateLog::class)->create($rate);
+        return view('alerts.success', [
+            'msg' => '費率表刪除成功',
+            'redirectURL' => route($this->slug . '.index')
+        ]);
+    }
+
+    public function details(Request $request, $id)
+    {
+        $filters = [
+            'fee_rate_id' => $id,
+            'keyword' => $request->keyword
+        ];
+
+        $logs = app(FeeRateTable::class)->getSearchResult($filters);
+
+        return view('fee_rates.details', compact(
+            'id',
+            'logs',
+            'filters'
+        ));
+    }
+
+    public function content($id, $detailId)
+    {
+        $data = app(FeeRateTable::class)->find($detailId);
+
+        if ($data) {
+            return view('fee_rates.detail_content', compact(
+                'id',
+                'data'
+            ));
         }
+
+        return view('alerts.error', [
+            'msg' => '該資料不存在',
+            'redirectURL' => route('fee_rates.details', $id)
+        ]);
+    }
+
+    public function detailUpdate(Request $request, $id, $detailId)
+    {
+        $formData = $request->except('_token', '_method');
+
+        app(FeeRateTable::class)->where('id', $detailId)->update($formData);
+
+        return view('alerts.success', [
+            'msg' => '資料更新成功',
+            'redirectURL' => route('fee_rates.details', $id)
+        ]);
+    }
+
+    private function convertBig5ToUtf8($inputFile, $outputFile)
+    {
+        $inputHandle = fopen($inputFile, 'r');
+        $outputHandle = fopen($outputFile, 'w');
+
+        while (($line = fgets($inputHandle)) !== false) {
+            $utf8Line = mb_convert_encoding($line, 'UTF-8', 'Big5');
+            fwrite($outputHandle, $utf8Line);
+        }
+
+        fclose($inputHandle);
+        fclose($outputHandle);
     }
 }

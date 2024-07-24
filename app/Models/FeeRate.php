@@ -60,6 +60,25 @@ class FeeRate extends AbstractModel
                 ]),
             ],
             [
+                'field' => 'fee_rate_file',
+                'type' => 'file',
+                'show_name' => '上傳費率表',
+                'has_js' => 1,
+                'use_edit_link' => 2,
+                'join_search' => 2,
+                'required' => 1,
+                'browse' => 2,
+                'create' => 1,
+                'edit' => 1,
+                'sort' => 1,
+                'create_rule' => json_encode([
+                    'fee_rate_file' => 'required'
+                ]),
+                'error_msg' => json_encode([
+                    ['fee_rate_file.required' => '請上傳費率表']
+                ]),
+            ],
+            [
                 'field' => 'status',
                 'type' => 'radio',
                 'show_name' => '狀態',
@@ -81,8 +100,23 @@ class FeeRate extends AbstractModel
         ];
     }
 
-    public function logs()
+    public function rateType()
     {
-        return $this->hasMany(FeeRateLog::class, 'fee_rate_id');
+        return $this->belongsTo(FuncType::class, 'rate_type_id');
+    }
+
+    public function tables()
+    {
+        return $this->hasMany(FeeRateTable::class, 'fee_rate_id');
+    }
+
+    public function createUser()
+    {
+        return $this->belongsTo(User::class, 'create_user_id');
+    }
+
+    public function updateUser()
+    {
+        return $this->belongsTo(User::class, 'update_user_id');
     }
 }
