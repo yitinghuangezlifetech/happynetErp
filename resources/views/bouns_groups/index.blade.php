@@ -109,7 +109,7 @@
             }
             $(document).ready(function() {
                 $('.dd').nestable({
-                        maxDepth: 3
+                        maxDepth: 0
                     })
                     .on('change', function() {
                         let data = $('.dd').nestable('serialize');
