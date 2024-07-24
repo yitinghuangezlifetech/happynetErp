@@ -20,6 +20,7 @@ use App\Http\Controllers\TableContrller;
 use App\Http\Controllers\ContractController;
 use App\Http\Controllers\ApplyController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\FeeRateController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -76,6 +77,12 @@ Route::middleware('auth:web')->group(function () {
 
     Route::prefix('applies')->group(function () {
         Route::get('{id}/print', [ApplyController::class, 'print'])->name('applies.print');
+    });
+
+    Route::prefix('fee_rates')->group(function () {
+        Route::get('{id}/details', [FeeRateController::class, 'details'])->name('fee_rates.details');
+        Route::get('{id}/details/{detialId}/content', [FeeRateController::class, 'content'])->name('fee_rates.detail_content');
+        Route::put('{id}/detailUpdate/{detialId}', [FeeRateController::class, 'detailUpdate'])->name('fee_rates.detailUpdate');
     });
 
     Route::prefix('project_regulations')->group(function () {

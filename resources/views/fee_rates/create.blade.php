@@ -33,7 +33,7 @@
                             @if ($detail->show_hidden_field == 1)
                                 @php
                                     $value = null;
-                                    
+
                                     if ($detail->field == 'user_id') {
                                         $value = $user->id;
                                     }
@@ -68,93 +68,6 @@
                         @endif
                     @endforeach
                 @endif
-            </div>
-        </div>
-        <div id="rateArea">
-            <div class="card card-secondary" id="card_1">
-                <div class="card-header">
-                    <h3 class="card-title">通話費率-1</h3>
-                    <div class="card-tools">
-                        <button type="button" class="btn btn-tool" data-card-widget="collapse"><i
-                                class="fas fa-minus"></i></button>
-                        <button type="button" class="btn btn-tool removeAreaBtn" data-rows="1"
-                            data-card-widget="remove"><i class="fas fa-times"></i></button>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-sm-6">
-                            <div class="form-group">
-                                <label for="call_target_id_1"><span style="color:red">*</span>撥打對象</label>
-                                <select class="form-control callTarget" name="rates[1][call_target_id]"
-                                    id="call_target_id_1" required>
-                                    <option value="">請選擇</option>
-                                    @foreach ($callTargets ?? [] as $target)
-                                        <option value="{{ $target->id }}">{{ $target->type_name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-sm-6">
-                            <label><span style="color:red">*</span>含稅</label>
-                            <div class="form-group clearfix">
-                                <div class="icheck-primary d-inline">
-                                    <input type="radio" id="radioPrimary1" name="rates[1][include_tax]" value="1">
-                                    <label for="radioPrimary1">是
-                                    </label>
-                                </div>
-                                <div class="icheck-primary d-inline">
-                                    <input type="radio" id="radioPrimary2" name="rates[1][include_tax]" value="2"
-                                        checked>
-                                    <label for="radioPrimary2">否
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-sm-6">
-                            <div class="form-group">
-                                <label for="call_rate_1"><span style="color:red">*</span>通話費率</label>
-                                <input type="text" class="form-control callRate" name="rates[1][call_rate]"
-                                    id="call_rate_1" data-rows="1" required>
-                            </div>
-                        </div>
-                        <div class="col-sm-6">
-                            <div class="form-group">
-                                <label for="discount_1">折讓</label>
-                                <input type="text" class="form-control discout" name="rates[1][discount]" id="discount_1"
-                                    data-rows="1">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-sm-4">
-                            <div class="form-group">
-                                <label for="discount_after_rate_1">折後費率</label>
-                                <input type="text" class="form-control" name="rates[1][discount_after_rate]"
-                                    id="discount_after_rate_1" readonly>
-                            </div>
-                        </div>
-                        <div class="col-sm-4">
-                            <div class="form-group">
-                                <label for="charge_unit_1"><span style="color:red">*</span>計費單位</label>
-                                <select class="form-control" name="rates[1][charge_unit]" id="charge_unit_1" required>
-                                    <option value="">請選擇</option>
-                                    <option value="1">秒鐘</option>
-                                    <option value="2">分鐘</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-sm-4">
-                            <div class="form-group">
-                                <label for="parameter_1"><span style="color:red">*</span>參數</label>
-                                <input type="text" class="form-control" name="rates[1][parameter]" id="parameter_1"
-                                    required>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
         <div class="card" id="footerArea">
@@ -201,7 +114,7 @@
                     str += `<option value="{{ $target->id }}">{{ $target->type_name }}</option>`;
                 }
             @endforeach
-            str += `          
+            str += `
 							</select>
 						</div>
 						</div>
