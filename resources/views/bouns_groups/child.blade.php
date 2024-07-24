@@ -7,8 +7,10 @@
               $com = '';
               foreach ($child->logs??[] as $log)
               {
-                  $str .= $com.$log->funcType->type_name.'('.$log->bonus.'%)';
-                  $com = '，';
+                if ($log->funcType) {
+                    $str .= $com.$log->funcType->type_name.'('.$log->bonus.'%)';
+                    $com = '，';
+                }
               }
               @endphp
                 {{$child->name}}：{{$str}}
