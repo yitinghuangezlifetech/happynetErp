@@ -128,8 +128,8 @@ class MenuController extends BasicController
 
                 DB::commit();
 
-                $this->createOrUpdatePermission($menu);
-                Artisan::call('db:seed --class=MenuDetailSeeder');
+                // $this->createOrUpdatePermission($menu);
+                // Artisan::call('db:seed --class=MenuDetailSeeder');
 
                 return view('alerts.success', [
                     'msg' => '資料更新成功',
