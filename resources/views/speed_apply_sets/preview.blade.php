@@ -16,7 +16,7 @@
             @php
                 $i = 1;
             @endphp
-            @foreach($request->field as $k=>$field)  
+            @foreach($request->field as $k=>$field)
             <div class="card card-primary card-outline">
                 <a class="d-block w-100" data-toggle="collapse show" href="#collapseOne_{{$k}}">
                     <div class="card-header">
@@ -54,27 +54,58 @@
                                 @break
                             @case('checkbox')
                                 @foreach($field['items']??[] as $item)
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="checkbox">
-                                    <label class="form-check-label">{{$item['name']}}</label>
-                                    @if(isset($item['child']))
-                                        <table class="table">
-                                        @foreach($item['child'] as $child)
-                                        <tr>
-                                            <td style="text-align: left">{{$child['title']}}</td>
-                                            <td style="text-align: left">
-                                                @foreach($child['items'] as $item)
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="checkbox" name="checkbox">
-                                                    <label class="form-check-label">{{$item['name']}}</label>
-                                                </div>
-                                                @endforeach
-                                            </td>
-                                        </tr>
-                                        @endforeach
-                                    </table>
-                                    @endif
-                                </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="checkbox">
+                                        <label class="form-check-label">{{$item['name']}}</label>
+                                        @if(isset($item['child']))
+                                            <br>
+                                            <table class="table">
+                                            @foreach($item['child'] as $child)
+                                                @switch($child['field_attribute'])
+                                                    @case('text')
+                                                    <label class="form-check-label">{{$child['title']}}</label>
+                                                    <input type="text" class="form-control form-control-border">
+                                                    @break
+                                                @case('text_area')
+                                                    <label class="form-check-label">{{$child['title']}}</label>
+                                                    <textarea rows="10" style="width: 100%"></textarea>
+                                                    @break
+                                                @case('select')
+                                                    <label class="form-check-label">{{$child['title']}}</label>
+                                                    <select class="form-control">
+                                                        <option value="">請選擇</option>
+                                                        @foreach($child['items']??[] as $item)
+                                                            <option>{{$item['name']}}</option>
+                                                        @endforeach
+                                                    </select>
+                                                    @break;
+                                                @case('radio')
+                                                 <label class="form-check-label">{{$child['title']}}</label>
+                                                    @foreach($child['items']??[] as $item)
+                                                        <div class="form-check">
+                                                            <input class="form-check-input" type="radio" name="radio">
+                                                            <label class="form-check-label">{{$item['name']}}</label>
+                                                        </div>
+                                                    @endforeach
+                                                    @break
+                                                @case('checkbox')
+                                                    <tr>
+                                                        <td style="text-align: left">{{$child['title']}}</td>
+                                                        <td style="text-align: left">
+                                                            @foreach($child['items'] as $item)
+                                                            <div class="form-check">
+                                                                <input class="form-check-input" type="checkbox" name="checkbox">
+                                                                <label class="form-check-label">{{$item['name']}}</label>
+                                                            </div>
+                                                            @endforeach
+                                                        </td>
+                                                    </tr>
+                                                @break
+                                                @endswitch
+                                            @endforeach
+                                        </table>
+                                        @endif
+                                    </div>
                                 @endforeach
                                 @break;
                         @endswitch
@@ -93,9 +124,9 @@
                                 <textarea rows="10" style="width: 100%"></textarea>
                                 @break
                             @case('image')
-                                <input 
-                                    type="file" 
-                                    class="form-control dropify" 
+                                <input
+                                    type="file"
+                                    class="form-control dropify"
                                     name="image"
                                     data-show-remove="true"
                                 />
